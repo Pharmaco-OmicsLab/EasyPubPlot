@@ -1,0 +1,986 @@
+library(shiny)
+library(shinyWidgets)
+library(colourpicker)
+library(tidyverse)
+library(bslib)
+
+# Define UI
+ui <- navbarPage(
+  title = "PubOmicsVisu",
+  theme = bs_theme(
+    version = 4,
+    bootswatch = "lux",
+    primary = "#007bff",
+    base_font = font_google("Roboto")
+  ),
+  
+  # Introduction Tab
+  tabPanel(
+    title = "Introduction",
+    fluidPage(
+      fluidRow(
+        column(
+          width = 3,
+          #wellPanel(
+          navlistPanel(
+            id = "introTab",
+            tabPanel("Welcome", value = "welcome"),
+            tabPanel("PCA/PLS-DA Scores PLot", value = "pca_info"),
+            tabPanel("Volcano Plot", value = "volcano_info"),
+            tabPanel("Heatmap", value = "heatmap_info"),
+            tabPanel("Box PLot", value = "boxplot_info"),
+            tabPanel("Venn Diagram", value = "venn_info"),
+            tabPanel("Upset Plot", value = "upset_info")
+          )
+          #)
+        ),
+        column(
+          width = 9,
+          uiOutput("introContent")
+        )
+      )
+    )
+  ),
+  
+  # PCA Plot Tab
+  tabPanel(
+    title = "Scores Plot",
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "ScorePlottabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            # File upload inputs
+            fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
+            fileInput("scoreFile_ScorePlot", "Upload PCA Score File:", accept = c(".csv"))
+          ),
+          
+          # Plot Appearance Tab
+          tabPanel(
+            "Plot Appearance",
+            uiOutput("groupLevelSelector_ScorePlot"),  # This will be dynamically generated based on the uploaded data
+            uiOutput("dynamicColorInputs_ScorePlot"),
+            
+            uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
+            
+            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE),
+            
+            numericInput("pointSize_ScorePlot", "Point Size:", value = 4, min = 0.5, max = 30),
+            
+            selectInput(
+              "plotTheme_ScorePlot", "Plot Theme:",
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "theme_Publication"
+            )
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
+            textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
+            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15, min = 8, max = 30),
+            checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
+            
+            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15, min = 8, max = 30),
+            checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
+          ),
+          
+          # Axis Limits & Breaks Tab
+          tabPanel(
+            "Axis Limits",
+            numericInput("xMin_ScorePlot", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("xMax_ScorePlot", "X-axis Maximum:", value = NA, step = 0.1),
+            numericInput("yMin_ScorePlot", "Y-axis Minimum:", value = NA, step = 0.1),
+            numericInput("yMax_ScorePlot", "Y-axis Maximum:", value = NA, step = 0.1)
+          ),
+          
+          tabPanel(
+            "Axis Breaks",
+            numericInput("xBreaks_ScorePlot", "X-axis Breaks:", value = NA, step = 0.1),
+            numericInput("yBreaks_ScorePlot", "Y-axis Breaks:", value = NA, step = 0.1)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, min = 72, max = 1200, step = 100),
+            selectInput(
+              "formatdownloadScorePlot", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf"),
+              selected = ".png"
+            ),
+            downloadButton("downloadScorePlot", "Download Plot")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_ScorePlot", width = "100%", height = "600px")
+      )
+    )
+  ),
+  
+  # Volcano Plot Tab
+  tabPanel(
+    title = "Volcano Plot",
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Controls for the Volcano Plot
+        tabsetPanel(
+          id = "volcanoTabs",
+          type = "pills",
+          
+          # File upload inputs for Volcano Plot
+          tabPanel(
+            "Data Upload",
+            fileInput("volcanoFile", "Upload STAT Result File:", accept = c(".csv"))
+          ),
+          
+          # Plot Appearance Tab
+          tabPanel(
+            "Cut-offs",
+            
+            numericInput("FDR_cut_off_Volcano", "(adj) P-value Cut-off:", min = 0, max = 10, value = 0.05, step = 0.01),
+            numericInput("FC_cut_off_Volcano", "Fold Change Cut-off:", min = 0, max = 500, value = 1.5, step = 0.5),
+            
+            textInput("caption_Volcano", "Caption:", value = "FC cut-off, 1.5; FDR cut-off, 0.05"),
+            numericInput("captionLabSize_Volcano", "Caption Size:", value = 20, min = 6, max = 50)
+            
+          ),
+          
+          tabPanel(
+            "Colors",
+            
+            colourInput("color_NotSig_Volcano", "Not Significant Color:", value = "#848484"),
+            colourInput("color_DownFDR_Volcano", "(adj) P-value, Down-regulation Color:", value = "#BCF1B9"),
+            colourInput("color_UpFDR_Volcano", "(adj) P-value, Up-regulation:", value = "#FEB0B0"),
+            colourInput("color_DownFDR_FC_Volcano", "(adj) P-value & FC, Down-regulation):", value = "#5FDD59"),
+            colourInput("color_UpFDR_FC_Volcano", "(adj) P-value & FC, Up-regulation):", value = "#FE5E5E")
+            
+          ),
+          
+          # Plot Appearance
+          tabPanel(
+            "Points and Legends",
+            numericInput("pointSize_Volcano", "Point Size:", value = 1.6, min = 0.5, max = 30, step = 0.5),
+            
+            # legend
+            checkboxInput("Show_legend_Volcano", "Show legend", value = FALSE),
+            numericInput("legendLabSize_Volcano", "Legend Title Size:", value = 24, min = 6, max = 50),
+            numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6, min = 1, max = 50),
+            
+            selectInput(
+              "plotTheme_Volcano", "Plot Theme:",
+              choices = c("none"),#, "theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "none"
+            )
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            textInput("xLabel_Volcano", "X-axis Label:", value = "log2(FC)"),
+            textInput("yLabel_Volcano", "Y-axis Label:", value = "-log10(FDR)"),
+            numericInput("labelSize_Volcano", "Axis Label Size:", value = 24, min = 6, max = 50),
+            checkboxInput("checkbox_Axis_bold_Volcano", "Axis bold", value = TRUE),
+            
+            numericInput("tickLabelSize_Volcano", "Tick Label Size:", value = 20, min = 6, max = 50),
+            checkboxInput("checkbox_Tick_bold_Volcano", "Tick bold", value = FALSE)
+          ),
+          
+          # Axis Limits & Breaks Tab
+          tabPanel(
+            "Axis Limits",
+            numericInput("xMin_Volcano", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("xMax_Volcano", "X-axis Maximum:", value = NA, step = 0.1),
+            numericInput("yMin_Volcano", "Y-axis Minimum:", value = NA, step = 0.1),
+            numericInput("yMax_Volcano", "Y-axis Maximum:", value = NA, step = 0.1)
+          ),
+          
+          tabPanel(
+            "Axis Breaks",
+            numericInput("xBreaks_Volcano", "X-axis Breaks:", value = NA, step = 0.1),
+            numericInput("yBreaks_Volcano", "Y-axis Breaks:", value = NA, step = 0.1)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            # Ensure the consistency with variables name in the server
+            numericInput("plotWidth_Volcano", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("plotHeight_Volcano", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("volcanoDPI", "DPI for Saving:", value = 300, min = 72, max = 2000, step = 100),
+            selectInput(
+              "formatdownloadVolcano", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf"),
+              selected = ".png"
+            ),
+            downloadButton("download_VolcanoPlot", "Download Plot")
+          )
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_volcanoPlot", width = "100%", height = "600px")
+      )
+    )
+  ),
+  
+  # Heatmap
+  tabPanel(
+    title = "Heatmap"
+  ),
+  
+  # Box Plot Tab
+  tabPanel(
+    title = "Box Plot",
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "BoxPlottabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            # File upload inputs
+            fileInput("metadataFile_BoxPlot", "Upload Metadata File:", accept = c(".csv")),
+            fileInput("expressionFile_BoxPlot", "Upload Normalized Data File:", accept = c(".csv"))
+          ),
+          
+          # Plot Appearance Tab
+          tabPanel(
+            "Plot Appearance",
+            uiOutput("groupLevelSelector_BoxPlot"),  # This will be dynamically generated based on the uploaded data
+            uiOutput("dynamicColorInputs_BoxPlot"),
+            
+            uiOutput("dynamicLegendInputs_BoxPlot"), # For dynamic legend labels
+            
+            numericInput("pointSize_BoxPlot", "Point Size:", value = 3, min = 0.5, max = 30),
+            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, min = 0.1, max = 5, step = 0.1),
+            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, min = 0.01, max = 5, step = 0.02),
+            
+            selectInput(
+              "plotTheme_BoxPlot", "Plot Theme:",
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "theme_Publication"
+            )
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            # textInput("xLabel_BoxPlot", "X-axis Label:", value = "The first component (A %)"),
+            textInput("yLabel_BoxPlot", "Y-axis Label:", value = "Normalized Abundance"),
+            numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20, min = 6, max = 50),
+            checkboxInput("checkbox_Axis_bold_BoxPlot", "Axis bold", value = TRUE),
+            
+            numericInput("tickLabelSize_BoxPlot", "Tick Label Size:", value = 15, min = 8, max = 30),
+            checkboxInput("checkbox_Tick_bold_BoxPlot", "Tick bold", value = FALSE),
+            
+            numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, min = 8, max = 30, step = 1),
+          ),
+          
+          # # Axis Limits & Breaks Tab
+          # tabPanel(
+          #   "Axis Limits",
+          #   # numericInput("xMin_BoxPlot", "X-axis Minimum:", value = NA, step = 0.1),
+          #   # numericInput("xMax_BoxPlot", "X-axis Maximum:", value = NA, step = 0.1),
+          #   numericInput("yMin_BoxPlot", "Y-axis Minimum:", value = NA, step = 0.1),
+          #   numericInput("yMax_BoxPlot", "Y-axis Maximum:", value = NA, step = 0.1)
+          # ),
+          # 
+          # tabPanel(
+          #   "Axis Breaks",
+          #   # numericInput("xBreaks_BoxPlot", "X-axis Breaks:", value = NA, step = 0.1),
+          #   numericInput("yBreaks_BoxPlot", "Y-axis Breaks:", value = NA, step = 0.1)
+          # ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", min = 200, max = 8000, value = 800, step = 50),
+            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", min = 200, max = 8000, value = 400, step = 50),
+            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, min = 72, max = 2800, step = 100),
+            selectInput(
+              "formatdownload_BoxPlot", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf"),
+              selected = ".png"
+            ),
+            downloadButton("download_BoxPlot", "Download Plot")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_BoxPlot", width = "100%", height = "600px")
+      )
+    )
+  ),
+  
+  # Raincloud plot
+  tabPanel(
+    title = "Time-course Expression"
+  ),
+  
+  # Venn Diagram
+  tabPanel(
+    title = "Venn Diagram"
+  ),
+  
+  # Venn Diagram
+  tabPanel(
+    title = "Upset Plot"
+  )
+)
+
+# Define Server
+server <- function(input, output, session) {
+  # Define some background function
+  ## theme_Publication - copy from the source code
+  theme_Publication <- function(base_size=14, base_family="helvetica") {
+    library(grid)
+    library(ggthemes)
+    (theme_foundation(base_size=base_size, base_family=base_family)
+      + theme(plot.title = element_text(face = "bold",
+                                        size = rel(1.2), hjust = 0.5),
+              text = element_text(),
+              panel.background = element_rect(colour = NA),
+              plot.background = element_rect(colour = NA),
+              panel.border = element_rect(colour = NA),
+              axis.title = element_text(face = "bold",size = rel(1)),
+              axis.title.y = element_text(angle = 90,vjust =2),
+              axis.title.x = element_text(vjust = -0.2),
+              axis.text = element_text(), 
+              axis.line = element_line(colour="black"),
+              axis.ticks = element_line(),
+              panel.grid.major = element_line(colour="#f0f0f0"),
+              panel.grid.minor = element_blank(),
+              legend.key = element_rect(colour = NA),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              legend.key.size= unit(0.2, "cm"),
+              legend.margin = margin(unit(0, "cm")),
+              legend.title = element_text(face="italic"),
+              plot.margin=unit(c(10,5,5,5),"mm"),
+              strip.background = element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+              strip.text = element_text(face="bold")
+      ))
+    
+  }
+  
+  scale_fill_Publication <- function(...){
+    library(scales)
+    discrete_scale("fill","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+    
+  }
+  
+  scale_colour_Publication <- function(...){
+    library(scales)
+    discrete_scale("colour","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+    
+  }
+  
+  # Reactive values to store uploaded data for PCA and Volcano Plots
+  values <- reactiveValues(
+    # PCA/PLS-DA score_ScorePlot plot
+    metadata_ScorePlot = NULL, score_ScorePlot = NULL, group_levels_ScorePlot = NULL, 
+    # Volcano plots
+    volcanoData = NULL,
+    # Box Plots
+    expression_BoxPlot = NULL, metadata_BoxPlot= NULL, group_levels_BoxPlot = NULL
+  )
+  
+  # Dynamic content for Introduction tab
+  output$introContent <- renderUI({
+    if (input$introTab == "pca_info") {
+      fluidPage(
+        h2("Introduction to PCA Plot"),
+        p("How to prepare Input Data (Have button to download)"),
+        p("Some steps to use?")
+      )
+    } else if (input$introTab == "volcano_info") {
+      fluidPage(
+        h2("Introduction to Volcano Plot"),
+        p("How to prepare Input Data (Have button to download)"),
+        p("Some steps to use?")
+      )
+    } else {
+      fluidPage(
+        h1("Welcome to the PubOmicsVisu App"),
+        p("This app provides interactive tools to create publishable plots for scientific paper."),
+        p("To get started, navigate to the appropriate tab, upload your data files, and customize the plot settings."),
+        p("You can also explore various options for customizing the appearance of plots and save them for future use."),
+        hr(),
+        img(src = "https://via.placeholder.com/800x200.png", height = "200px"), # Placeholder image
+        p("Use the navigation bar above to select the type of plot you want to create.")
+      )
+    }
+  })
+  
+  #<-- PCA/PLS-DA score_ScorePlot plot Handling -->
+  # Observe metadata_ScorePlot file upload
+  observeEvent(input$metadataFile_ScorePlot, {
+    req(input$metadataFile_ScorePlot)
+    values$metadata_ScorePlot <- read.csv(input$metadataFile_ScorePlot$datapath) %>% dplyr::mutate(Group = factor(Group))
+  })
+  
+  # Observe score_ScorePlot file upload
+  observeEvent(input$scoreFile_ScorePlot, {
+    req(input$scoreFile_ScorePlot)
+    values$score_ScorePlot <- read.csv(input$scoreFile_ScorePlot$datapath) %>% dplyr::rename(Sample = X)
+    
+    # Determine group levels dynamically after both files are uploaded
+    if (!is.null(values$metadata_ScorePlot)) {
+      combined_data <- inner_join(values$score_ScorePlot, values$metadata_ScorePlot %>% dplyr::select(Sample, Group), by = "Sample")
+      values$group_levels_ScorePlot <- unique(combined_data$Group)
+      
+      # Update UI for selecting and ordering group levels
+      output$groupLevelSelector_ScorePlot <- renderUI({
+        selectInput("groupLevels", "Select and Order Group Levels", 
+                    choices = values$group_levels_ScorePlot, 
+                    selected = values$group_levels_ScorePlot,
+                    multiple = TRUE)
+      })
+    }
+  })
+  
+  # UI for dynamic color inputs based on group levels
+  output$dynamicColorInputs_ScorePlot <- renderUI({
+    req(values$group_levels_ScorePlot)  # Ensure group levels are available
+    
+    # Create a list of color inputs for each group level
+    Publication_color_code = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
+    color_inputs <- lapply(seq_along(values$group_levels_ScorePlot), function(i) {
+      level <- values$group_levels_ScorePlot[i]
+      default_color <- Publication_color_code[(i - 1) %% length(Publication_color_code) + 1]  # Cycle through Publication_color_code
+      colourInput(inputId = paste0("color_", level), label = paste("Color for", level, "Group:"), value = default_color)
+    })
+    
+    # Return the list of color input elements
+    do.call(tagList, color_inputs)
+  })
+  
+  # Reactive expression to create a named color palette from the selected group levels
+  color_palette <- reactive({
+    req(values$group_levels_ScorePlot)  # Ensure group levels are available
+    sapply(values$group_levels_ScorePlot, function(level) {
+      input[[paste0("color_", level)]]  # Extract color inputs dynamically
+    }, simplify = FALSE)
+  })
+  
+  # UI for allowing to edit legend labels
+  output$dynamicLegendInputs_ScorePlot <- renderUI({
+    req(values$group_levels_ScorePlot)  # Ensure group levels are available
+    
+    # Create text input fields for each group level to edit legend labels
+    legend_inputs <- lapply(values$group_levels_ScorePlot, function(level) {
+      textInput(
+        inputId = paste0("legend_", level), 
+        label = paste("Legend label for", level, "Group:"), 
+        value = level  # Set default value to the current level name
+      )
+    })
+    
+    # Return the list of legend input elements
+    do.call(tagList, legend_inputs)
+  })
+  
+  # Reactive expression to create a named vector of legend labels
+  legend_labels <- reactive({
+    req(values$group_levels_ScorePlot)  # Ensure group levels are available
+    
+    # Collect legend labels dynamically from inputs
+    labels <- sapply(values$group_levels_ScorePlot, function(level) {
+      input[[paste0("legend_", level)]]  # Access each text input value dynamically
+    }, simplify = TRUE)
+    
+    # Return a named vector where the names are the group levels
+    setNames(labels, values$group_levels_ScorePlot)
+  })
+  
+  # Render the plot
+  output$Render_ScorePlot <- renderPlot({
+    req(values$metadata_ScorePlot, values$score_ScorePlot, input$groupLevels) # Ensure data and group level input are available
+    
+    # Combine datasets
+    PCA_score_df <- values$score_ScorePlot %>%
+      inner_join(values$metadata_ScorePlot %>% dplyr::select(Sample, Group), by = "Sample") %>%
+      mutate(Group = factor(Group, levels = input$groupLevels))  # Use selected group levels
+    
+    # Generate dynamic color palette based on the number of groups
+    color_code <- color_palette()  # Get dynamic color palette
+    
+    # Get the legend labels from reactive expression
+    legend_labels_vector <- legend_labels()
+    
+    # Define the theme dynamically
+    plot_theme <- switch(
+      input$plotTheme_ScorePlot,
+      "theme_Publication" = theme_Publication(), 
+      "theme_bw" = theme_bw(), 
+      "theme_minimal" = theme_minimal(),
+      "theme_linedraw" = theme_linedraw(), 
+      "theme_classic" = theme_classic(),
+      "theme_gray" = theme_gray(),
+      "theme_bw" = theme_bw(),
+    )
+    
+    # Prepare axis limits and breaks
+    x_limits <- if (!is.na(input$xMin_ScorePlot) && !is.na(input$xMax_ScorePlot) && input$xMin_ScorePlot < input$xMax_ScorePlot) c(input$xMin_ScorePlot, input$xMax_ScorePlot) else NULL
+    y_limits <- if (!is.na(input$yMin_ScorePlot) && !is.na(input$yMax_ScorePlot) && input$yMin_ScorePlot < input$yMax_ScorePlot) c(input$yMin_ScorePlot, input$yMax_ScorePlot) else NULL
+    x_breaks <- if (!is.na(input$xBreaks_ScorePlot) && !is.na(input$xMin_ScorePlot) && !is.na(input$xMax_ScorePlot) && input$xBreaks_ScorePlot > 0) seq(from = input$xMin_ScorePlot, to = input$xMax_ScorePlot, by = input$xBreaks_ScorePlot) else waiver()
+    y_breaks <- if (!is.na(input$yBreaks_ScorePlot) && !is.na(input$yMin_ScorePlot) && !is.na(input$yMax_ScorePlot) && input$yBreaks_ScorePlot > 0) seq(from = input$yMin_ScorePlot, to = input$yMax_ScorePlot, by = input$yBreaks_ScorePlot) else waiver()
+    
+    # Make a data.frame for 95CI -> Follow `MetaboAnalystR` package (https://github.com/xia-lab/MetaboAnalystR/blob/1c6aa245388f7c0ba617111e264fa53bec221c83/R/stats_chemometrics.R#L227)
+    ## Extract score
+    pc1  <- pull(PCA_score_df[2])
+    pc2  <- pull(PCA_score_df[3])
+    
+    ## Get group and levels
+    cls1 <- PCA_score_df$Group
+    lvs <- levels(cls1)
+    
+    ## Generate array for ellipse with 100 points, using self-calculated var and mean of pc1 and pc2
+    pts.array <- array(0, dim = c(100,2,length(lvs)))
+    
+    for(i in 1:length(lvs)){
+      inx <- cls1 == lvs[i];
+      groupVar <- var(cbind(pc1[inx],pc2[inx]), na.rm=T);
+      groupMean <- cbind(mean(pc1[inx], na.rm=T),mean(pc2[inx], na.rm=T));
+      pts.array[,,i] <- ellipse::ellipse(groupVar, centre = groupMean, level = 0.95, npoints=100);
+    }
+    
+    ### Convert array to df for ploting
+    pts.df <- 1:length(lvs) %>%
+      lapply(function(i) as.data.frame(pts.array[,,i])) %>%
+      do.call(rbind, .) %>% #setNames(c("X", "Y"))  # Rename columns if needed
+      dplyr::mutate(Group = rep(lvs, each = 100))
+    
+    # Generate the Score plot
+    p = ggplot(PCA_score_df, aes(x = pull(PCA_score_df[2]), y = pull(PCA_score_df[3]), color = Group, fill = Group)) +
+      geom_point(size = input$pointSize_ScorePlot, alpha = 1) +
+      scale_color_manual(name = NULL, values = color_code, labels = legend_labels_vector) +
+      scale_fill_manual(name = NULL, values = color_code, labels = legend_labels_vector) +
+      # stat_ellipse(geom = "polygon", aes(fill = Group), type = "norm", level = 0.95, alpha = 0.2, show.legend = FALSE, size = 0) +
+      labs(x = input$xLabel_ScorePlot, y = input$yLabel_ScorePlot) +
+      plot_theme +
+      theme(
+        axis.title.x = element_text(size = input$labelSize_ScorePlot),
+        axis.title.y = element_text(size = input$labelSize_ScorePlot),
+        axis.text.x = element_text(size = input$tickLabelSize_ScorePlot),
+        axis.text.y = element_text(size = input$tickLabelSize_ScorePlot),
+        legend.title = element_blank(),
+        legend.position = "top"
+      ) +
+      #coord_cartesian(xlim = x_limits, ylim = y_limits) +
+      scale_x_continuous(limits = x_limits, breaks = x_breaks) +
+      scale_y_continuous(limits = y_limits, breaks = y_breaks)
+    
+    # Conditionally add the 95% CI ellipse based on the checkbox
+    if (input$checkbox_95CI_ScorePlot) {
+      p <- p + 
+        geom_polygon(aes(x = V1, y = V2, fill = Group), data = pts.df, alpha = 0.2, color = NA)
+        # stat_ellipse(
+        #   geom = "polygon", aes(fill = Group), type = "norm", level = 0.95, alpha = 0.2, show.legend = FALSE, size = 0
+        # )
+    }
+    
+    # Conditionally add the bold for axis and tick
+    if (input$checkbox_Axis_bold_ScorePlot) {
+      p <- p + theme(axis.title = element_text(face = "bold"))
+    }
+    
+    if (input$checkbox_Tick_bold_ScorePlot) {
+      p <- p + theme(axis.text = element_text(face = "bold"))
+    }
+    
+    # Render the plot
+    p
+    
+  }, width = reactive({ input$plotWidth_ScorePlot }), height = reactive({ input$plotHeight_ScorePlot }))
+  
+  # <-- Volcano Plot Handling -->
+  observeEvent(input$volcanoFile, {
+    req(input$volcanoFile)
+    values$volcanoData <- read.csv(input$volcanoFile$datapath) %>% dplyr::rename(FDR = `adj.P.Val`)
+  })
+  
+  output$Render_volcanoPlot <- renderPlot({
+    req(values$volcanoData)
+    
+    # Define the theme dynamically
+    plot_theme <- switch(
+      input$plotTheme_Volcano,
+      "theme_Publication" = theme_Publication(), 
+      "theme_bw" = theme_bw(), 
+      "theme_minimal" = theme_minimal(),
+      "theme_linedraw" = theme_linedraw(), 
+      "theme_classic" = theme_classic(),
+      "theme_gray" = theme_gray(),
+      "theme_bw" = theme_bw(),
+    )
+    
+    # Prepare axis limits and breaks
+    x_limits <- if (!is.na(input$xMin_Volcano) && !is.na(input$xMax_Volcano) && input$xMin_Volcano < input$xMax_Volcano) c(input$xMin_Volcano, input$xMax_Volcano) else NULL
+    y_limits <- if (!is.na(input$yMin_Volcano) && !is.na(input$yMax_Volcano) && input$yMin_Volcano < input$yMax_Volcano) c(input$yMin_Volcano, input$yMax_Volcano) else NULL
+    x_breaks <- if (!is.na(input$xBreaks_Volcano) && !is.na(input$xMin_Volcano) && !is.na(input$xMax_Volcano) && input$xBreaks_Volcano > 0) seq(from = input$xMin_Volcano, to = input$xMax_Volcano, by = input$xBreaks_Volcano) else waiver()
+    y_breaks <- if (!is.na(input$yBreaks_Volcano) && !is.na(input$yMin_Volcano) && !is.na(input$yMax_Volcano) && input$yBreaks_Volcano > 0) seq(from = input$yMin_Volcano, to = input$yMax_Volcano, by = input$yBreaks_Volcano) else waiver()
+    
+    # Volcano plot function
+    draw_volcano <- function(stat_df, FC_cut_of = 1.5, FDR_cut_of = 0.05){
+      keyvals2 <- case_when(
+        # FDR and log2FC
+        (stat_df$log2FoldChange < -log2(FC_cut_of)) & (stat_df$FDR < FDR_cut_of)  ~ input$color_DownFDR_FC_Volcano,
+        (stat_df$log2FoldChange > log2(FC_cut_of)) & (stat_df$FDR < FDR_cut_of)   ~ input$color_UpFDR_FC_Volcano,
+        # FDR
+        (stat_df$log2FoldChange < 0) & (stat_df$FDR < FDR_cut_of)                 ~ input$color_DownFDR_Volcano,
+        (stat_df$log2FoldChange > 0) & (stat_df$FDR < FDR_cut_of)                 ~ input$color_UpFDR_Volcano,
+        
+        # Not sig
+        TRUE                                                                      ~ input$color_NotSig_Volcano
+      )
+      
+      names(keyvals2)[keyvals2 == input$color_NotSig_Volcano] <- 'Not significant'
+      names(keyvals2)[keyvals2 == input$color_DownFDR_Volcano] <- 'FDR (Down-regulation)' 
+      names(keyvals2)[keyvals2 == input$color_UpFDR_Volcano] <- 'FDR (Up-regulation)'  
+      names(keyvals2)[keyvals2 == input$color_DownFDR_FC_Volcano] <- 'FDR and FC (Down-regulation)'
+      names(keyvals2)[keyvals2 == input$color_UpFDR_FC_Volcano] <- 'FDR and FC (Up-regulation)'
+      
+      
+      library(EnhancedVolcano)
+      if (FC_cut_of != 1 & FDR_cut_of != 0) {
+        EnhancedVolcano(
+          stat_df,
+          lab = "",
+          x = 'log2FoldChange',
+          y = 'FDR',
+          xlab = input$xLabel_Volcano,
+          ylab = input$yLabel_Volcano,
+          axisLabSize = input$labelSize_Volcano,
+          title = NULL,
+          pCutoff = NA,
+          FCcutoff = NA,
+          cutoffLineWidth = 0.8,
+          pointSize = input$pointSize_Volcano,
+          labSize = 0,
+          boxedLabels = FALSE,
+          colAlpha = 0.48,
+          colCustom = keyvals2,
+          legendLabSize = input$legendLabSize_Volcano,
+          legendIconSize = input$legendIconSize_Volcano,
+          drawConnectors = FALSE,
+          subtitle = "",
+          caption = input$caption_Volcano,
+          captionLabSize = input$captionLabSize_Volcano,
+          hline = c(FDR_cut_of),
+          hlineCol = c("grey30"),
+          hlineType = c("dotted"),
+          hlineWidth = c(0.8),
+          vline = c(-log2(FC_cut_of), log2(FC_cut_of)),
+          vlineCol = c("grey30", "grey30"),
+          vlineType = c("dotted", "dotted"),
+          vlineWidth = c(0.8, 0.8)
+        )
+      } else if (FC_cut_of == 1 & FDR_cut_of != 0) {
+        EnhancedVolcano(
+          stat_df,
+          lab = "",
+          x = 'log2FoldChange',
+          y = 'FDR',
+          xlab = input$xLabel_Volcano,
+          ylab = input$yLabel_Volcano,
+          axisLabSize = input$labelSize_Volcano,
+          title = NULL,
+          pCutoff = NA,
+          FCcutoff = NA,
+          cutoffLineWidth = 0.8,
+          pointSize = input$pointSize_Volcano,
+          labSize = 0,
+          boxedLabels = FALSE,
+          colAlpha = 0.48,
+          colCustom = keyvals2,
+          legendLabSize = input$legendLabSize_Volcano,
+          legendIconSize = input$legendIconSize_Volcano,
+          drawConnectors = FALSE,
+          subtitle = "",
+          caption = input$caption_Volcano,
+          captionLabSize = input$captionLabSize_Volcano,
+          hline = c(FDR_cut_of),
+          hlineCol = c("grey30"),
+          hlineType = c("dotted"),
+          hlineWidth = c(0.8),
+          # vline = c(-log2(FC_cut_of), log2(FC_cut_of)),
+          # vlineCol = c("grey30", "grey30"),
+          # vlineType = c("dotted", "dotted"),
+          # vlineWidth = c(0.8, 0.8)
+        )
+      } 
+      
+    }
+    
+    # Call the volcano plot function
+    draw_volcano(values$volcanoData, FC_cut_of = input$FC_cut_off_Volcano, FDR_cut_of = input$FDR_cut_off_Volcano) + 
+      ggplot2::theme(legend.position = "none") +
+      ggplot2::theme(
+        axis.title.x = element_text(size = input$labelSize_Volcano),
+        axis.title.y = element_text(size = input$labelSize_Volcano),
+        axis.text.x = element_text(size = input$tickLabelSize_Volcano),
+        axis.text.y = element_text(size = input$tickLabelSize_Volcano)
+      ) +
+      ggplot2::scale_x_continuous(limits = x_limits, breaks = x_breaks) +
+      ggplot2::scale_y_continuous(limits = y_limits, breaks = y_breaks) -> p_volcano
+    
+    # Show legend or nor
+    if (input$Show_legend_Volcano) {
+      p_volcano + ggplot2::theme(legend.position = "top",
+                                 legend.title = element_blank()) -> p_volcano
+    }
+    
+    ## If select other themes
+    if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano) {
+      p_volcano + 
+        plot_theme + 
+        ggplot2::theme(legend.position = "top", legend.title = element_blank()) -> p_volcano
+    } 
+    
+    if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano == FALSE){
+      p_volcano + 
+        plot_theme + 
+        ggplot2::theme(legend.position = "none") -> p_volcano
+    }
+    
+    # Conditionally add the bold for axis and tick
+    if (input$checkbox_Axis_bold_Volcano) {
+      p_volcano <- p_volcano + theme(axis.title = element_text(face = "bold"))
+    }
+    
+    if (input$checkbox_Tick_bold_Volcano) {
+      p_volcano <- p_volcano + theme(axis.text = element_text(face = "bold"))
+    }
+    
+    # For render
+    p_volcano
+    
+  }, width = reactive({ input$plotWidth_Volcano }), height = reactive({ input$plotHeight_Volcano }))
+  
+  #<-- Boxplot Handling -->
+  # Observe metadata_BoxPlot file upload
+  observeEvent(input$metadataFile_BoxPlot, {
+    req(input$metadataFile_BoxPlot)
+    values$metadata_BoxPlot <- read.csv(input$metadataFile_BoxPlot$datapath) %>% dplyr::mutate(Group = factor(Group))
+  })
+
+  # Observe expression_BoxPlot file upload
+  observeEvent(input$expressionFile_BoxPlot, {
+    req(input$expressionFile_BoxPlot)
+    values$expression_BoxPlot <- read.csv(input$expressionFile_BoxPlot$datapath, row.names = 1)
+
+    # Determine group levels dynamically after both files are uploaded
+    if (!is.null(values$metadata_BoxPlot)) {
+      # combined_data <- inner_join(values$expression_BoxPlot, values$metadata_BoxPlot %>% dplyr::select(Sample, Group), by = "Sample")
+      values$group_levels_BoxPlot <- unique(values$metadata_BoxPlot$Group)
+
+      # Update UI for selecting and ordering group levels
+      output$groupLevelSelector_BoxPlot <- renderUI({
+        selectInput("groupLevels_selected_BoxPlot", "Select and Order Group Levels",
+                    choices = values$group_levels_BoxPlot,
+                    selected = values$group_levels_BoxPlot,
+                    multiple = TRUE)
+      })
+    }
+
+    # Determine features list dynamically after both files are uploaded
+
+  })
+
+  # UI for dynamic color inputs based on group levels
+  output$dynamicColorInputs_BoxPlot <- renderUI({
+    req(values$group_levels_BoxPlot)  # Ensure group levels are available
+
+    # Create a list of color inputs for each group level
+    Publication_color_code = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
+    color_inputs <- lapply(seq_along(values$group_levels_BoxPlot), function(i) {
+      level <- values$group_levels_BoxPlot[i]
+      default_color <- Publication_color_code[(i - 1) %% length(Publication_color_code) + 1]  # Cycle through Publication_color_code
+      colourInput(inputId = paste0("color_", level), label = paste("Color for", level, "Group:"), value = default_color)
+    })
+
+    # Return the list of color input elements
+    do.call(tagList, color_inputs)
+  })
+
+  # Reactive expression to create a named color palette from the selected group levels
+  color_palette_BoxPlot <- reactive({
+    req(values$group_levels_BoxPlot)  # Ensure group levels are available
+    sapply(values$group_levels_BoxPlot, function(level) {
+      input[[paste0("color_", level)]]  # Extract color inputs dynamically
+    }, simplify = FALSE)
+  })
+
+  # UI for allowing to edit legend labels
+  output$dynamicLegendInputs_BoxPlot <- renderUI({
+    req(values$group_levels_BoxPlot)  # Ensure group levels are available
+
+    # Create text input fields for each group level to edit legend labels
+    legend_inputs <- lapply(values$group_levels_BoxPlot, function(level) {
+      textInput(
+        inputId = paste0("legend_", level),
+        label = paste("Legend label for", level, "Group:"),
+        value = level  # Set default value to the current level name
+      )
+    })
+
+    # Return the list of legend input elements
+    do.call(tagList, legend_inputs)
+  })
+
+  # Reactive expression to create a named vector of legend labels
+  legend_labels_BoxPlot <- reactive({
+    req(values$group_levels_BoxPlot)  # Ensure group levels are available
+
+    # Collect legend labels dynamically from inputs
+    labels <- sapply(values$group_levels_BoxPlot, function(level) {
+      input[[paste0("legend_", level)]]  # Access each text input value dynamically
+    }, simplify = TRUE)
+
+    # Return a named vector where the names are the group levels
+    setNames(labels, values$group_levels_BoxPlot)
+  })
+
+  # Render the plot
+  output$Render_BoxPlot <- renderPlot({
+    req(values$metadata_BoxPlot, values$expression_BoxPlot, input$groupLevels_selected_BoxPlot) # Ensure data and group level input are available
+
+    # Combine datasets
+    values$expression_BoxPlot %>%
+      t() %>% as.data.frame() %>%
+      rownames_to_column(var = "Sample") -> Exp_df_BoxPlot
+
+    data_normalized_STAT_DEMs = values$metadata_BoxPlot %>%
+      inner_join(Exp_df_BoxPlot, by = "Sample") %>%
+      mutate(Group = factor(Group, levels = input$groupLevels_selected_BoxPlot))  # Use selected group levels
+
+    # Transform data
+    data_gathered <- gather(data_normalized_STAT_DEMs, key = "Features", value = "Intensity", -Sample, -Group) %>%
+      mutate(Intensity = as.numeric(Intensity))
+
+    # Generate dynamic color palette based on the number of groups
+    color_code <- color_palette_BoxPlot()  # Get dynamic color palette
+
+    # # Get the legend labels from reactive expression
+    legend_labels_vector <- legend_labels_BoxPlot()
+
+    # Define the theme dynamically
+    plot_theme <- switch(
+      input$plotTheme_BoxPlot,
+      "theme_Publication" = theme_Publication(),
+      "theme_bw" = theme_bw(),
+      "theme_minimal" = theme_minimal(),
+      "theme_linedraw" = theme_linedraw(),
+      "theme_classic" = theme_classic(),
+      "theme_gray" = theme_gray(),
+    )
+
+    # Prepare axis limits and breaks
+    # x_limits <- if (!is.na(input$xMin_BoxPlot) && !is.na(input$xMax_BoxPlot) && input$xMin_BoxPlot < input$xMax_BoxPlot) c(input$xMin_BoxPlot, input$xMax_BoxPlot) else NULL
+    # y_limits <- if (!is.na(input$yMin_BoxPlot) && !is.na(input$yMax_BoxPlot) && input$yMin_BoxPlot < input$yMax_BoxPlot) c(input$yMin_BoxPlot, input$yMax_BoxPlot) else NULL
+    # x_breaks <- if (!is.na(input$xBreaks_BoxPlot) && !is.na(input$xMin_BoxPlot) && !is.na(input$xMax_BoxPlot) && input$xBreaks_BoxPlot > 0) seq(from = input$xMin_BoxPlot, to = input$xMax_BoxPlot, by = input$xBreaks_BoxPlot) else waiver()
+    # y_breaks <- if (!is.na(input$yBreaks_BoxPlot) && !is.na(input$yMin_BoxPlot) && !is.na(input$yMax_BoxPlot) && input$yBreaks_BoxPlot > 0) seq(from = input$yMin_BoxPlot, to = input$yMax_BoxPlot, by = input$yBreaks_BoxPlot) else waiver()
+    
+    p_BoxPlot = data_gathered %>% 
+      ggplot(aes(x = Group, y = Intensity)) +
+      geom_boxplot(
+        aes(fill = Group, color = Group), #ERROR when only set color = Group: supplied color is neither numeric nor character
+        outlier.shape = NA, alpha = .36, width = input$BoxWidth_BoxPlot, size = 0.5
+      ) +
+      geom_point(
+        aes(color = Group),
+        position = position_jitter(width = input$JitterWidth_BoxPlot, seed = 123), size = input$pointSize_BoxPlot#, shape = 21,# alpha = 0.32, stroke = NA
+      ) +
+      facet_wrap(~Features, scales = "free") +
+      labs(y = input$yLabel_BoxPlot, x = "") +
+      scale_color_manual(values = color_code) +
+      scale_fill_manual(values = color_code) +
+      plot_theme +
+      theme(
+        legend.position = "none",
+        axis.title.x = element_text(size = input$labelSize_BoxPlot),
+        axis.title.y = element_text(size = input$labelSize_BoxPlot),
+        axis.text.x = element_text(size = input$tickLabelSize_BoxPlot),
+        axis.text.y = element_text(size = input$tickLabelSize_BoxPlot),
+        strip.text = element_text(size = input$stripLabelSize_BoxPlot)
+      ) +
+      scale_x_discrete(labels = legend_labels_vector)
+      # scale_y_continuous(limits = y_limits, breaks = y_breaks)
+    
+    # Conditionally add the bold for axis and tick
+    if (input$checkbox_Axis_bold_BoxPlot) {
+      p_BoxPlot <- p_BoxPlot + theme(axis.title = element_text(face = "bold"))
+    }
+    
+    if (input$checkbox_Tick_bold_BoxPlot) {
+      p_BoxPlot <- p_BoxPlot + theme(axis.text = element_text(face = "bold"))
+    }
+    
+    # Show plot
+    p_BoxPlot
+
+  }, width = reactive({ input$plotWidth_BoxPlot }), height = reactive({ input$plotHeight_BoxPlot }))
+
+  # <-- Download handlers -->
+  ## Score plot
+  output$downloadScorePlot <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_2DScores_Plot", input$formatdownloadScorePlot, sep = "")
+    },
+    content = function(file) {
+      ggsave(file, plot = last_plot(), width = input$plotWidth_ScorePlot / 100, height = input$plotHeight_ScorePlot / 100, 
+             dpi = input$dpi_ScorePlot, units = "in")
+    }
+  )
+  
+  ## Volcano plot
+  output$download_VolcanoPlot <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_Volcano_Plot", input$formatdownloadVolcano, sep = "")
+    },
+    content = function(file) {
+      ggsave(file, plot = last_plot(), width = input$plotWidth_Volcano / 100, height = input$plotHeight_Volcano / 100, 
+             dpi = input$volcanoDPI, units = "in")
+    }
+  )
+  
+  ## Box plot
+  output$download_BoxPlot <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_Box_Plots", input$formatdownload_BoxPlot, sep = "")
+    },
+    content = function(file) {
+      ggsave(file, plot = last_plot(), width = input$plotWidth_BoxPlot / 100, height = input$plotHeight_BoxPlot / 100, 
+             dpi = input$dpi_BoxPlot, units = "in")
+    }
+  )
+  
+}
+
+# Run the Application
+shinyApp(ui = ui, server = server)
+
+
+
