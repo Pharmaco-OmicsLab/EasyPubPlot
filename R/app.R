@@ -6,126 +6,53 @@ library(bslib)
 
 # Define UI
 ui <- navbarPage(
-  title = "PubOmicsVisu",
+  title = "EasyPubPlot",
+  id = "navbar",  # Set an ID here for reference
   theme = bs_theme(
     version = 4,
     bootswatch = "lux",
-    primary = "#007bff",
+    primary = "#47B0C3",
     base_font = font_google("Roboto")
   ),
   
   # Introduction Tab
   tabPanel(
     title = "Introduction",
-    fluidPage(
-      fluidRow(
-        column(
-          width = 3,
-          #wellPanel(
-          navlistPanel(
-            id = "introTab",
-            tabPanel("Welcome", value = "welcome"),
-            tabPanel("PCA/PLS-DA Scores PLot", value = "pca_info"),
-            tabPanel("Volcano Plot", value = "volcano_info"),
-            tabPanel("Heatmap", value = "heatmap_info"),
-            tabPanel("Box PLot", value = "boxplot_info"),
-            tabPanel("Venn Diagram", value = "venn_info"),
-            tabPanel("Upset Plot", value = "upset_info")
-          )
-          #)
-        ),
-        column(
-          width = 9,
-          uiOutput("introContent")
-        )
-      )
-    )
-  ),
-  
-  # PCA Plot Tab
-  tabPanel(
-    title = "Scores Plot",
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
-        
-        # Tabs for different settings
-        tabsetPanel(
-          id = "ScorePlottabs",
-          type = "pills",
-          
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            # File upload inputs
-            fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
-            fileInput("scoreFile_ScorePlot", "Upload PCA Score File:", accept = c(".csv"))
-          ),
-          
-          # Plot Appearance Tab
-          tabPanel(
-            "Plot Appearance",
-            uiOutput("groupLevelSelector_ScorePlot"),  # This will be dynamically generated based on the uploaded data
-            uiOutput("dynamicColorInputs_ScorePlot"),
-            
-            uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
-            
-            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE),
-            
-            numericInput("pointSize_ScorePlot", "Point Size:", value = 4, min = 0.5, max = 30),
-            
-            selectInput(
-              "plotTheme_ScorePlot", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "theme_Publication"
-            )
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
-            textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
-            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15, min = 8, max = 30),
-            checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
-            
-            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15, min = 8, max = 30),
-            checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
-          ),
-          
-          # Axis Limits & Breaks Tab
-          tabPanel(
-            "Axis Limits",
-            numericInput("xMin_ScorePlot", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("xMax_ScorePlot", "X-axis Maximum:", value = NA, step = 0.1),
-            numericInput("yMin_ScorePlot", "Y-axis Minimum:", value = NA, step = 0.1),
-            numericInput("yMax_ScorePlot", "Y-axis Maximum:", value = NA, step = 0.1)
-          ),
-          
-          tabPanel(
-            "Axis Breaks",
-            numericInput("xBreaks_ScorePlot", "X-axis Breaks:", value = NA, step = 0.1),
-            numericInput("yBreaks_ScorePlot", "Y-axis Breaks:", value = NA, step = 0.1)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, min = 72, max = 1200, step = 100),
-            selectInput(
-              "formatdownloadScorePlot", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf"),
-              selected = ".png"
-            ),
-            downloadButton("downloadScorePlot", "Download Plot")
-          ),
-        )
-      ),
+    tagList(
+      # Use with action link below to customize its UI
+    #   tags$head(
+    #     tags$style(HTML("
+    #   .clickable-link {
+    #     color: blue;
+    #     text-decoration: underline;
+    #     cursor: pointer;
+    #   }
+    #   .clickable-link:hover {
+    #     color: darkblue;
+    #   }
+    # "))
+    #   ),
       
-      mainPanel(
-        plotOutput("Render_ScorePlot", width = "100%", height = "600px")
+      tags$main(
+        tags$h2("EasyPubPlot - Easy and Publishable Plotting"),
+        tags$p(
+          "EasyPubPlot provides an interactive and customizable tools to easily",
+          "create publishable plots for scientific papers"
+        ),
+        # actionLink("go_to_tutorials", 
+        #            tags$h4("Click here to start", class = "clickable-link")),  # Clickable text
+        
+        tags$p("\n"),
+        
+        tags$button(
+          id = "go_to_tutorials",
+          class = "action-button shiny-bound-input",
+          "Click here to start",
+          style = "font-size: 20px; font-weight: bold; padding: 10px 20px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        ),
+        
+        tags$p("\n"),
+        # img(src = "https://via.placeholder.com/800x200.png", height = "200px")
       )
     )
   ),
@@ -133,6 +60,14 @@ ui <- navbarPage(
   # Volcano Plot Tab
   tabPanel(
     title = "Volcano Plot",
+    
+    tags$button(
+      id = "go_to_tutorials_VolcanoPlot",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+    ),
+    
     sidebarLayout(
       sidebarPanel(
         width = 4,
@@ -243,9 +178,113 @@ ui <- navbarPage(
     title = "Heatmap"
   ),
   
+  # Scores Plot Tab
+  tabPanel(
+    title = "Scores Plot",
+    
+    tags$button(
+      id = "go_to_tutorials_ScoresPlot",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+    ),
+    
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "ScorePlottabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            # File upload inputs
+            fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
+            fileInput("scoreFile_ScorePlot", "Upload PCA Score File:", accept = c(".csv"))
+          ),
+          
+          # Plot Appearance Tab
+          tabPanel(
+            "Plot Appearance",
+            uiOutput("groupLevelSelector_ScorePlot"),  # This will be dynamically generated based on the uploaded data
+            uiOutput("dynamicColorInputs_ScorePlot"),
+            
+            uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
+            
+            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE),
+            
+            numericInput("pointSize_ScorePlot", "Point Size:", value = 4, min = 0.5, max = 30),
+            
+            selectInput(
+              "plotTheme_ScorePlot", "Plot Theme:",
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "theme_Publication"
+            )
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
+            textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
+            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15, min = 8, max = 30),
+            checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
+            
+            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15, min = 8, max = 30),
+            checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
+          ),
+          
+          # Axis Limits & Breaks Tab
+          tabPanel(
+            "Axis Limits",
+            numericInput("xMin_ScorePlot", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("xMax_ScorePlot", "X-axis Maximum:", value = NA, step = 0.1),
+            numericInput("yMin_ScorePlot", "Y-axis Minimum:", value = NA, step = 0.1),
+            numericInput("yMax_ScorePlot", "Y-axis Maximum:", value = NA, step = 0.1)
+          ),
+          
+          tabPanel(
+            "Axis Breaks",
+            numericInput("xBreaks_ScorePlot", "X-axis Breaks:", value = NA, step = 0.1),
+            numericInput("yBreaks_ScorePlot", "Y-axis Breaks:", value = NA, step = 0.1)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
+            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, min = 72, max = 1200, step = 100),
+            selectInput(
+              "formatdownloadScorePlot", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf"),
+              selected = ".png"
+            ),
+            downloadButton("downloadScorePlot", "Download Plot")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_ScorePlot", width = "100%", height = "600px")
+      )
+    )
+  ),
+  
   # Box Plot Tab
   tabPanel(
     title = "Box Plot",
+    
+    tags$button(
+      id = "go_to_tutorials_BoxPlot",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+    ),
+    
     sidebarLayout(
       sidebarPanel(
         width = 4,
@@ -316,7 +355,7 @@ ui <- navbarPage(
             "Save Plot",
             numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", min = 200, max = 8000, value = 800, step = 50),
             numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", min = 200, max = 8000, value = 400, step = 50),
-            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, min = 72, max = 2800, step = 100),
+            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, min = 72, step = 100),
             selectInput(
               "formatdownload_BoxPlot", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -333,25 +372,396 @@ ui <- navbarPage(
     )
   ),
   
-  # Raincloud plot
+  # Tutorial Tab
   tabPanel(
-    title = "Time-course Expression"
-  ),
-  
-  # Venn Diagram
-  tabPanel(
-    title = "Venn Diagram"
-  ),
-  
-  # Venn Diagram
-  tabPanel(
-    title = "Upset Plot"
+    title = "Tutorials",
+    fluidPage(
+      fluidRow(
+        column(
+          width = 3,
+          #wellPanel(
+          navlistPanel(
+            id = "introTab",
+            # tabPanel("Welcome", value = "welcome"),
+            tabPanel("Volcano Plot", value = "VolcanoPlot_infor"),
+            tabPanel("Heatmap", value = "HeatmapSimple_infor"),
+            tabPanel("Scores PLot", value = "ScoresPlot_infor"),
+            tabPanel("Box PLot", value = "BoxPlot_infor"),
+            # tabPanel("Venn Diagram", value = "venn_info"),
+            # tabPanel("Upset Plot", value = "upset_info")
+          )
+          #)
+        ),
+        column(
+          width = 9,
+          uiOutput("TutorialsContent")
+        )
+      )
+    )
   )
 )
 
 # Define Server
 server <- function(input, output, session) {
-  # Define some background function
+  
+  #<-- Navigate when click -->
+  ## Go to tutorial
+  observeEvent(input$go_to_tutorials, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")
+  })
+  
+  ## Go to each module of the tutorial
+  observeEvent(input$go_to_tutorials_VolcanoPlot, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "VolcanoPlot_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
+  observeEvent(input$go_to_tutorials_HeatmapSimple, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "HeatmapSimple_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
+  observeEvent(input$go_to_tutorials_ScoresPlot, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "ScoresPlot_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
+  observeEvent(input$go_to_tutorials_BoxPlot, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "BoxPlot_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
+  ## Go to Volcano Plot module
+  observeEvent(input$go_to_VolcanoPlot_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Volcano Plot")
+  })
+  
+  ## Go to Heatmap module
+  observeEvent(input$go_to_HeatmapSimple_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Heatmap")
+  })
+  
+  ## Go to Scores Plot module
+  observeEvent(input$go_to_ScoresPlot_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Scores Plot")
+  })
+  
+  ## Go to Box Plot module
+  observeEvent(input$go_to_BoxPlot_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Box Plot")
+  })
+  
+  #<-- Dynamic content for Introduction tab Handling -->
+  output$TutorialsContent <- renderUI({
+    if (input$introTab == "ScoresPlot_infor") {
+      
+      tagList(
+        # Use with action link below
+    #     tags$head(
+    #       tags$style(HTML("
+    #   .clickable-link {
+    #     color: blue;
+    #     text-decoration: underline;
+    #     cursor: pointer;
+    #   }
+    #   .clickable-link:hover {
+    #     color: darkblue;
+    #   }
+    # "))
+    #     ),
+        
+        tags$main(
+          tags$h3("2D scores plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=1uacjgrXmt0b97V7UdmCf_uUloAYgFDkk", height = "300px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          downloadLink("download_ScoresPlot_Tutorial_pdf", "Link to download", class = "clickable-link"),
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("The input data are principal component scores obtained in the PCA/PLS-DA analysis"),
+          tags$p("This module also requires metadata"),
+          downloadLink("download_ScoresPlot_ExampleScoresData", "Link to download example scores data,", class = "clickable-link"),  # Link to the example data
+          downloadLink("download_ScoresPlot_ExampleMetaData", "Link to download example metadata data", class = "clickable-link"),
+          
+          # actionLink("go_to_ScoresPlot_module", 
+          #            tags$h4("Click here to make your first plot", class = "clickable-link")),  # Clickable text
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_ScoresPlot_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your first plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+          )
+        )
+      )
+      
+      
+    } else if (input$introTab == "VolcanoPlot_infor") {
+
+      tagList(
+        tags$main(
+          tags$h3("Volcano plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=1ubOEI67ERmQzcJ4tMcArX8-MoUou4-ei&usp", height = "200px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          downloadLink("download_VolcanoPlot_Tutorial_pdf", "Link to download"), 
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("Three columns are required: Features, log2FoldChange, adj.P.Val."),
+          tags$p("The input data were statistical output from e.g., MetaboAnalyst, ExpressAnalyst, and DESeq2."),
+          downloadLink("download_VolcanoPlot_ExampleData", "Link to download example input data"),  # Link to the example data
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_VolcanoPlot_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your first plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+          )
+        )
+      )
+      
+      
+    } else if (input$introTab == "HeatmapSimple_infor") {
+      
+      tagList(
+        tags$main(
+          tags$h3("Heatmap plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=1Rx7G21L0abazFohXaFhJtgRwMKmwtbpU", height = "300px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          # downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("The input data are e.g., normalized gene expression or metabolites abundance data"),
+          tags$p("This module also requires metadata"),
+          downloadLink("download_HeatmapSimple_ExampleNormData", "Link to download example normalized data,"),  # Link to the example data
+          downloadLink("download_HeatmapSimple_ExampleMetaData", "Link to download example metadata data"),
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_HeatmapSimple_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your first plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+          )
+        )
+      )
+      
+    } else {
+      
+      tagList(
+        tags$main(
+          tags$h3("Box plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=1S-N9OWh4rhA3JWtBWcF75ullRgfMj-T9", height = "200px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          # downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"), 
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("The input data are e.g., normalized gene expression or metabolites abundance data"),
+          tags$p("This module also requires metadata"),
+          downloadLink("download_BoxPlot_ExampleNormData", "Link to download example normalized data,"),  # Link to the example data
+          downloadLink("download_BoxPlot_ExampleMetaData", "Link to download example metadata data"),
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_BoxPlot_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your first plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+          )
+        )
+      )
+      
+    }
+  })
+  
+  
+  #<-- Download example data and tutorials Handling -->
+  # Scores Plot
+  ## Scores data
+  output$download_ScoresPlot_ExampleScoresData <- downloadHandler(
+    filename = function() {
+      "ScoresPlot_ExampleScoreData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1sattL6OMC4VHhd_Xok0uvTi1pACe7tl_", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Metadata
+  output$download_ScoresPlot_ExampleMetaData <- downloadHandler(
+    filename = function() {
+      "ScoresPlot_ExampleMetadataData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1sVH-q8RB5AjJTuR_yqCu2GEx3madd2XR",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Tutorial
+  output$download_ScoresPlot_Tutorial_pdf <- downloadHandler(
+    filename = function() {
+      "241010_instruction_PCA_scores_plot_v1.pdf"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1QOMruiA5DHI0nSuuEskXYhJY8TOyg3XM",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # Volcano Plot
+  ## STAT data
+  output$download_VolcanoPlot_ExampleData <- downloadHandler(
+    filename = function() {
+      "VolcanoPlotExampleData.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1tM88JhwkxQ4KIrCeX-023Q3hRcgoFxQs", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Tutorials
+  output$download_VolcanoPlot_Tutorial_pdf <- downloadHandler(
+    filename = function() {
+      "241009_instruction_volcano_plot_v3.pdf"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1SKrJcmSJyRRvss9H6tajsOL_B7DquCDK", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # Heatmap Plot
+  ## Heatmap data
+  output$download_HeatmapSimple_ExampleNormData <- downloadHandler(
+    filename = function() {
+      "HeatmapSimple_ExampleNormData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1RehE0MZxJnFCSejUt-V9g9MKVOqaQULn", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Metadata
+  output$download_HeatmapSimple_ExampleMetaData <- downloadHandler(
+    filename = function() {
+      "HeatmapSimple_ExampleMetaData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1RhubgrcRfo-0w_avJdmMu6HwFq9Ot5T9",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # ## Tutorial
+  # output$download_HeatmapSimple_Tutorial_pdf <- downloadHandler(
+  #   filename = function() {
+  #     "241010_instruction_PCA_Heatmap_plot_v1.pdf"  # Name of the file to be downloaded
+  #   },
+  #   content = function(file) {
+  #     # Download the file from Google Drive and save it to 'file'
+  #     download.file(
+  #       url = "https://drive.google.com/uc?export=download&id=1QOMruiA5DHI0nSuuEskXYhJY8TOyg3XM",
+  #       destfile = file,
+  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
+  #     )
+  #   }
+  # )
+  
+  # Box Plot
+  ## Box Norm data
+  output$download_BoxPlot_ExampleNormData <- downloadHandler(
+    filename = function() {
+      "BoxPlot_ExampleNormData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1QaYJ_NLsVYaQvSRY95zG-SWihvnYVm40", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Metadata
+  output$download_BoxPlot_ExampleMetaData <- downloadHandler(
+    filename = function() {
+      "BoxPlot_ExampleMetaData_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1QfkDrmA4jcbne5gdo1TlsGq9ABsHqYvw",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # ## Tutorial
+  # output$download_BoxPlot_Tutorial_pdf <- downloadHandler(
+  #   filename = function() {
+  #     "241010_instruction_PCA_scores_plot_v1.pdf"  # Name of the file to be downloaded
+  #   },
+  #   content = function(file) {
+  #     # Download the file from Google Drive and save it to 'file'
+  #     download.file(
+  #       url = "https://drive.google.com/uc?export=download&id=1QOMruiA5DHI0nSuuEskXYhJY8TOyg3XM",
+  #       destfile = file,
+  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
+  #     )
+  #   }
+  # )
+  
+  #<-- Define some background function -->
   ## theme_Publication - copy from the source code
   theme_Publication <- function(base_size=14, base_family="helvetica") {
     library(grid)
@@ -396,7 +806,8 @@ server <- function(input, output, session) {
     
   }
   
-  # Reactive values to store uploaded data for PCA and Volcano Plots
+  
+  #<--Reactive values to store uploaded data for all modudeles -->
   values <- reactiveValues(
     # PCA/PLS-DA score_ScorePlot plot
     metadata_ScorePlot = NULL, score_ScorePlot = NULL, group_levels_ScorePlot = NULL, 
@@ -406,32 +817,6 @@ server <- function(input, output, session) {
     expression_BoxPlot = NULL, metadata_BoxPlot= NULL, group_levels_BoxPlot = NULL
   )
   
-  # Dynamic content for Introduction tab
-  output$introContent <- renderUI({
-    if (input$introTab == "pca_info") {
-      fluidPage(
-        h2("Introduction to PCA Plot"),
-        p("How to prepare Input Data (Have button to download)"),
-        p("Some steps to use?")
-      )
-    } else if (input$introTab == "volcano_info") {
-      fluidPage(
-        h2("Introduction to Volcano Plot"),
-        p("How to prepare Input Data (Have button to download)"),
-        p("Some steps to use?")
-      )
-    } else {
-      fluidPage(
-        h1("Welcome to the PubOmicsVisu App"),
-        p("This app provides interactive tools to create publishable plots for scientific paper."),
-        p("To get started, navigate to the appropriate tab, upload your data files, and customize the plot settings."),
-        p("You can also explore various options for customizing the appearance of plots and save them for future use."),
-        hr(),
-        img(src = "https://via.placeholder.com/800x200.png", height = "200px"), # Placeholder image
-        p("Use the navigation bar above to select the type of plot you want to create.")
-      )
-    }
-  })
   
   #<-- PCA/PLS-DA score_ScorePlot plot Handling -->
   # Observe metadata_ScorePlot file upload
