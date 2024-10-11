@@ -20,18 +20,18 @@ ui <- navbarPage(
     title = "Introduction",
     tagList(
       # Use with action link below to customize its UI
-    #   tags$head(
-    #     tags$style(HTML("
-    #   .clickable-link {
-    #     color: blue;
-    #     text-decoration: underline;
-    #     cursor: pointer;
-    #   }
-    #   .clickable-link:hover {
-    #     color: darkblue;
-    #   }
-    # "))
-    #   ),
+      #   tags$head(
+      #     tags$style(HTML("
+      #   .clickable-link {
+      #     color: blue;
+      #     text-decoration: underline;
+      #     cursor: pointer;
+      #   }
+      #   .clickable-link:hover {
+      #     color: darkblue;
+      #   }
+      # "))
+      #   ),
       
       tags$main(
         tags$h2("EasyPubPlot - Easy and Publishable Plotting"),
@@ -154,9 +154,9 @@ ui <- navbarPage(
           tabPanel(
             "Save Plot",
             # Ensure the consistency with variables name in the server
-            numericInput("plotWidth_Volcano", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("plotHeight_Volcano", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("volcanoDPI", "DPI for Saving:", value = 300, min = 72, max = 2000, step = 100),
+            numericInput("plotWidth_Volcano", "Plot Width (in pixels):", value = 600, step = 5),
+            numericInput("plotHeight_Volcano", "Plot Height (in pixels):", value = 600, step = 5),
+            numericInput("volcanoDPI", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownloadVolcano", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -173,9 +173,100 @@ ui <- navbarPage(
     )
   ),
   
-  # Heatmap
+  # Heatmap tap
   tabPanel(
-    title = "Heatmap"
+    title = "Heatmap",
+    
+    tags$button(
+      id = "go_to_tutorials_HeatmapSimple",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+    ),
+    
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "HeatmapSimpletabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            # File upload inputs
+            fileInput("metadataFile_HeatmapSimple", "Upload Metadata File:", accept = c(".csv")),
+            fileInput("NormDataFile_HeatmapSimple", "Upload Normalized Data File:", accept = c(".csv"))
+          ),
+          
+          # Group Tab
+          tabPanel(
+            "Group",
+            # Group Color => Use dynamical
+            uiOutput("groupLevelSelector_HeatmapSimple"),  # Cannot change group order in the ComplexHeatmap
+            uiOutput("dynamicColorInputs_HeatmapSimple"),
+            uiOutput("dynamicLegendInputs_HeatmapSimple")
+          ),
+          
+          # Colors Tab
+          tabPanel(
+            "Heatmap colors",
+            # Heatmap Color and Scale
+            colourInput("color_DownHeatmap_HeatmapSimple", "Down-regulation Color:", value = "#23446f"),
+            colourInput("color_UnchangedHeatmap_HeatmapSimple", "Unchange Color:", value = "white"),
+            colourInput("color_UpHeatmap_HeatmapSimple", "Up-regulation Color:", value = "#ad190d"),
+            numericInput("color_scaleHeatmap_HeatmapSimple", "Color Scale:", value = 2, step = 0.5)
+          ),
+          
+          # Text Size Tab
+          tabPanel(
+            "Text & Size",
+            # Feature Text Size
+            numericInput("size_Features_HeatmapSimple", "Features Size:", value = 12),
+            checkboxInput("checkbox_italicFeatures_HeatmapSimple", "Italic Text", value = FALSE),
+            
+            # Top level
+            # numericInput("size_TopAnnotation_HeatmapSimple", "Top Annotation Size, top:", value = 16),
+            
+            # Legend
+            textInput("TopAnnotation_legend_HeatmapSimple", "Level-1 Annotation:", value = "Group"),
+            textInput("HeatmapAnnotation_legend_HeatmapSimple", "Heatmap Annotation:", value = "Expression (scaled)")
+          ),
+          
+          # Clustering Tab
+          tabPanel(
+            "Clustering",
+            # Row clustering
+            checkboxInput("checkbox_Row_clustering_HeatmapSimple", "Cluster Row", value = TRUE),
+            # Col clustering
+            checkboxInput("checkbox_Col_clustering_HeatmapSimple", "Cluster Column", value = FALSE),
+            # Show col name
+            checkboxInput("checkbox_showColname_HeatmapSimple", "Show Column Name", value = FALSE)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            numericInput("plotWidth_HeatmapSimple", "Plot Width (in pixels):", value = 300, step = 5),
+            numericInput("plotHeight_HeatmapSimple", "Plot Height (in pixels):", value = 600, step = 5),
+            
+            numericInput("dpi_HeatmapSimple", "DPI for Saving:", value = 300, step = 300),
+            # selectInput(
+            #   "formatdownload_HeatmapSimple", "Format:",
+            #   choices = c(".png", ".svg", ".tiff", ".pdf"),
+            #   selected = ".png"
+            # ),
+            downloadButton("download_HeatmapSimple", "Download Plot as .png")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_HeatmapSimple", width = "100%", height = "600px")
+      )
+    )
   ),
   
   # Scores Plot Tab
@@ -203,7 +294,7 @@ ui <- navbarPage(
             "Data Upload",
             # File upload inputs
             fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
-            fileInput("scoreFile_ScorePlot", "Upload PCA Score File:", accept = c(".csv"))
+            fileInput("scoreFile_ScorePlot", "Upload Scores File:", accept = c(".csv"))
           ),
           
           # Plot Appearance Tab
@@ -255,9 +346,9 @@ ui <- navbarPage(
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", min = 400, max = 1200, value = 600, step = 50),
-            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, min = 72, max = 1200, step = 100),
+            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", value = 600, step = 5),
+            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", value = 600, step = 5),
+            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownloadScorePlot", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -353,9 +444,9 @@ ui <- navbarPage(
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", min = 200, max = 8000, value = 800, step = 50),
-            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", min = 200, max = 8000, value = 400, step = 50),
-            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, min = 72, step = 100),
+            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", value = 800, step = 5),
+            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", value = 400, step = 5),
+            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownload_BoxPlot", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -457,18 +548,18 @@ server <- function(input, output, session) {
       
       tagList(
         # Use with action link below
-    #     tags$head(
-    #       tags$style(HTML("
-    #   .clickable-link {
-    #     color: blue;
-    #     text-decoration: underline;
-    #     cursor: pointer;
-    #   }
-    #   .clickable-link:hover {
-    #     color: darkblue;
-    #   }
-    # "))
-    #     ),
+        #     tags$head(
+        #       tags$style(HTML("
+        #   .clickable-link {
+        #     color: blue;
+        #     text-decoration: underline;
+        #     cursor: pointer;
+        #   }
+        #   .clickable-link:hover {
+        #     color: darkblue;
+        #   }
+        # "))
+        #     ),
         
         tags$main(
           tags$h3("2D scores plot"),
@@ -493,7 +584,7 @@ server <- function(input, output, session) {
           tags$button(
             id = "go_to_ScoresPlot_module",
             class = "action-button shiny-bound-input",
-            "Click here to make your first plot",
+            "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
           )
         )
@@ -501,7 +592,7 @@ server <- function(input, output, session) {
       
       
     } else if (input$introTab == "VolcanoPlot_infor") {
-
+      
       tagList(
         tags$main(
           tags$h3("Volcano plot"),
@@ -522,7 +613,7 @@ server <- function(input, output, session) {
           tags$button(
             id = "go_to_VolcanoPlot_module",
             class = "action-button shiny-bound-input",
-            "Click here to make your first plot",
+            "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
           )
         )
@@ -552,7 +643,7 @@ server <- function(input, output, session) {
           tags$button(
             id = "go_to_HeatmapSimple_module",
             class = "action-button shiny-bound-input",
-            "Click here to make your first plot",
+            "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
           )
         )
@@ -581,7 +672,7 @@ server <- function(input, output, session) {
           tags$button(
             id = "go_to_BoxPlot_module",
             class = "action-button shiny-bound-input",
-            "Click here to make your first plot",
+            "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
           )
         )
@@ -814,7 +905,9 @@ server <- function(input, output, session) {
     # Volcano plots
     volcanoData = NULL,
     # Box Plots
-    expression_BoxPlot = NULL, metadata_BoxPlot= NULL, group_levels_BoxPlot = NULL
+    expression_BoxPlot = NULL, metadata_BoxPlot= NULL, group_levels_BoxPlot = NULL,
+    # Heatmap simple
+    metadata_HeatmapSimple = NULL, NormData_HeatmapSimple = NULL
   )
   
   
@@ -887,7 +980,7 @@ server <- function(input, output, session) {
   })
   
   # Reactive expression to create a named vector of legend labels
-  legend_labels <- reactive({
+  legend_labels_ScorePlot <- reactive({
     req(values$group_levels_ScorePlot)  # Ensure group levels are available
     
     # Collect legend labels dynamically from inputs
@@ -912,7 +1005,7 @@ server <- function(input, output, session) {
     color_code <- color_palette()  # Get dynamic color palette
     
     # Get the legend labels from reactive expression
-    legend_labels_vector <- legend_labels()
+    legend_labels_vector <- legend_labels_ScorePlot()
     
     # Define the theme dynamically
     plot_theme <- switch(
@@ -981,9 +1074,9 @@ server <- function(input, output, session) {
     if (input$checkbox_95CI_ScorePlot) {
       p <- p + 
         geom_polygon(aes(x = V1, y = V2, fill = Group), data = pts.df, alpha = 0.2, color = NA)
-        # stat_ellipse(
-        #   geom = "polygon", aes(fill = Group), type = "norm", level = 0.95, alpha = 0.2, show.legend = FALSE, size = 0
-        # )
+      # stat_ellipse(
+      #   geom = "polygon", aes(fill = Group), type = "norm", level = 0.95, alpha = 0.2, show.legend = FALSE, size = 0
+      # )
     }
     
     # Conditionally add the bold for axis and tick
@@ -1170,17 +1263,17 @@ server <- function(input, output, session) {
     req(input$metadataFile_BoxPlot)
     values$metadata_BoxPlot <- read.csv(input$metadataFile_BoxPlot$datapath) %>% dplyr::mutate(Group = factor(Group))
   })
-
+  
   # Observe expression_BoxPlot file upload
   observeEvent(input$expressionFile_BoxPlot, {
     req(input$expressionFile_BoxPlot)
     values$expression_BoxPlot <- read.csv(input$expressionFile_BoxPlot$datapath, row.names = 1)
-
+    
     # Determine group levels dynamically after both files are uploaded
     if (!is.null(values$metadata_BoxPlot)) {
       # combined_data <- inner_join(values$expression_BoxPlot, values$metadata_BoxPlot %>% dplyr::select(Sample, Group), by = "Sample")
       values$group_levels_BoxPlot <- unique(values$metadata_BoxPlot$Group)
-
+      
       # Update UI for selecting and ordering group levels
       output$groupLevelSelector_BoxPlot <- renderUI({
         selectInput("groupLevels_selected_BoxPlot", "Select and Order Group Levels",
@@ -1189,15 +1282,15 @@ server <- function(input, output, session) {
                     multiple = TRUE)
       })
     }
-
+    
     # Determine features list dynamically after both files are uploaded
-
+    
   })
-
+  
   # UI for dynamic color inputs based on group levels
   output$dynamicColorInputs_BoxPlot <- renderUI({
     req(values$group_levels_BoxPlot)  # Ensure group levels are available
-
+    
     # Create a list of color inputs for each group level
     Publication_color_code = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
     color_inputs <- lapply(seq_along(values$group_levels_BoxPlot), function(i) {
@@ -1205,11 +1298,11 @@ server <- function(input, output, session) {
       default_color <- Publication_color_code[(i - 1) %% length(Publication_color_code) + 1]  # Cycle through Publication_color_code
       colourInput(inputId = paste0("color_", level), label = paste("Color for", level, "Group:"), value = default_color)
     })
-
+    
     # Return the list of color input elements
     do.call(tagList, color_inputs)
   })
-
+  
   # Reactive expression to create a named color palette from the selected group levels
   color_palette_BoxPlot <- reactive({
     req(values$group_levels_BoxPlot)  # Ensure group levels are available
@@ -1217,11 +1310,11 @@ server <- function(input, output, session) {
       input[[paste0("color_", level)]]  # Extract color inputs dynamically
     }, simplify = FALSE)
   })
-
+  
   # UI for allowing to edit legend labels
   output$dynamicLegendInputs_BoxPlot <- renderUI({
     req(values$group_levels_BoxPlot)  # Ensure group levels are available
-
+    
     # Create text input fields for each group level to edit legend labels
     legend_inputs <- lapply(values$group_levels_BoxPlot, function(level) {
       textInput(
@@ -1230,47 +1323,47 @@ server <- function(input, output, session) {
         value = level  # Set default value to the current level name
       )
     })
-
+    
     # Return the list of legend input elements
     do.call(tagList, legend_inputs)
   })
-
+  
   # Reactive expression to create a named vector of legend labels
   legend_labels_BoxPlot <- reactive({
     req(values$group_levels_BoxPlot)  # Ensure group levels are available
-
+    
     # Collect legend labels dynamically from inputs
     labels <- sapply(values$group_levels_BoxPlot, function(level) {
       input[[paste0("legend_", level)]]  # Access each text input value dynamically
     }, simplify = TRUE)
-
+    
     # Return a named vector where the names are the group levels
     setNames(labels, values$group_levels_BoxPlot)
   })
-
+  
   # Render the plot
   output$Render_BoxPlot <- renderPlot({
     req(values$metadata_BoxPlot, values$expression_BoxPlot, input$groupLevels_selected_BoxPlot) # Ensure data and group level input are available
-
+    
     # Combine datasets
     values$expression_BoxPlot %>%
       t() %>% as.data.frame() %>%
       rownames_to_column(var = "Sample") -> Exp_df_BoxPlot
-
+    
     data_normalized_STAT_DEMs = values$metadata_BoxPlot %>%
       inner_join(Exp_df_BoxPlot, by = "Sample") %>%
       mutate(Group = factor(Group, levels = input$groupLevels_selected_BoxPlot))  # Use selected group levels
-
+    
     # Transform data
     data_gathered <- gather(data_normalized_STAT_DEMs, key = "Features", value = "Intensity", -Sample, -Group) %>%
       mutate(Intensity = as.numeric(Intensity))
-
+    
     # Generate dynamic color palette based on the number of groups
     color_code <- color_palette_BoxPlot()  # Get dynamic color palette
-
+    
     # # Get the legend labels from reactive expression
     legend_labels_vector <- legend_labels_BoxPlot()
-
+    
     # Define the theme dynamically
     plot_theme <- switch(
       input$plotTheme_BoxPlot,
@@ -1281,7 +1374,7 @@ server <- function(input, output, session) {
       "theme_classic" = theme_classic(),
       "theme_gray" = theme_gray(),
     )
-
+    
     # Prepare axis limits and breaks
     # x_limits <- if (!is.na(input$xMin_BoxPlot) && !is.na(input$xMax_BoxPlot) && input$xMin_BoxPlot < input$xMax_BoxPlot) c(input$xMin_BoxPlot, input$xMax_BoxPlot) else NULL
     # y_limits <- if (!is.na(input$yMin_BoxPlot) && !is.na(input$yMax_BoxPlot) && input$yMin_BoxPlot < input$yMax_BoxPlot) c(input$yMin_BoxPlot, input$yMax_BoxPlot) else NULL
@@ -1312,7 +1405,7 @@ server <- function(input, output, session) {
         strip.text = element_text(size = input$stripLabelSize_BoxPlot)
       ) +
       scale_x_discrete(labels = legend_labels_vector)
-      # scale_y_continuous(limits = y_limits, breaks = y_breaks)
+    # scale_y_continuous(limits = y_limits, breaks = y_breaks)
     
     # Conditionally add the bold for axis and tick
     if (input$checkbox_Axis_bold_BoxPlot) {
@@ -1325,9 +1418,226 @@ server <- function(input, output, session) {
     
     # Show plot
     p_BoxPlot
-
+    
   }, width = reactive({ input$plotWidth_BoxPlot }), height = reactive({ input$plotHeight_BoxPlot }))
-
+  
+  #<-- HeatmapSimple plot Handling -->
+  library(ComplexHeatmap)
+  
+  # Observe metadata_HeatmapSimple file upload
+  observeEvent(input$metadataFile_HeatmapSimple, {
+    req(input$metadataFile_HeatmapSimple)
+    values$metadata_HeatmapSimple <- read.csv(input$metadataFile_HeatmapSimple$datapath) #%>% dplyr::mutate(Group = factor(Group))
+  })
+  
+  # Observe NormData_HeatmapSimple file upload
+  observeEvent(input$NormDataFile_HeatmapSimple, {
+    req(input$NormDataFile_HeatmapSimple)
+    values$NormData_HeatmapSimple <- read.csv(input$NormDataFile_HeatmapSimple$datapath, row.names = 1, check.names = FALSE) %>% 
+      rownames_to_column(var = "Features")
+    
+    # Determine group levels dynamically after both files are uploaded
+    if (!is.null(values$metadata_HeatmapSimple)) {
+      values$group_levels_HeatmapSimple <- unique(values$metadata_HeatmapSimple$GroupLevel1)
+      
+      # Update UI for selecting and ordering group levels
+      output$groupLevelSelector_HeatmapSimple <- renderUI({
+        selectInput("groupLevels_selected_HeatmapSimple", "Select and Order Group Levels", 
+                    choices = values$group_levels_HeatmapSimple, 
+                    selected = values$group_levels_HeatmapSimple,
+                    multiple = TRUE)
+      })
+    }
+  })
+  
+  
+  # UI for dynamic color inputs based on group levels
+  output$dynamicColorInputs_HeatmapSimple <- renderUI({
+    req(input$groupLevels_selected_HeatmapSimple)  # Ensure group levels are available
+    
+    # Create a list of color inputs for each group level
+    Publication_color_code = c("#323232", "#EB9F49", "#7fc97f", "#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
+    color_inputs <- lapply(seq_along(input$groupLevels_selected_HeatmapSimple), function(i) {
+      level <- input$groupLevels_selected_HeatmapSimple[i]
+      default_color <- Publication_color_code[(i - 1) %% length(Publication_color_code) + 1]  # Cycle through Publication_color_code
+      colourInput(inputId = paste0("color_", level), label = paste("Color for", level, "Group:"), value = default_color)
+    })
+    
+    # Return the list of color input elements
+    do.call(tagList, color_inputs)
+  })
+  
+  # Reactive expression to create a named color palette from the selected group levels
+  color_palette_HeatmapSimple <- reactive({
+    req(input$groupLevels_selected_HeatmapSimple)  # Ensure group levels are available
+    
+    # Define your Publication_color_code palette
+    Publication_color_code <- c("#323232", "#EB9F49", "#7fc97f", "#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
+    
+    # Assign colors based on the group levels, cycling through Publication_color_code
+    sapply(seq_along(input$groupLevels_selected_HeatmapSimple), function(i) {
+      level <- input$groupLevels_selected_HeatmapSimple[i]
+      
+      # If input is not available yet, fallback to Publication_color_code
+      input_color <- input[[paste0("color_", level)]]
+      
+      if (is.null(input_color)) {
+        # Assign color from Publication_color_code based on the index
+        default_color <- Publication_color_code[(i - 1) %% length(Publication_color_code) + 1]
+        return(default_color)
+      }
+      
+      return(input_color)
+    }, simplify = FALSE)
+  })
+  
+  
+  # UI for allowing to edit legend labels
+  output$dynamicLegendInputs_HeatmapSimple <- renderUI({
+    req(input$groupLevels_selected_HeatmapSimple)  # Ensure group levels are available
+    
+    # Create text input fields for each group level to edit legend labels
+    legend_inputs <- lapply(input$groupLevels_selected_HeatmapSimple, function(level) {
+      textInput(
+        inputId = paste0("legend_", level), 
+        label = paste("Legend label for", level, "Group:"), 
+        value = level  # Set default value to the current level name
+      )
+    })
+    
+    # Return the list of legend input elements
+    do.call(tagList, legend_inputs)
+  })
+  
+  # Reactive expression to create a named vector of legend labels
+  legend_labels_HeatmapSimple <- reactive({
+    req(input$groupLevels_selected_HeatmapSimple)  # Ensure group levels are available
+    
+    # Collect legend labels dynamically from inputs
+    labels <- sapply(input$groupLevels_selected_HeatmapSimple, function(level) {
+      input[[paste0("legend_", level)]]  # Access each text input value dynamically
+    }, simplify = TRUE)
+    
+    # Return a named vector where the names are the group levels
+    labels
+  })
+  
+  
+  # Render the plot
+  output$Render_HeatmapSimple <- renderPlot({
+    req(
+      # Ensure data and group level input are available
+      values$metadata_HeatmapSimple, values$NormData_HeatmapSimple, #values$group_levels_HeatmapSimple, 
+      # Use to sort Group
+      input$groupLevels_selected_HeatmapSimple
+    ) 
+    
+    Heatmap_df = values$NormData_HeatmapSimple
+    metadata_df_Heatmap = values$metadata_HeatmapSimple
+    
+    # metadata_Group_Heatmap = unique(metadata_df_Heatmap$GroupLevel1)
+    
+    ########## Global variables ##########
+    # Mapping color code automatically => like this (manually): mapping_col_vect = c(Group_1 = "#323232",Group_2 = "#1B6393")
+    ## Define the color vector
+    group_col_vect <- unlist(color_palette_HeatmapSimple()) #c("#323232", "#1B6393")
+    ## Define metadata group heatmap
+    metadata_Group_Heatmap <- input$groupLevels_selected_HeatmapSimple #c("Group_1", "Group_2")
+    ## Use setNames to assign the group names as names to the color vector
+    mapping_col_vect <- setNames(group_col_vect, metadata_Group_Heatmap)
+    
+    # Heatmap color
+    heatmap_col_vect = c(input$color_DownHeatmap_HeatmapSimple, input$color_UnchangedHeatmap_HeatmapSimple, input$color_UpHeatmap_HeatmapSimple)
+    heatmap_col_scale = c(-input$color_scaleHeatmap_HeatmapSimple, 0, input$color_scaleHeatmap_HeatmapSimple)
+    
+    labels_group_vect = legend_labels_HeatmapSimple()
+    fontsize_row_name = input$size_Features_HeatmapSimple
+    
+    ############# IMPORTANT: Print to check debugging information before the next step #############
+    # Require for mapping_col_vect, e.g., output of c(Group_1 = "#323232",Group_2 = "#1B6393")
+    # print("Group levels:")
+    # print(input$groupLevels_selected_HeatmapSimple)
+    # print("Group color vector:")
+    # print(group_col_vect)
+    # print("Mapping color vector:")
+    # print(mapping_col_vect)
+    # print(legend_labels_HeatmapSimple())
+    
+    ############# Heatmap Annotation ##############
+    
+    # Row annotation
+    if (input$checkbox_italicFeatures_HeatmapSimple == TRUE) {
+      ha_row_txt <- rowAnnotation(
+        labels = anno_text(
+          Heatmap_df$Features, 
+          which = "row", 
+          gp = gpar(fontsize = fontsize_row_name, fontface = "italic")
+        )
+      )
+    } else {
+      ha_row_txt <- rowAnnotation(
+        labels = anno_text(
+          Heatmap_df$Features, 
+          which = "row", 
+          gp = gpar(fontsize = fontsize_row_name)
+        )
+      )
+    }
+    
+    # Col annotation: Original code: ha_col = HeatmapAnnotation("Group" = anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect))
+    # do.call(HeatmapAnnotation, setNames(list(
+    #   anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect)
+    # ), input$TopAnnotation_legend_HeatmapSimple))
+    ha_col = HeatmapAnnotation(" " = anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect))
+    
+    ## Col splitting
+    # split1 <- metadata_df_Heatmap$GroupLevel1
+    ## Row splitting
+    # split2 = Heatmap_df$Pathway
+    
+    ############# Heatmap ##############
+    
+    # Matrix data scaling
+    dat_pathway <- Heatmap_df %>% dplyr::select(all_of(metadata_df_Heatmap$Sample)) %>% mutate_if(is.character, as.numeric)
+    dat_pathway <- t(scale(t(dat_pathway)))
+    dat_pathway <- as.matrix(dat_pathway)
+    
+    # Visualization
+    Hist1  <- Heatmap(
+      dat_pathway,
+      cluster_columns = input$checkbox_Col_clustering_HeatmapSimple,
+      cluster_rows = input$checkbox_Row_clustering_HeatmapSimple,
+      #cluster_row_slices = FALSE,
+      name = input$HeatmapAnnotation_legend_HeatmapSimple,
+      circlize::colorRamp2(heatmap_col_scale, heatmap_col_vect),
+      top_annotation = ha_col,
+      # left_annotation = ha_row,
+      right_annotation = ha_row_txt,
+      show_row_names = FALSE,
+      show_column_names = input$checkbox_showColname_HeatmapSimple,
+      # column_title_rot = 45,
+      heatmap_legend_param = list(legend_direction = "horizontal"),
+      column_split = factor(metadata_df_Heatmap$GroupLevel1, levels = input$groupLevels_selected_HeatmapSimple),
+      # column_title_gp = gpar(fontsize = input$size_TopAnnotation_HeatmapSimple)
+      column_title = NULL  # dont show top annotation
+      #row_split = split2,
+      #row_title=NULL
+    )
+    
+    ############# Legend ##############
+    lgd_group = Legend(title = input$TopAnnotation_legend_HeatmapSimple, legend_gp = gpar(fill = group_col_vect), labels = labels_group_vect)
+    
+    ############# Exporting ##############
+    pd = packLegend(lgd_group,#lgd_compare, lgd_sig, lgd_pvalue, #lgd_pathway,
+                    max_width = unit(12, "cm"), direction = "horizontal", column_gap = unit(5, "mm"), row_gap = unit(2, "mm"))
+    
+    # Show the plot with legend
+    draw(Hist1, heatmap_legend_list = pd, #ht_gap =,
+         heatmap_legend_side = "bottom", annotation_legend_side = "bottom", adjust_annotation_extension = TRUE)
+    
+  }, width = reactive({ input$plotWidth_HeatmapSimple }), height = reactive({ input$plotHeight_HeatmapSimple }))
+  
+  
   # <-- Download handlers -->
   ## Score plot
   output$downloadScorePlot <- downloadHandler(
@@ -1362,10 +1672,134 @@ server <- function(input, output, session) {
     }
   )
   
+  ## Heatmap simple
+  output$download_HeatmapSimple <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".png", sep = "") #input$formatdownload_HeatmapSimple
+    },
+    content = function(file) {
+      png(file, width = input$plotWidth_HeatmapSimple / 100, height = input$plotHeight_HeatmapSimple / 100, 
+          res = input$dpi_HeatmapSimple, units = "in")
+      
+      ######### IMPORTANT: Copy all to here => Remember when modify in the render -> Copy here #########
+      req(
+        # Ensure data and group level input are available
+        values$metadata_HeatmapSimple, values$NormData_HeatmapSimple, #values$group_levels_HeatmapSimple, 
+        # Use to sort Group
+        input$groupLevels_selected_HeatmapSimple
+      ) 
+      
+      Heatmap_df = values$NormData_HeatmapSimple
+      metadata_df_Heatmap = values$metadata_HeatmapSimple
+      
+      # metadata_Group_Heatmap = unique(metadata_df_Heatmap$GroupLevel1)
+      
+      ########## Global variables ##########
+      # Mapping color code automatically => like this (manually): mapping_col_vect = c(Group_1 = "#323232",Group_2 = "#1B6393")
+      ## Define the color vector
+      group_col_vect <- unlist(color_palette_HeatmapSimple()) #c("#323232", "#1B6393")
+      ## Define metadata group heatmap
+      metadata_Group_Heatmap <- input$groupLevels_selected_HeatmapSimple #c("Group_1", "Group_2")
+      ## Use setNames to assign the group names as names to the color vector
+      mapping_col_vect <- setNames(group_col_vect, metadata_Group_Heatmap)
+      
+      # Heatmap color
+      heatmap_col_vect = c(input$color_DownHeatmap_HeatmapSimple, input$color_UnchangedHeatmap_HeatmapSimple, input$color_UpHeatmap_HeatmapSimple)
+      heatmap_col_scale = c(-input$color_scaleHeatmap_HeatmapSimple, 0, input$color_scaleHeatmap_HeatmapSimple)
+      
+      labels_group_vect = legend_labels_HeatmapSimple()
+      fontsize_row_name = input$size_Features_HeatmapSimple
+      
+      ############# IMPORTANT: Print to check debugging information before the next step #############
+      # Require for mapping_col_vect, e.g., output of c(Group_1 = "#323232",Group_2 = "#1B6393")
+      # print("Group levels:")
+      # print(input$groupLevels_selected_HeatmapSimple)
+      # print("Group color vector:")
+      # print(group_col_vect)
+      # print("Mapping color vector:")
+      # print(mapping_col_vect)
+      # print(legend_labels_HeatmapSimple())
+      
+      ############# Heatmap Annotation ##############
+      
+      # Row annotation
+      if (input$checkbox_italicFeatures_HeatmapSimple == TRUE) {
+        ha_row_txt <- rowAnnotation(
+          labels = anno_text(
+            Heatmap_df$Features, 
+            which = "row", 
+            gp = gpar(fontsize = fontsize_row_name, fontface = "italic")
+          )
+        )
+      } else {
+        ha_row_txt <- rowAnnotation(
+          labels = anno_text(
+            Heatmap_df$Features, 
+            which = "row", 
+            gp = gpar(fontsize = fontsize_row_name)
+          )
+        )
+      }
+      
+      # Col annotation: Original code: ha_col = HeatmapAnnotation("Group" = anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect))
+      # do.call(HeatmapAnnotation, setNames(list(
+      #   anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect)
+      # ), input$TopAnnotation_legend_HeatmapSimple))
+      ha_col = HeatmapAnnotation(" " = anno_simple(metadata_df_Heatmap$GroupLevel1, col = mapping_col_vect))
+      
+      ## Col splitting
+      # split1 <- metadata_df_Heatmap$GroupLevel1
+      ## Row splitting
+      # split2 = Heatmap_df$Pathway
+      
+      ############# Heatmap ##############
+      
+      # Matrix data scaling
+      dat_pathway <- Heatmap_df %>% dplyr::select(all_of(metadata_df_Heatmap$Sample)) %>% mutate_if(is.character, as.numeric)
+      dat_pathway <- t(scale(t(dat_pathway)))
+      dat_pathway <- as.matrix(dat_pathway)
+      
+      # Visualization
+      Hist1  <- Heatmap(
+        dat_pathway,
+        cluster_columns = input$checkbox_Col_clustering_HeatmapSimple,
+        cluster_rows = input$checkbox_Row_clustering_HeatmapSimple,
+        #cluster_row_slices = FALSE,
+        name = input$HeatmapAnnotation_legend_HeatmapSimple,
+        circlize::colorRamp2(heatmap_col_scale, heatmap_col_vect),
+        top_annotation = ha_col,
+        # left_annotation = ha_row,
+        right_annotation = ha_row_txt,
+        show_row_names = FALSE,
+        show_column_names = input$checkbox_showColname_HeatmapSimple,
+        # column_title_rot = 45,
+        heatmap_legend_param = list(legend_direction = "horizontal"),
+        column_split = factor(metadata_df_Heatmap$GroupLevel1, levels = input$groupLevels_selected_HeatmapSimple),
+        # column_title_gp = gpar(fontsize = input$size_TopAnnotation_HeatmapSimple)
+        column_title = NULL  # dont show top annotation
+        #row_split = split2,
+        #row_title=NULL
+      )
+      
+      ############# Legend ##############
+      lgd_group = Legend(title = input$TopAnnotation_legend_HeatmapSimple, legend_gp = gpar(fill = group_col_vect), labels = labels_group_vect)
+      
+      ############# Exporting ##############
+      pd = packLegend(lgd_group,#lgd_compare, lgd_sig, lgd_pvalue, #lgd_pathway,
+                      max_width = unit(12, "cm"), direction = "horizontal", column_gap = unit(5, "mm"), row_gap = unit(2, "mm"))
+      
+      # Show the plot with legend
+      draw(Hist1, heatmap_legend_list = pd, #ht_gap =,
+           heatmap_legend_side = "bottom", annotation_legend_side = "bottom", adjust_annotation_extension = TRUE)
+      
+      
+      dev.off()
+    }
+  )
+  
 }
 
 # Run the Application
 shinyApp(ui = ui, server = server)
-
 
 
