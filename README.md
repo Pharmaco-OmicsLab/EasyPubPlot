@@ -1,4 +1,4 @@
-# EasyPubPlot -  Easy and Publishable Ploting
+# EasyPubPlot - Shiny App for Easy and Publishable Ploting
 
 EasyPubPlot provides interactive and customizable tools to easily create publishable plots for scientific papers.
 
