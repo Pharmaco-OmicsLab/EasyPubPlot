@@ -98,7 +98,15 @@ ui <- navbarPage(
             fileInput("volcanoFile", "Upload STAT Results File:", accept = c(".csv"))
           ),
           
-          # Plot Appearance Tab
+          # Plot Dimension Tab
+          tabPanel(
+            "Plot Dimension",
+            
+            numericInput("plotWidth_Volcano", "Width (in pixels):", value = 600, step = 5),
+            numericInput("plotHeight_Volcano", "Height (in pixels):", value = 600, step = 5)
+          ),
+          
+          # Cut-offs Tab
           tabPanel(
             "Cut-offs",
             
@@ -169,8 +177,6 @@ ui <- navbarPage(
           tabPanel(
             "Save Plot",
             # Ensure the consistency with variables name in the server
-            numericInput("plotWidth_Volcano", "Plot Width (in pixels):", value = 600, step = 5),
-            numericInput("plotHeight_Volcano", "Plot Height (in pixels):", value = 600, step = 5),
             numericInput("volcanoDPI", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownloadVolcano", "Format:",
@@ -234,6 +240,14 @@ ui <- navbarPage(
             uiOutput("dynamicLegendInputs_HeatmapSimple")
           ),
           
+          # Plot Dimension Tab
+          tabPanel(
+            "Plot Dimension",
+            
+            numericInput("plotWidth_HeatmapSimple", "Width (in pixels):", value = 300, step = 5),
+            numericInput("plotHeight_HeatmapSimple", "Height (in pixels):", value = 600, step = 5),
+          ),
+          
           # Colors Tab
           tabPanel(
             "Heatmap Colors",
@@ -273,8 +287,6 @@ ui <- navbarPage(
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("plotWidth_HeatmapSimple", "Plot Width (in pixels):", value = 300, step = 5),
-            numericInput("plotHeight_HeatmapSimple", "Plot Height (in pixels):", value = 600, step = 5),
             
             numericInput("dpi_HeatmapSimple", "DPI for Saving:", value = 300, step = 300),
             # selectInput(
@@ -338,9 +350,23 @@ ui <- navbarPage(
             
             uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
             
-            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE),
+            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE)
             
-            numericInput("pointSize_ScorePlot", "Point Size:", value = 4, min = 0.5, max = 30),
+          ),
+          
+          # Plot Dimension Tab
+          tabPanel(
+            "Plot Dimension",
+            
+            numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
+            numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5)
+          ),
+          
+          # Points and Themes
+          tabPanel(
+            "Points & Themes",
+            
+            numericInput("pointSize_ScorePlot", "Point Size:", value = 4),
             
             selectInput(
               "plotTheme_ScorePlot", "Plot Theme:",
@@ -354,10 +380,10 @@ ui <- navbarPage(
             "Axis Labels",
             textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
             textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
-            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15, min = 8, max = 30),
+            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15),
             checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
             
-            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15, min = 8, max = 30),
+            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15),
             checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
           ),
           
@@ -379,8 +405,6 @@ ui <- navbarPage(
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("plotWidth_ScorePlot", "Plot Width (in pixels):", value = 600, step = 5),
-            numericInput("plotHeight_ScorePlot", "Plot Height (in pixels):", value = 600, step = 5),
             numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownloadScorePlot", "Format:",
@@ -450,32 +474,39 @@ ui <- navbarPage(
             )
           ),
           
+          # Plot Dimension Tab
+          tabPanel(
+            "Plot Dimension",
+            
+            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", value = 800, step = 5),
+            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", value = 400, step = 5)
+          ),
+          
           # point, jitter, width
           tabPanel(
             "Sizes",
-            numericInput("pointSize_BoxPlot", "Point Size:", value = 3, min = 0.5, max = 30),
-            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, min = 0.1, max = 5, step = 0.1),
-            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, min = 0.01, max = 5, step = 0.02)
+            numericInput("pointSize_BoxPlot", "Point Size:", value = 3),
+            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, step = 0.1),
+            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, step = 0.02)
           ),
           
           # Axis Labels Tab
           tabPanel(
             "Axis Labels",
             textInput("yLabel_BoxPlot", "Y-axis Label:", value = "Normalized Abundance"),
-            numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20, min = 6, max = 50),
+            numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20),
             checkboxInput("checkbox_Axis_bold_BoxPlot", "Axis bold", value = TRUE),
             
-            numericInput("tickLabelSize_BoxPlot", "Tick Label Size:", value = 15, min = 8, max = 30),
+            numericInput("tickLabelSize_BoxPlot", "Tick Label Size:", value = 15),
             checkboxInput("checkbox_Tick_bold_BoxPlot", "Tick bold", value = FALSE),
             
-            numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, min = 8, max = 30, step = 1),
+            numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, step = 1),
           ),
           
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", value = 800, step = 5),
-            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", value = 400, step = 5),
+            
             numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, step = 300),
             selectInput(
               "formatdownload_BoxPlot", "Format:",
