@@ -39,7 +39,7 @@ ui <- navbarPage(
           "EasyPubPlot provides an interactive and customizable tools to easily",
           "create publishable plots for scientific papers"
         ),
-        # actionLink("go_to_tutorials", 
+        # actionLink("go_to_tutorials",
         #            tags$h4("Click here to start", class = "clickable-link")),  # Clickable text
         
         tags$p("\n"),
@@ -49,10 +49,12 @@ ui <- navbarPage(
           class = "action-button shiny-bound-input",
           "Click here to start",
           style = "font-size: 20px; font-weight: bold; padding: 10px 20px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+          onclick = "Shiny.setInputValue('go_to_tutorials', Math.random())"
         ),
         
         tags$p("\n"),
-        # img(src = "https://via.placeholder.com/800x200.png", height = "200px")
+        img(src = "https://drive.google.com/thumbnail?id=1-Xzh6vEfQF-B30I4Dk2JFDmwhte6Ye_T", height = "500px")
+        
       )
     )
   ),
@@ -66,6 +68,19 @@ ui <- navbarPage(
       class = "action-button shiny-bound-input",
       "Back to Tutorials",
       style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_VolcanoPlot', Math.random())"
+    ),
+    
+    # This work but not beautiful
+    # actionButton("reload_app_button", "Reset App",
+    #              style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
     ),
     
     sidebarLayout(
@@ -80,7 +95,7 @@ ui <- navbarPage(
           # File upload inputs for Volcano Plot
           tabPanel(
             "Data Upload",
-            fileInput("volcanoFile", "Upload STAT Result File:", accept = c(".csv"))
+            fileInput("volcanoFile", "Upload STAT Results File:", accept = c(".csv"))
           ),
           
           # Plot Appearance Tab
@@ -108,7 +123,7 @@ ui <- navbarPage(
           
           # Plot Appearance
           tabPanel(
-            "Points and Legends",
+            "Points & Legends",
             numericInput("pointSize_Volcano", "Point Size:", value = 1.6, min = 0.5, max = 30, step = 0.5),
             
             # legend
@@ -182,6 +197,15 @@ ui <- navbarPage(
       class = "action-button shiny-bound-input",
       "Back to Tutorials",
       style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_HeatmapSimple', Math.random())"
+    ),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
     ),
     
     sidebarLayout(
@@ -203,7 +227,7 @@ ui <- navbarPage(
           
           # Group Tab
           tabPanel(
-            "Group",
+            "Plot Appearance",
             # Group Color => Use dynamical
             uiOutput("groupLevelSelector_HeatmapSimple"),  # Cannot change group order in the ComplexHeatmap
             uiOutput("dynamicColorInputs_HeatmapSimple"),
@@ -212,7 +236,7 @@ ui <- navbarPage(
           
           # Colors Tab
           tabPanel(
-            "Heatmap colors",
+            "Heatmap Colors",
             # Heatmap Color and Scale
             colourInput("color_DownHeatmap_HeatmapSimple", "Down-regulation Color:", value = "#23446f"),
             colourInput("color_UnchangedHeatmap_HeatmapSimple", "Unchange Color:", value = "white"),
@@ -278,6 +302,15 @@ ui <- navbarPage(
       class = "action-button shiny-bound-input",
       "Back to Tutorials",
       style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_ScoresPlot', Math.random())"
+    ),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
     ),
     
     sidebarLayout(
@@ -374,6 +407,15 @@ ui <- navbarPage(
       class = "action-button shiny-bound-input",
       "Back to Tutorials",
       style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_BoxPlot', Math.random())"
+    ),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
     ),
     
     sidebarLayout(
@@ -401,10 +443,6 @@ ui <- navbarPage(
             
             uiOutput("dynamicLegendInputs_BoxPlot"), # For dynamic legend labels
             
-            numericInput("pointSize_BoxPlot", "Point Size:", value = 3, min = 0.5, max = 30),
-            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, min = 0.1, max = 5, step = 0.1),
-            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, min = 0.01, max = 5, step = 0.02),
-            
             selectInput(
               "plotTheme_BoxPlot", "Plot Theme:",
               choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
@@ -412,10 +450,17 @@ ui <- navbarPage(
             )
           ),
           
+          # point, jitter, width
+          tabPanel(
+            "Sizes",
+            numericInput("pointSize_BoxPlot", "Point Size:", value = 3, min = 0.5, max = 30),
+            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, min = 0.1, max = 5, step = 0.1),
+            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, min = 0.01, max = 5, step = 0.02)
+          ),
+          
           # Axis Labels Tab
           tabPanel(
             "Axis Labels",
-            # textInput("xLabel_BoxPlot", "X-axis Label:", value = "The first component (A %)"),
             textInput("yLabel_BoxPlot", "Y-axis Label:", value = "Normalized Abundance"),
             numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20, min = 6, max = 50),
             checkboxInput("checkbox_Axis_bold_BoxPlot", "Axis bold", value = TRUE),
@@ -425,21 +470,6 @@ ui <- navbarPage(
             
             numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, min = 8, max = 30, step = 1),
           ),
-          
-          # # Axis Limits & Breaks Tab
-          # tabPanel(
-          #   "Axis Limits",
-          #   # numericInput("xMin_BoxPlot", "X-axis Minimum:", value = NA, step = 0.1),
-          #   # numericInput("xMax_BoxPlot", "X-axis Maximum:", value = NA, step = 0.1),
-          #   numericInput("yMin_BoxPlot", "Y-axis Minimum:", value = NA, step = 0.1),
-          #   numericInput("yMax_BoxPlot", "Y-axis Maximum:", value = NA, step = 0.1)
-          # ),
-          # 
-          # tabPanel(
-          #   "Axis Breaks",
-          #   # numericInput("xBreaks_BoxPlot", "X-axis Breaks:", value = NA, step = 0.1),
-          #   numericInput("yBreaks_BoxPlot", "Y-axis Breaks:", value = NA, step = 0.1)
-          # ),
           
           # Save Plot Tab
           tabPanel(
@@ -466,6 +496,15 @@ ui <- navbarPage(
   # Tutorial Tab
   tabPanel(
     title = "Tutorials",
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+    ),
+    
     fluidPage(
       fluidRow(
         column(
@@ -478,8 +517,8 @@ ui <- navbarPage(
             tabPanel("Heatmap", value = "HeatmapSimple_infor"),
             tabPanel("Scores PLot", value = "ScoresPlot_infor"),
             tabPanel("Box PLot", value = "BoxPlot_infor"),
-            # tabPanel("Venn Diagram", value = "venn_info"),
-            # tabPanel("Upset Plot", value = "upset_info")
+            # tabPanel("Dot Plot", value = "DotPlot_info"),
+            # tabPanel("Bubble Plot", value = "Bubble_info")
           )
           #)
         ),
@@ -494,6 +533,11 @@ ui <- navbarPage(
 
 # Define Server
 server <- function(input, output, session) {
+  
+  # Observe the reset button and reload the app when clicked
+  observeEvent(input$reload_app_button, {
+    session$reload()
+  })
   
   #<-- Navigate when click -->
   ## Go to tutorial
@@ -586,6 +630,7 @@ server <- function(input, output, session) {
             class = "action-button shiny-bound-input",
             "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_ScoresPlot_module', Math.random())"
           )
         )
       )
@@ -615,6 +660,7 @@ server <- function(input, output, session) {
             class = "action-button shiny-bound-input",
             "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_VolcanoPlot_module', Math.random())"
           )
         )
       )
@@ -629,7 +675,7 @@ server <- function(input, output, session) {
           img(src = "https://drive.google.com/thumbnail?id=1Rx7G21L0abazFohXaFhJtgRwMKmwtbpU", height = "300px"),
           
           tags$h4("First, download a step-by-step guide"),
-          # downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
+          downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
           
           tags$h4("Next, prepare the input data"),
           
@@ -645,6 +691,7 @@ server <- function(input, output, session) {
             class = "action-button shiny-bound-input",
             "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_HeatmapSimple_module', Math.random())"
           )
         )
       )
@@ -658,7 +705,7 @@ server <- function(input, output, session) {
           img(src = "https://drive.google.com/thumbnail?id=1S-N9OWh4rhA3JWtBWcF75ullRgfMj-T9", height = "200px"),
           
           tags$h4("First, download a step-by-step guide"),
-          # downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"), 
+          downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
           
@@ -674,6 +721,7 @@ server <- function(input, output, session) {
             class = "action-button shiny-bound-input",
             "Click here to make your amazing plot",
             style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_BoxPlot_module', Math.random())"
           )
         )
       )
@@ -717,7 +765,7 @@ server <- function(input, output, session) {
   ## Tutorial
   output$download_ScoresPlot_Tutorial_pdf <- downloadHandler(
     filename = function() {
-      "241010_instruction_PCA_scores_plot_v1.pdf"  # Name of the file to be downloaded
+      "EasyPubPlot_Tutorials_ScoresPlot.pdf"  # Name of the file to be downloaded
     },
     content = function(file) {
       # Download the file from Google Drive and save it to 'file'
@@ -748,7 +796,7 @@ server <- function(input, output, session) {
   ## Tutorials
   output$download_VolcanoPlot_Tutorial_pdf <- downloadHandler(
     filename = function() {
-      "241009_instruction_volcano_plot_v3.pdf"  # Name of the file to be downloaded
+      "EasyPubPlot_Tutorials_VolcanoPlot.pdf"  # Name of the file to be downloaded
     },
     content = function(file) {
       # Download the file from Google Drive and save it to 'file'
@@ -791,20 +839,20 @@ server <- function(input, output, session) {
     }
   )
   
-  # ## Tutorial
-  # output$download_HeatmapSimple_Tutorial_pdf <- downloadHandler(
-  #   filename = function() {
-  #     "241010_instruction_PCA_Heatmap_plot_v1.pdf"  # Name of the file to be downloaded
-  #   },
-  #   content = function(file) {
-  #     # Download the file from Google Drive and save it to 'file'
-  #     download.file(
-  #       url = "https://drive.google.com/uc?export=download&id=1QOMruiA5DHI0nSuuEskXYhJY8TOyg3XM",
-  #       destfile = file,
-  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
-  #     )
-  #   }
-  # )
+  ## Tutorial
+  output$download_HeatmapSimple_Tutorial_pdf <- downloadHandler(
+    filename = function() {
+      "EasyPubPlot_Tutorials_HeatmapSimple.pdf"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1WEiHhXnGdpm5p0qX89U2rJkpBKT-NZ5I",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
   
   # Box Plot
   ## Box Norm data
@@ -837,20 +885,20 @@ server <- function(input, output, session) {
     }
   )
   
-  # ## Tutorial
-  # output$download_BoxPlot_Tutorial_pdf <- downloadHandler(
-  #   filename = function() {
-  #     "241010_instruction_PCA_scores_plot_v1.pdf"  # Name of the file to be downloaded
-  #   },
-  #   content = function(file) {
-  #     # Download the file from Google Drive and save it to 'file'
-  #     download.file(
-  #       url = "https://drive.google.com/uc?export=download&id=1QOMruiA5DHI0nSuuEskXYhJY8TOyg3XM",
-  #       destfile = file,
-  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
-  #     )
-  #   }
-  # )
+  ## Tutorial
+  output$download_BoxPlot_Tutorial_pdf <- downloadHandler(
+    filename = function() {
+      "EasyPubPlot_Tutorials_BoxPlot.pdf"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=1WJ7VQ-03TREDM6ECkUe-jLYegz_KHkDi",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
   
   #<-- Define some background function -->
   ## theme_Publication - copy from the source code
@@ -864,7 +912,8 @@ server <- function(input, output, session) {
               panel.background = element_rect(colour = NA),
               plot.background = element_rect(colour = NA),
               panel.border = element_rect(colour = NA),
-              axis.title = element_text(face = "bold",size = rel(1)),
+              axis.title = element_text(#face = "bold",
+                size = rel(1)),
               axis.title.y = element_text(angle = 90,vjust =2),
               axis.title.x = element_text(vjust = -0.2),
               axis.text = element_text(), 
@@ -1091,7 +1140,7 @@ server <- function(input, output, session) {
     # Render the plot
     p
     
-  }, width = reactive({ input$plotWidth_ScorePlot }), height = reactive({ input$plotHeight_ScorePlot }))
+  }, width = reactive({ input$plotWidth_ScorePlot }), height = reactive({ input$plotHeight_ScorePlot }), res  = 72)
   
   # <-- Volcano Plot Handling -->
   observeEvent(input$volcanoFile, {
@@ -1255,7 +1304,7 @@ server <- function(input, output, session) {
     # For render
     p_volcano
     
-  }, width = reactive({ input$plotWidth_Volcano }), height = reactive({ input$plotHeight_Volcano }))
+  }, width = reactive({ input$plotWidth_Volcano }), height = reactive({ input$plotHeight_Volcano }), res  = 72)
   
   #<-- Boxplot Handling -->
   # Observe metadata_BoxPlot file upload
@@ -1419,7 +1468,7 @@ server <- function(input, output, session) {
     # Show plot
     p_BoxPlot
     
-  }, width = reactive({ input$plotWidth_BoxPlot }), height = reactive({ input$plotHeight_BoxPlot }))
+  }, width = reactive({ input$plotWidth_BoxPlot }), height = reactive({ input$plotHeight_BoxPlot }), res  = 72)
   
   #<-- HeatmapSimple plot Handling -->
   library(ComplexHeatmap)
@@ -1635,7 +1684,7 @@ server <- function(input, output, session) {
     draw(Hist1, heatmap_legend_list = pd, #ht_gap =,
          heatmap_legend_side = "bottom", annotation_legend_side = "bottom", adjust_annotation_extension = TRUE)
     
-  }, width = reactive({ input$plotWidth_HeatmapSimple }), height = reactive({ input$plotHeight_HeatmapSimple }))
+  }, width = reactive({ input$plotWidth_HeatmapSimple }), height = reactive({ input$plotHeight_HeatmapSimple }), res  = 72)
   
   
   # <-- Download handlers -->
@@ -1645,8 +1694,13 @@ server <- function(input, output, session) {
       paste(gsub("-", "_", Sys.Date()), "_2DScores_Plot", input$formatdownloadScorePlot, sep = "")
     },
     content = function(file) {
-      ggsave(file, plot = last_plot(), width = input$plotWidth_ScorePlot / 100, height = input$plotHeight_ScorePlot / 100, 
-             dpi = input$dpi_ScorePlot, units = "in")
+      ggsave(
+        file, plot = last_plot(), 
+        width = input$plotWidth_ScorePlot * input$dpi_ScorePlot / 72, 
+        height = input$plotHeight_ScorePlot * input$dpi_ScorePlot / 72, 
+        dpi = input$dpi_ScorePlot,
+        units = "px"
+      )
     }
   )
   
@@ -1656,8 +1710,13 @@ server <- function(input, output, session) {
       paste(gsub("-", "_", Sys.Date()), "_Volcano_Plot", input$formatdownloadVolcano, sep = "")
     },
     content = function(file) {
-      ggsave(file, plot = last_plot(), width = input$plotWidth_Volcano / 100, height = input$plotHeight_Volcano / 100, 
-             dpi = input$volcanoDPI, units = "in")
+      ggsave(
+        file, plot = last_plot(), 
+        width = input$plotWidth_Volcano * input$volcanoDPI / 72, 
+        height = input$plotHeight_Volcano * input$volcanoDPI / 72, 
+        dpi = input$volcanoDPI,
+        units = "px"
+      )
     }
   )
   
@@ -1667,19 +1726,30 @@ server <- function(input, output, session) {
       paste(gsub("-", "_", Sys.Date()), "_Box_Plots", input$formatdownload_BoxPlot, sep = "")
     },
     content = function(file) {
-      ggsave(file, plot = last_plot(), width = input$plotWidth_BoxPlot / 100, height = input$plotHeight_BoxPlot / 100, 
-             dpi = input$dpi_BoxPlot, units = "in")
+      ggsave(
+        file, plot = last_plot(), 
+        # Adjust height and width accordingly
+        width = input$plotWidth_BoxPlot * input$dpi_BoxPlot / 72, 
+        height = input$plotHeight_BoxPlot * input$dpi_BoxPlot / 72, 
+        dpi = input$dpi_BoxPlot, 
+        units = "px"
+      )
     }
   )
   
   ## Heatmap simple
   output$download_HeatmapSimple <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".png", sep = "") #input$formatdownload_HeatmapSimple
+      paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".png", sep = "") 
     },
     content = function(file) {
-      png(file, width = input$plotWidth_HeatmapSimple / 100, height = input$plotHeight_HeatmapSimple / 100, 
-          res = input$dpi_HeatmapSimple, units = "in")
+      png(
+        file, 
+        # Adjust height and width accordingly
+        width = input$plotWidth_HeatmapSimple * input$dpi_HeatmapSimple / 72, 
+        height = input$plotHeight_HeatmapSimple * input$dpi_HeatmapSimple / 72, 
+        res = input$dpi_HeatmapSimple, units = "px"
+      )
       
       ######### IMPORTANT: Copy all to here => Remember when modify in the render -> Copy here #########
       req(
