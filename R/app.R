@@ -114,7 +114,7 @@ ui <- navbarPage(
             numericInput("FC_cut_off_Volcano", "Fold Change Cut-off:", min = 0, max = 500, value = 1.5, step = 0.5),
             
             textInput("caption_Volcano", "Caption:", value = "FC cut-off, 1.5; FDR cut-off, 0.05"),
-            numericInput("captionLabSize_Volcano", "Caption Size:", value = 20, min = 6, max = 50)
+            numericInput("captionLabSize_Volcano", "Caption Size:", value = 20)
             
           ),
           
@@ -132,12 +132,12 @@ ui <- navbarPage(
           # Plot Appearance
           tabPanel(
             "Points & Legends",
-            numericInput("pointSize_Volcano", "Point Size:", value = 1.6, min = 0.5, max = 30, step = 0.5),
+            numericInput("pointSize_Volcano", "Point Size:", value = 1.6, step = 0.5),
             
             # legend
             checkboxInput("Show_legend_Volcano", "Show legend", value = FALSE),
-            numericInput("legendLabSize_Volcano", "Legend Title Size:", value = 24, min = 6, max = 50),
-            numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6, min = 1, max = 50),
+            numericInput("legendLabSize_Volcano", "Legend Title Size:", value = 24),
+            numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6),
             
             selectInput(
               "plotTheme_Volcano", "Plot Theme:",
@@ -151,10 +151,10 @@ ui <- navbarPage(
             "Axis Labels",
             textInput("xLabel_Volcano", "X-axis Label:", value = "log2(FC)"),
             textInput("yLabel_Volcano", "Y-axis Label:", value = "-log10(FDR)"),
-            numericInput("labelSize_Volcano", "Axis Label Size:", value = 24, min = 6, max = 50),
+            numericInput("labelSize_Volcano", "Axis Label Size:", value = 24),
             checkboxInput("checkbox_Axis_bold_Volcano", "Axis bold", value = TRUE),
             
-            numericInput("tickLabelSize_Volcano", "Tick Label Size:", value = 20, min = 6, max = 50),
+            numericInput("tickLabelSize_Volcano", "Tick Label Size:", value = 20),
             checkboxInput("checkbox_Tick_bold_Volcano", "Tick bold", value = FALSE)
           ),
           
@@ -481,8 +481,8 @@ ui <- navbarPage(
           tabPanel(
             "Plot Dimension",
             
-            numericInput("plotWidth_BoxPlot", "Plot Width (in pixels):", value = 800, step = 5),
-            numericInput("plotHeight_BoxPlot", "Plot Height (in pixels):", value = 400, step = 5)
+            numericInput("plotWidth_BoxPlot", "Width (in pixels):", value = 800, step = 5),
+            numericInput("plotHeight_BoxPlot", "Height (in pixels):", value = 400, step = 5)
           ),
           
           # point, jitter, width
@@ -662,6 +662,148 @@ ui <- navbarPage(
       
       mainPanel(
         plotOutput("Render_DotPlot", width = "auto", height = "auto")
+      )
+    )
+  ),
+  
+  # BubblePlot Tab
+  tabPanel(
+    title = "BubblePlot",
+    
+    tags$button(
+      id = "go_to_tutorials_BubblePlot",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_BubblePlot', Math.random())"
+    ),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+    ),
+    
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "BubblePlottabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            
+            # Metabolomics or Transcriptomics
+            selectInput(
+              "PathwayFromOmics_BubblePlot", "Omics Data:",
+              choices = c("Metabolomics", "Transcriptomics"),
+              selected = "Metabolomics"
+            ),
+            
+            # Use Pvalue or adjPvalue 
+            checkboxInput("checkbox_adjPvalue_BubblePlot", "Adjusted P-value"), # value will be returned from the server
+            
+            # File upload inputs
+            fileInput("PathwayDataFile_BubblePlot", "Upload Pathway Results File:", accept = c(".csv"))
+          ),
+          
+          # Plot Size and Theme Tab
+          tabPanel(
+            "Plot Dimension & Themes",
+            
+            # Plot Size
+            numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
+            numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
+            
+            # Plot Theme
+            selectInput(
+              "plotTheme_BubblePlot", "Plot Theme:",
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "theme_Publication"
+            )
+          ),
+          
+          # Points
+          tabPanel(
+            "Points",
+            
+            numericInput("small_size_scale_BubblePlot", "Point Size Scale, Small:", value = 4, step = 1),
+            numericInput("big_size_scale_BubblePlot", "Point Size Scale, Big:", value = 12, step = 1),
+            
+            colourInput("color_lowPvalue_BubblePlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
+            colourInput("color_interPvalue_BubblePlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
+            colourInput("color_highPvalue_BubblePlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
+          ),
+          
+          # Legend
+          tabPanel(
+            "Legend",
+            
+            checkboxInput("showLegend_BubblePlot", "Show Legend", value = TRUE),
+            
+            numericInput("legendTitleSize_BubblePlot", "Legend Title Size:", value = 18, step = 1),
+            numericInput("legendTextSize_BubblePlot", "Legend Text Size:", value = 15, step = 1),
+            numericInput("legendkeySize_BubblePlot", "Legend Key Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+            
+            textInput("ColorTitle_BubblePlot", "Color Title:"), # value will be returned from the server
+            
+            textInput("PointSizeTitleBubblePlot", "Point Size Title:") # value will be returned from the server
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            textInput("xLabel_BubblePlot", "X-axis Label:"), # value will be returned from the server
+            
+            textInput("yLabel_BubblePlot", "Y-axis Label:"), # value will be returned from the server
+            
+            numericInput("labelSize_BubblePlot", "Axis Label Size:", value = 22),
+            checkboxInput("checkbox_Axis_bold_BubblePlot", "Axis Bold", value = TRUE),
+            
+            numericInput("tickLabelSize_BubblePlot", "Tick Label Size:", value = 18),
+            checkboxInput("checkbox_Tick_bold_BubblePlot", "Tick Bold", value = FALSE),
+          ),
+          
+          # Axis Limits & Breaks Tab
+          tabPanel(
+            "Axis Limits",
+            numericInput("xMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("xMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1),
+            
+            numericInput("yMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("yMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1)
+          ),
+          
+          tabPanel(
+            "Axis Breaks",
+            numericInput("xBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1),
+            numericInput("yBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            # numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
+            # numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
+            numericInput("dpi_BubblePlot", "DPI for Saving:", value = 300, step = 300),
+            selectInput(
+              "formatdownload_BubblePlot", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+              selected = ".png"
+            ),
+            downloadButton("download_BubblePlot", "Download Plot")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_BubblePlot", width = "100%", height = "600px")
       )
     )
   ),
@@ -1163,7 +1305,9 @@ server <- function(input, output, session) {
     # Heatmap simple
     metadata_HeatmapSimple = NULL, NormData_HeatmapSimple = NULL,
     # Dot Plot
-    PathwayData_DotPlot = NULL
+    PathwayData_DotPlot = NULL,
+    # Bubble Plot
+    PathwayData_BubblePlot = NULL
   )
   
   
@@ -2162,6 +2306,221 @@ server <- function(input, output, session) {
   }, width = reactive({ input$plotWidth_DotPlot }), height = reactive({ input$plotHeight_DotPlot }), res = 72)
   
   
+  #<-- BubblePlot plot Handling -->
+  library(tidyverse)
+  
+  # Observe PathwayData_BubblePlot file upload
+  observeEvent(input$PathwayDataFile_BubblePlot, {
+    req(input$PathwayDataFile_BubblePlot)
+    values$PathwayData_BubblePlot <- read.csv(input$PathwayDataFile_BubblePlot$datapath, check.names = FALSE)
+  })
+  
+  # Define the Omics data and update the label of x-axis automatically based on type of Omics data
+  observeEvent(input$PathwayFromOmics_BubblePlot, {
+    Input_data_BubblePlot <- switch(
+      input$PathwayFromOmics_BubblePlot,
+      "Transcriptomics" = "Transcriptomics",
+      "Metabolomics" = "Metabolomics"
+    )
+    
+    # Update x-axis label based on Input_data_BubblePlot
+    updateTextInput(
+      session,
+      "xLabel_BubblePlot",
+      value = if (Input_data_BubblePlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+    )
+    
+    # Update PointSize label based on Input_data_BubblePlot 
+    updateTextInput(
+      session,
+      "PointSizeTitleBubblePlot",
+      value = if (Input_data_BubblePlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+    )
+    
+    # Update Y-axis label based on Input_data_BubblePlot
+    updateTextInput(
+      session,
+      "yLabel_BubblePlot",
+      value = if (Input_data_BubblePlot == "Transcriptomics") "-log10(Adjusted P-value)" else "-log10(P-value)"
+    )
+    
+    # Update color label based on Input_data_BubblePlot 
+    updateTextInput(
+      session,
+      "ColorTitle_BubblePlot",
+      value = if (Input_data_BubblePlot == "Transcriptomics") "Adjusted P-value" else "P-value"
+    )
+    
+    # Choose AdjPvalue by default if select Transcriptomics
+    updateTextInput(
+      session,
+      "checkbox_adjPvalue_BubblePlot",
+      value = if (Input_data_BubblePlot == "Transcriptomics") TRUE else FALSE
+    )
+    
+  })
+  
+  # Define the AdjPval or Pval and update the label automatically
+  observeEvent(input$checkbox_adjPvalue_BubblePlot, {
+    
+    # yLabel
+    updateTextInput(
+      session,
+      "yLabel_BubblePlot",
+      value = if (input$checkbox_adjPvalue_BubblePlot) "-log10(Adjusted P-value)" else "-log10(P-value)"
+    )
+    
+    # Update color label
+    updateTextInput(
+      session,
+      "ColorTitle_BubblePlot",
+      value = if (input$checkbox_adjPvalue_BubblePlot) "Adjusted P-value" else "P-value"
+    )
+    
+  })
+  
+  # Render the plot
+  output$Render_BubblePlot <- renderPlot({
+    req(values$PathwayData_BubblePlot)#, input$groupLevels) # Ensure data and group level input are available
+    
+    pathway_input_data = values$PathwayData_BubblePlot
+    
+    # Define the theme dynamically
+    plot_theme <- switch(
+      input$plotTheme_BubblePlot,
+      "theme_Publication" = theme_Publication_modifedBubblePlot(),
+      "theme_bw" = theme_bw(),
+      "theme_minimal" = theme_minimal(),
+      "theme_linedraw" = theme_linedraw(),
+      "theme_classic" = theme_classic(),
+      "theme_gray" = theme_gray(),
+    )
+    
+    # Prepare axis limits and breaks
+    x_limits <- if (!is.na(input$xMin_BubblePlot) && !is.na(input$xMax_BubblePlot) && input$xMin_BubblePlot < input$xMax_BubblePlot) c(input$xMin_BubblePlot, input$xMax_BubblePlot) else NULL
+    y_limits <- if (!is.na(input$yMin_BubblePlot) && !is.na(input$yMax_BubblePlot) && input$yMin_BubblePlot < input$yMax_BubblePlot) c(input$yMin_BubblePlot, input$yMax_BubblePlot) else NULL
+    x_breaks <- if (!is.na(input$xBreaks_BubblePlot) && !is.na(input$xMin_BubblePlot) && !is.na(input$xMax_BubblePlot) && input$xBreaks_BubblePlot > 0) seq(from = input$xMin_BubblePlot, to = input$xMax_BubblePlot, by = input$xBreaks_BubblePlot) else waiver()
+    y_breaks <- if (!is.na(input$yBreaks_BubblePlot) && !is.na(input$yMin_BubblePlot) && !is.na(input$yMax_BubblePlot) && input$yBreaks_BubblePlot > 0) seq(from = input$yMin_BubblePlot, to = input$yMax_BubblePlot, by = input$yBreaks_BubblePlot) else waiver()
+    
+    # Define the Omics data => NOTE: also define outside (above) to update the x-axis label autonmatically
+    Input_data_BubblePlot <- switch(
+      input$PathwayFromOmics_BubblePlot,
+      "Transcriptomics" = "Transcriptomics",
+      "Metabolomics" = "Metabolomics"
+    )
+    
+    # Ploting
+    ######### Bubble only For ORA #########
+    if (Input_data_BubblePlot == "Transcriptomics") {
+      
+      # <-- Transcriptomics -->
+      
+      # Standardize variables name
+      names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "GeneRatio", "Pvalue", "P.adjust", "FeaturesID")
+      
+      # Check if hit count available or not. If not -> calculate based on list of FeaturesID
+      if (all(is.na(pathway_input_data$Hits_count))) {
+        pathway_input_data %>% 
+          mutate(Hits_count = sapply(strsplit(FeaturesID, "/|,|;"), length)) -> pathway_input_data
+      }
+      
+      # Add other needed variables
+      pathway_input_data %>%
+        mutate(
+          # Calculate gene ratio
+          GeneRatio = Hits_count/Total_input_gene
+        ) -> pathway_input_data
+      
+      # Get the levels of Pathways based on the GeneRatio
+      pathway_input_data %>% arrange(GeneRatio) %>% dplyr::select(Description) %>% pull() -> Description_level
+      
+      # Visualize
+      if (input$checkbox_adjPvalue_BubblePlot) {
+        # Use adjPvalue for visualization
+        p_BubblePlot = pathway_input_data %>% 
+          dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+          ggplot(aes(x = `GeneRatio`, y = -log10(P.adjust))) +
+          geom_point(aes(size = GeneRatio, color = P.adjust))
+        
+      } else {
+        # Use Pvalue for visualization
+        p_BubblePlot = pathway_input_data %>% 
+          dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+          ggplot(aes(x = `GeneRatio`, y = -log10(Pvalue))) +
+          geom_point(aes(size = GeneRatio, color = Pvalue))
+      }
+      
+    } else if (Input_data_BubblePlot == "Metabolomics") {
+      
+      # <-- Metabolomics -->
+      
+      # Standardize the variable names
+      names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "Pathway_impact", "Pvalue", "P.adjust", "FeaturesID")
+      
+      # Check if hit count available or not. If not -> calculate based on list of FeaturesID
+      if (all(is.na(pathway_input_data$Hits_count))) {
+        pathway_input_data %>% 
+          mutate(Hits_count = sapply(strsplit(FeaturesID, "/|,|;"), length)) -> pathway_input_data
+      }
+      
+      # Get the levels of Pathways based on the Pathway_impact
+      pathway_input_data %>% arrange(Pathway_impact) %>% dplyr::select(Description) %>% pull() -> Description_level
+      
+      # Visualize
+      if (input$checkbox_adjPvalue_BubblePlot) {
+        # Use adjPvalue for visualization
+        p_BubblePlot = pathway_input_data %>% 
+          dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+          ggplot(aes(x = `Pathway_impact`, y = -log10(P.adjust))) +
+          geom_point(aes(size = Pathway_impact, color = P.adjust))
+        
+      } else {
+        # Use Pvalue for visualization
+        p_BubblePlot = pathway_input_data %>% 
+          dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+          ggplot(aes(x = `Pathway_impact`, y = -log10(Pvalue))) +
+          geom_point(aes(size = Pathway_impact, color = Pvalue))
+      }
+      
+    }
+    
+    # Plot customization
+    p_BubblePlot = p_BubblePlot +
+      scale_color_gradientn(
+        colours = c(input$color_lowPvalue_BubblePlot, input$color_interPvalue_BubblePlot, input$color_highPvalue_BubblePlot), 
+        guide = guide_colorbar(reverse = T, order = 1)
+      ) +
+      scale_size_continuous(range = c(input$small_size_scale_BubblePlot, input$big_size_scale_BubblePlot)) +
+      labs(y = input$yLabel_BubblePlot, x = input$xLabel_BubblePlot, color = input$ColorTitle_BubblePlot, size = input$PointSizeTitleBubblePlot) +
+      plot_theme +
+      theme(
+        axis.title = element_text(size = input$labelSize_BubblePlot),
+        axis.text = element_text(size = input$tickLabelSize_BubblePlot),
+        legend.title = element_text(size = input$legendTitleSize_BubblePlot),
+        legend.text = element_text(size = input$legendTextSize_BubblePlot),
+        legend.key.size = unit(input$legendkeySize_BubblePlot, 'cm')
+      ) +
+      scale_x_continuous(limits = x_limits, breaks = x_breaks) +
+      scale_y_continuous(limits = y_limits, breaks = y_breaks)
+    
+    # Conditionally add the bold for axis and tick
+    if (input$checkbox_Axis_bold_BubblePlot) {
+      p_BubblePlot <- p_BubblePlot + theme(axis.title = element_text(face = "bold"))
+    }
+    
+    if (input$checkbox_Tick_bold_BubblePlot) {
+      p_BubblePlot <- p_BubblePlot + theme(axis.text = element_text(face = "bold"))
+    }
+    
+    # Conditionally show legend or not
+    if (!input$showLegend_BubblePlot) {
+      p_BubblePlot <- p_BubblePlot + theme(legend.position = "none")
+    }
+    
+    p_BubblePlot
+    
+  }, width = reactive({ input$plotWidth_BubblePlot }), height = reactive({ input$plotHeight_BubblePlot }), res = 72)
+  
   
   # <-- Download handlers -->
   ## Score plot
@@ -2355,6 +2714,23 @@ server <- function(input, output, session) {
         width = input$plotWidth_DotPlot * input$dpi_DotPlot / 72,  
         height = input$plotHeight_DotPlot * input$dpi_DotPlot / 72, 
         dpi = input$dpi_DotPlot, 
+        units = "px"
+      )
+    }
+  )
+  
+  ## Bubble plot
+  output$download_BubblePlot <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_BubblePlot", input$formatdownload_BubblePlot, sep = "")
+    },
+    content = function(file) {
+      ggsave(
+        file, plot = last_plot(), 
+        # Adjust height and width accordingly
+        width = input$plotWidth_BubblePlot * input$dpi_BubblePlot / 72,  
+        height = input$plotHeight_BubblePlot * input$dpi_BubblePlot / 72, 
+        dpi = input$dpi_BubblePlot, 
         units = "px"
       )
     }
