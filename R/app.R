@@ -177,7 +177,7 @@ ui <- navbarPage(
           tabPanel(
             "Save Plot",
             # Ensure the consistency with variables name in the server
-            numericInput("volcanoDPI", "DPI for Saving:", value = 300, step = 300),
+            numericInput("volcanoDPI", "Resolution (DPI):", value = 300, step = 300),
             selectInput(
               "formatdownloadVolcano", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -288,7 +288,7 @@ ui <- navbarPage(
           tabPanel(
             "Save Plot",
             
-            numericInput("dpi_HeatmapSimple", "DPI for Saving:", value = 300, step = 300),
+            numericInput("dpi_HeatmapSimple", "Resolution (DPI):", value = 300, step = 300),
             # selectInput(
             #   "formatdownload_HeatmapSimple", "Format:",
             #   choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -405,7 +405,10 @@ ui <- navbarPage(
           # Save Plot Tab
           tabPanel(
             "Save Plot",
-            numericInput("dpi_ScorePlot", "DPI for Saving:", value = 300, step = 300),
+            
+            # numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
+            # numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5),
+            numericInput("dpi_ScorePlot", "Resolution (DPI):", value = 300, step = 300),
             selectInput(
               "formatdownloadScorePlot", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -507,7 +510,7 @@ ui <- navbarPage(
           tabPanel(
             "Save Plot",
             
-            numericInput("dpi_BoxPlot", "DPI for Saving:", value = 300, step = 300),
+            numericInput("dpi_BoxPlot", "Resolution (DPI):", value = 300, step = 300),
             selectInput(
               "formatdownload_BoxPlot", "Format:",
               choices = c(".png", ".svg", ".tiff", ".pdf"),
@@ -520,6 +523,145 @@ ui <- navbarPage(
       
       mainPanel(
         plotOutput("Render_BoxPlot", width = "100%", height = "600px")
+      )
+    )
+  ),
+  
+  # Dot Plot tab
+  tabPanel(
+    title = "DotPlot",
+    
+    tags$button(
+      id = "go_to_tutorials_DotPlot",
+      class = "action-button shiny-bound-input",
+      "Back to Tutorials",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('go_to_tutorials_DotPlot', Math.random())"
+    ),
+    
+    tags$button(
+      id = "reload_app_button",
+      class = "action-button shiny-bound-input",
+      "Reset App",
+      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+    ),
+    
+    sidebarLayout(
+      sidebarPanel(
+        width = 4,
+        
+        # Tabs for different settings
+        tabsetPanel(
+          id = "DotPlottabs",
+          type = "pills",
+          
+          # Data upload
+          tabPanel(
+            "Data Upload",
+            
+            # GSEA or ORA
+            selectInput(
+              "PathwayAnalysisMode_DotPlot", "Pathway Analysis Mode:",
+              choices = c("ORA", "GSEA"),
+              selected = "ORA"
+            ),
+            
+            # Metabolomics or Transcriptomics
+            selectInput(
+              "PathwayFromOmics_DotPlot", "Using:",
+              choices = c("Metabolomics", "Transcriptomics"),
+              selected = "Transcriptomics"
+            ),
+            
+            # Use Pvalue or adjPvalue 
+            checkboxInput("checkbox_adjPvalue_DotPlot", "Adjusted P-value"),  # Get automatically from the server
+            
+            # File upload inputs
+            fileInput("PathwayDataFile_DotPlot", "Upload Pathway Results File:", accept = c(".csv"))
+          ),
+          
+          # Plot Size and Theme Tab
+          tabPanel(
+            "Plot Dimension & Themes",
+            
+            # Plot Size
+            numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
+            numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
+            
+            # Plot Theme
+            selectInput(
+              "plotTheme_DotPlot", "Plot Theme:",
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              selected = "theme_Publication"
+            )
+          ),
+          
+          # Customized Points Tab
+          tabPanel(
+            "Points",
+            
+            numericInput("small_size_scale_DotPlot", "Point Size Scale, Small:", value = 2, step = 1),
+            numericInput("big_size_scale_DotPlot", "Point Size Scale, Big:", value = 7, step = 1),
+            
+            colourInput("color_lowPvalue_DotPlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
+            colourInput("color_interPvalue_DotPlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
+            colourInput("color_highPvalue_DotPlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
+          ),
+          
+          # Legend Tab
+          tabPanel(
+            "Legend",
+            
+            numericInput("legendTitleSize_DotPlot", "Legend Title Size:", value = 15, step = 1),
+            numericInput("legendTextSize_DotPlot", "Legend Text Size:", value = 14, step = 1),
+            numericInput("legendkeySize_DotPlot", "Legend Key Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+            
+            textInput("ColorTitle_DotPlot", "Color Title:"), # value will be returned from the server
+            
+            textInput("PointSizeTitle_DotPlot", "Point Size Title:", value = "Hits Count"),
+          ),
+          
+          # Axis Labels Tab
+          tabPanel(
+            "Axis Labels",
+            textInput("xLabel_DotPlot", "X-axis Label:"), # value will be returned from the server
+            numericInput("labelSize_DotPlot", "Axis Label Size:", value = 18),
+            checkboxInput("checkbox_Axis_bold_DotPlot", "Axis Bold", value = TRUE),
+            
+            numericInput("tickLabelSize_xAxis_DotPlot", "Tick Label Size, x-Axis:", value = 13),
+            numericInput("tickLabelSize_yAxis_DotPlot", "Tick Label Size, y-Axis:", value = 15),
+            checkboxInput("checkbox_Tick_bold_DotPlot", "Tick Bold", value = FALSE),
+          ),
+          
+          # Axis Limits & Breaks Tab
+          tabPanel(
+            "Limits & Breaks",
+            numericInput("xMin_DotPlot", "X-axis Minimum:", value = NA, step = 0.1),
+            numericInput("xMax_DotPlot", "X-axis Maximum:", value = NA, step = 0.1),
+            
+            numericInput("xBreaks_DotPlot", "X-axis Breaks:", value = NA, step = 0.1)
+          ),
+          
+          # Save Plot Tab
+          tabPanel(
+            "Save Plot",
+            
+            # numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
+            # numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
+            numericInput("dpi_DotPlot", "DPI for Saving:", value = 300, step = 300),
+            selectInput(
+              "formatdownload_DotPlot", "Format:",
+              choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+              selected = ".png"
+            ),
+            downloadButton("download_DotPlot", "Download Plot")
+          ),
+        )
+      ),
+      
+      mainPanel(
+        plotOutput("Render_DotPlot", width = "auto", height = "auto")
       )
     )
   ),
@@ -965,6 +1107,38 @@ server <- function(input, output, session) {
     
   }
   
+  ## theme_Publication (for DotPlot and BubblePlot) - copy from the source code
+  theme_Publication_modifed_DotPlot <- function(base_size=14, base_family="helvetica") {
+    library(grid)
+    library(ggthemes)
+    (theme_foundation(base_size=base_size, base_family=base_family)
+      + theme(plot.title = element_text(face = "bold",
+                                        size = rel(1.2), hjust = 0.5),
+              text = element_text(),
+              panel.background = element_rect(colour = NA),
+              plot.background = element_rect(colour = NA),
+              panel.border = element_rect(colour = NA),
+              axis.title = element_text(face = "bold",size = rel(1)),
+              axis.title.y = element_text(angle = 90,vjust = 2),
+              axis.title.x = element_text(vjust = -0.2),
+              axis.text = element_text(), 
+              axis.line = element_line(colour="black"),
+              axis.ticks = element_line(),
+              panel.grid.major = element_line(colour="#f0f0f0"),
+              panel.grid.minor = element_blank(),
+              # legend.key = element_rect(colour = NA),
+              # legend.position = "bottom",
+              # legend.direction = "horizontal",
+              # legend.key.size= unit(0.2, "cm"),
+              # legend.margin = unit(0, "cm"),
+              # legend.title = element_text(face="italic"),
+              plot.margin = unit(c(10,5,5,5),"mm"),
+              strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
+              strip.text = element_text(face = "bold")
+      ))
+    
+  }
+  
   scale_fill_Publication <- function(...){
     library(scales)
     discrete_scale("fill","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
@@ -987,7 +1161,9 @@ server <- function(input, output, session) {
     # Box Plots
     expression_BoxPlot = NULL, metadata_BoxPlot= NULL, group_levels_BoxPlot = NULL,
     # Heatmap simple
-    metadata_HeatmapSimple = NULL, NormData_HeatmapSimple = NULL
+    metadata_HeatmapSimple = NULL, NormData_HeatmapSimple = NULL,
+    # Dot Plot
+    PathwayData_DotPlot = NULL
   )
   
   
@@ -1718,6 +1894,275 @@ server <- function(input, output, session) {
   }, width = reactive({ input$plotWidth_HeatmapSimple }), height = reactive({ input$plotHeight_HeatmapSimple }), res  = 72)
   
   
+  #<-- DotPlot plot Handling -->
+  library(tidyverse)
+  
+  # Observe PathwayData_DotPlot file upload
+  observeEvent(input$PathwayDataFile_DotPlot, {
+    req(input$PathwayDataFile_DotPlot)
+    values$PathwayData_DotPlot <- read.csv(input$PathwayDataFile_DotPlot$datapath, check.names = FALSE)
+  })
+  
+  # Define the Omics data and update the label of x-axis automatically based on type of Omics data
+  observeEvent(input$PathwayFromOmics_DotPlot, {
+    Input_data_DotPlot <- switch(
+      input$PathwayFromOmics_DotPlot,
+      "Transcriptomics" = "Transcriptomics",
+      "Metabolomics" = "Metabolomics"
+    )
+    
+    # Update x-axis label based on Input_data_DotPlot
+    updateTextInput(
+      session,
+      "xLabel_DotPlot",
+      value = if (Input_data_DotPlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+    )
+    
+    # Update color label based on Input_data_DotPlot
+    updateTextInput(
+      session,
+      "ColorTitle_DotPlot",
+      value = if (Input_data_DotPlot == "Transcriptomics") "Adjusted P-value" else "P-value"
+    )
+    
+    # Choose AdjPvalue by default if select Transcriptomics
+    updateTextInput(
+      session,
+      "checkbox_adjPvalue_DotPlot",
+      value = if (Input_data_DotPlot == "Transcriptomics") TRUE else FALSE
+    )
+    
+  })
+  
+  # Define the AdjPval or Pval and update the color label automatically
+  observeEvent(input$checkbox_adjPvalue_DotPlot, {
+    
+    # Update color label
+    updateTextInput(
+      session,
+      "ColorTitle_DotPlot",
+      value = if (input$checkbox_adjPvalue_DotPlot) "Adjusted P-value" else "P-value"
+    )
+    
+  })
+  
+  # Render the plot
+  output$Render_DotPlot <- renderPlot({
+    req(values$PathwayData_DotPlot)#, input$groupLevels) # Ensure data and group level input are available
+    
+    pathway_input_data = values$PathwayData_DotPlot
+    
+    # Define the theme dynamically
+    plot_theme <- switch(
+      input$plotTheme_DotPlot,
+      "theme_Publication" = theme_Publication_modifed_DotPlot(),
+      "theme_bw" = theme_bw(),
+      "theme_minimal" = theme_minimal(),
+      "theme_linedraw" = theme_linedraw(),
+      "theme_classic" = theme_classic(),
+      "theme_gray" = theme_gray(),
+    )
+    
+    # Prepare axis limits and breaks
+    x_limits <- if (!is.na(input$xMin_DotPlot) && !is.na(input$xMax_DotPlot) && input$xMin_DotPlot < input$xMax_DotPlot) c(input$xMin_DotPlot, input$xMax_DotPlot) else NULL
+    # y_limits <- if (!is.na(input$yMin_DotPlot) && !is.na(input$yMax_DotPlot) && input$yMin_DotPlot < input$yMax_DotPlot) c(input$yMin_DotPlot, input$yMax_DotPlot) else NULL
+    x_breaks <- if (!is.na(input$xBreaks_DotPlot) && !is.na(input$xMin_DotPlot) && !is.na(input$xMax_DotPlot) && input$xBreaks_DotPlot > 0) seq(from = input$xMin_DotPlot, to = input$xMax_DotPlot, by = input$xBreaks_DotPlot) else waiver()
+    # y_breaks <- if (!is.na(input$yBreaks_DotPlot) && !is.na(input$yMin_DotPlot) && !is.na(input$yMax_DotPlot) && input$yBreaks_DotPlot > 0) seq(from = input$yMin_DotPlot, to = input$yMax_DotPlot, by = input$yBreaks_DotPlot) else waiver()
+    
+    # Define the Pathway Analysis Mode
+    Pathway_analysis_mode <- switch(
+      input$PathwayAnalysisMode_DotPlot,
+      "ORA" = "ORA",
+      "GSEA" = "GSEA"
+    )
+    
+    # Define the Omics data => NOTE: also define outside (above) to update the x-axis label autonmatically
+    Input_data_DotPlot <- switch(
+      input$PathwayFromOmics_DotPlot,
+      "Transcriptomics" = "Transcriptomics",
+      "Metabolomics" = "Metabolomics"
+    )
+    
+    # Ploting
+    if (Pathway_analysis_mode == "ORA") {
+      
+      ######### For ORA #########
+      if (Input_data_DotPlot == "Transcriptomics") {
+        
+        # <-- Transcriptomics -->
+        
+        # Standardize variables name
+        names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "GeneRatio", "Pvalue", "P.adjust", "FeaturesID")
+        
+        # Check if hit count available or not. If not -> calculate based on list of FeaturesID
+        if (all(is.na(pathway_input_data$Hits_count))) {
+          pathway_input_data %>% 
+            mutate(Hits_count = sapply(strsplit(FeaturesID, "/|,|;"), length)) -> pathway_input_data
+        }
+        
+        # Add other needed variables
+        pathway_input_data %>%
+          mutate(
+            # Calculate gene ratio
+            GeneRatio = Hits_count/Total_input_gene
+          ) -> pathway_input_data
+        
+        # Get the levels of Pathways based on the GeneRatio
+        pathway_input_data %>% arrange(GeneRatio) %>% dplyr::select(Description) %>% pull() -> Description_level
+        
+        # Visualize
+        if (input$checkbox_adjPvalue_DotPlot) {
+          # Use adjPvalue for visualization
+          p_DotPlot = pathway_input_data %>% 
+            dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+            mutate(Description = factor(Description, level = Description_level)) %>% 
+            ggplot(aes(x = `GeneRatio`, y = Description)) +
+            geom_point(aes(size = Hits_count, color = P.adjust)) +
+            geom_segment(aes(xend = 0, yend = Description))
+        } else {
+          # Use Pvalue for visualization
+          p_DotPlot = pathway_input_data %>% 
+            dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+            mutate(Description = factor(Description, level = Description_level)) %>% 
+            ggplot(aes(x = `GeneRatio`, y = Description)) +
+            geom_point(aes(size = Hits_count, color = Pvalue)) +
+            geom_segment(aes(xend = 0, yend = Description))
+        }
+        
+      } else if (Input_data_DotPlot == "Metabolomics") {
+        
+        # <-- Metabolomics -->
+        
+        # Standardize the variable names
+        names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "Pathway_impact", "Pvalue", "P.adjust", "FeaturesID")
+        
+        # Check if hit count available or not. If not -> calculate based on list of FeaturesID
+        if (all(is.na(pathway_input_data$Hits_count))) {
+          pathway_input_data %>% 
+            mutate(Hits_count = sapply(strsplit(FeaturesID, "/|,|;"), length)) -> pathway_input_data
+        }
+        
+        # Get the levels of Pathways based on the Pathway_impact
+        pathway_input_data %>% arrange(Pathway_impact) %>% dplyr::select(Description) %>% pull() -> Description_level
+        
+        # Visualize
+        if (input$checkbox_adjPvalue_DotPlot) {
+          # Use adjPvalue for visualization
+          p_DotPlot = pathway_input_data %>% 
+            dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+            mutate(Description = factor(Description, level = Description_level)) %>% 
+            ggplot(aes(x = `Pathway_impact`, y = Description)) +
+            geom_point(aes(size = Hits_count, color = P.adjust)) +
+            geom_segment(aes(xend = 0, yend = Description))
+        } else {
+          # Use Pvalue for visualization
+          p_DotPlot = pathway_input_data %>% 
+            dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+            mutate(Description = factor(Description, level = Description_level)) %>% 
+            ggplot(aes(x = `Pathway_impact`, y = Description)) +
+            geom_point(aes(size = Hits_count, color = Pvalue)) +
+            geom_segment(aes(xend = 0, yend = Description))
+        }
+        
+      }
+      
+    } else if (
+      (Pathway_analysis_mode == "GSEA") & (Input_data_DotPlot == "Transcriptomics")
+    ) {
+      
+      ######### For GSEA #########
+      
+      # Standardize the variable names
+      names(pathway_input_data) = c("Description", "Set_size", "Hits_count", "Enrichment_score", "Normalized_enrichment_score", "Pvalue", "P.adjust", "FeaturesID")
+      
+      # Check if hit count available or not. If not -> calculate based on list of FeaturesID
+      if (all(is.na(pathway_input_data$Hits_count))) {
+        pathway_input_data %>% 
+          mutate(Hits_count = sapply(strsplit(FeaturesID, "/|,|;"), length)) -> pathway_input_data
+      }
+      
+      # Add other needed variables
+      if (!all(is.na(pathway_input_data$Normalized_enrichment_score))) {
+        #### Results from clusterProfiler  ####
+        pathway_input_data %>%
+          mutate(
+            # Calculate gene ratio
+            GeneRatio = Hits_count/Set_size,
+            # # Assign to Activated or Suppressed group
+            Sign = ifelse(Normalized_enrichment_score < 0, "Suppressed", "Activated")
+          ) -> pathway_input_data
+      } else {
+        #### Results from ExpressAnalyst  ####
+        pathway_input_data %>%
+          mutate(
+            # Calculate gene ratio
+            GeneRatio = Hits_count/Set_size,
+            # # Assign to Activated or Suppressed group
+            Sign = ifelse(Enrichment_score < 0, "Suppressed", "Activated")
+          ) -> pathway_input_data
+      }
+      
+      # Get the levels of Pathways based on the GeneRatio
+      pathway_input_data %>% arrange(GeneRatio) %>% dplyr::select(Description) %>% pull() -> Description_level
+      
+      # Option to use adjPval or not
+      # Visualize
+      if (input$checkbox_adjPvalue_DotPlot) {
+        # Use adjPvalue for visualization
+        p_DotPlot = pathway_input_data %>% 
+          dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+          mutate(Description = factor(Description, level = Description_level)) %>% 
+          ggplot(aes(x = `GeneRatio`, y = Description)) +
+          geom_point(aes(size = Hits_count, color = P.adjust)) +
+          geom_segment(aes(xend = 0, yend = Description)) +
+          facet_wrap(vars(Sign))
+      } else {
+        # Use Pvalue for visualization
+        p_DotPlot = pathway_input_data %>% 
+          dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+          mutate(Description = factor(Description, level = Description_level)) %>% 
+          ggplot(aes(x = `GeneRatio`, y = Description)) +
+          geom_point(aes(size = Hits_count, color = Pvalue)) +
+          geom_segment(aes(xend = 0, yend = Description)) +
+          facet_wrap(vars(Sign))
+      }
+      
+    }
+    
+    # Plot customization
+    p_DotPlot = p_DotPlot +
+      scale_color_gradientn(
+        colours = c(input$color_lowPvalue_DotPlot, input$color_interPvalue_DotPlot, input$color_highPvalue_DotPlot), 
+        guide = guide_colorbar(reverse = T, order = 1)
+      ) +
+      scale_size_continuous(range = c(input$small_size_scale_DotPlot, input$big_size_scale_DotPlot)) +
+      labs(y = "", x = input$xLabel_DotPlot, color = input$ColorTitle_DotPlot, size = input$PointSizeTitle_DotPlot) +
+      plot_theme +
+      theme(
+        axis.title.x = element_text(size = input$labelSize_DotPlot),
+        axis.text.x = element_text(size = input$tickLabelSize_xAxis_DotPlot),
+        axis.text.y = element_text(size = input$tickLabelSize_yAxis_DotPlot),
+        legend.title = element_text(size = input$legendTitleSize_DotPlot),
+        legend.text = element_text(size = input$legendTextSize_DotPlot),
+        legend.key.size = unit(input$legendkeySize_DotPlot, 'cm')
+      ) +
+      scale_x_continuous(limits = x_limits, breaks = x_breaks)
+    
+    # Conditionally add the bold for axis and tick
+    if (input$checkbox_Axis_bold_DotPlot) {
+      p_DotPlot <- p_DotPlot + theme(axis.title = element_text(face = "bold"))
+    }
+    
+    if (input$checkbox_Tick_bold_DotPlot) {
+      p_DotPlot <- p_DotPlot + theme(axis.text = element_text(face = "bold"))
+    }
+    
+    p_DotPlot
+    
+  }, width = reactive({ input$plotWidth_DotPlot }), height = reactive({ input$plotHeight_DotPlot }), res = 72)
+  
+  
+  
   # <-- Download handlers -->
   ## Score plot
   output$downloadScorePlot <- downloadHandler(
@@ -1895,6 +2340,23 @@ server <- function(input, output, session) {
       
       
       dev.off()
+    }
+  )
+  
+  ## Dot plot
+  output$download_DotPlot <- downloadHandler(
+    filename = function() {
+      paste(gsub("-", "_", Sys.Date()), "_DotPlot", input$formatdownload_DotPlot, sep = "")
+    },
+    content = function(file) {
+      ggsave(
+        file, plot = last_plot(), 
+        # Adjust height and width accordingly
+        width = input$plotWidth_DotPlot * input$dpi_DotPlot / 72,  
+        height = input$plotHeight_DotPlot * input$dpi_DotPlot / 72, 
+        dpi = input$dpi_DotPlot, 
+        units = "px"
+      )
     }
   )
   
