@@ -53,7 +53,7 @@ ui <- navbarPage(
         ),
         
         tags$p("\n"),
-        img(src = "https://drive.google.com/thumbnail?id=1-Xzh6vEfQF-B30I4Dk2JFDmwhte6Ye_T", height = "500px")
+        img(src = "https://drive.google.com/thumbnail?id=12PUIle3BBlG8mCLfBd2uLNqXze_Nszyu", height = "500px")
         
       )
     )
@@ -135,13 +135,13 @@ ui <- navbarPage(
             numericInput("pointSize_Volcano", "Point Size:", value = 1.6, step = 0.5),
             
             # legend
-            checkboxInput("Show_legend_Volcano", "Show legend", value = FALSE),
-            numericInput("legendLabSize_Volcano", "Legend Title Size:", value = 24),
+            checkboxInput("Show_legend_Volcano", "Show legend", value = TRUE),
+            numericInput("legendTextSize_Volcano", "Legend Text Size:", value = 12),
             numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6),
             
             selectInput(
               "plotTheme_Volcano", "Plot Theme:",
-              choices = c("none"),#, "theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
               selected = "none"
             )
           ),
@@ -529,7 +529,7 @@ ui <- navbarPage(
   
   # Dot Plot tab
   tabPanel(
-    title = "DotPlot",
+    title = "Dot Plot",
     
     tags$button(
       id = "go_to_tutorials_DotPlot",
@@ -615,7 +615,7 @@ ui <- navbarPage(
             
             numericInput("legendTitleSize_DotPlot", "Legend Title Size:", value = 15, step = 1),
             numericInput("legendTextSize_DotPlot", "Legend Text Size:", value = 14, step = 1),
-            numericInput("legendkeySize_DotPlot", "Legend Key Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+            numericInput("legendkeySize_DotPlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
             
             textInput("ColorTitle_DotPlot", "Color Title:"), # value will be returned from the server
             
@@ -668,7 +668,7 @@ ui <- navbarPage(
   
   # BubblePlot Tab
   tabPanel(
-    title = "BubblePlot",
+    title = "Bubble Plot",
     
     tags$button(
       id = "go_to_tutorials_BubblePlot",
@@ -749,7 +749,7 @@ ui <- navbarPage(
             
             numericInput("legendTitleSize_BubblePlot", "Legend Title Size:", value = 18, step = 1),
             numericInput("legendTextSize_BubblePlot", "Legend Text Size:", value = 15, step = 1),
-            numericInput("legendkeySize_BubblePlot", "Legend Key Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+            numericInput("legendkeySize_BubblePlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
             
             textInput("ColorTitle_BubblePlot", "Color Title:"), # value will be returned from the server
             
@@ -832,13 +832,13 @@ ui <- navbarPage(
             tabPanel("Heatmap", value = "HeatmapSimple_infor"),
             tabPanel("Scores PLot", value = "ScoresPlot_infor"),
             tabPanel("Box PLot", value = "BoxPlot_infor"),
-            # tabPanel("Dot Plot", value = "DotPlot_info"),
-            # tabPanel("Bubble Plot", value = "Bubble_info")
+            tabPanel("Dot Plot", value = "DotPlot_infor"),
+            tabPanel("Bubble Plot", value = "BubblePlot_infor")
           )
           #)
         ),
         column(
-          width = 9,
+          width = 8,
           uiOutput("TutorialsContent")
         )
       )
@@ -881,6 +881,16 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, inputId = "introTab", selected = "BoxPlot_infor")  # Then, go to Volcano Plot sub-tab
   })
   
+  observeEvent(input$go_to_tutorials_DotPlot, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "DotPlot_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
+  observeEvent(input$go_to_tutorials_BubblePlot, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")  # Go to Tutorials tab
+    updateTabsetPanel(session, inputId = "introTab", selected = "BubblePlot_infor")  # Then, go to Volcano Plot sub-tab
+  })
+  
   ## Go to Volcano Plot module
   observeEvent(input$go_to_VolcanoPlot_module, {
     updateTabsetPanel(session, inputId = "navbar", selected = "Volcano Plot")
@@ -899,6 +909,16 @@ server <- function(input, output, session) {
   ## Go to Box Plot module
   observeEvent(input$go_to_BoxPlot_module, {
     updateTabsetPanel(session, inputId = "navbar", selected = "Box Plot")
+  })
+  
+  ## Go to Dot Plot module
+  observeEvent(input$go_to_DotPlot_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Dot Plot")
+  })
+  
+  ## Go to Bubble Plot module
+  observeEvent(input$go_to_BubblePlot_module, {
+    updateTabsetPanel(session, inputId = "navbar", selected = "Bubble Plot")
   })
   
   #<-- Dynamic content for Introduction tab Handling -->
@@ -1011,7 +1031,7 @@ server <- function(input, output, session) {
         )
       )
       
-    } else {
+    } else if (input$introTab == "BoxPlot_infor") {
       
       tagList(
         tags$main(
@@ -1041,7 +1061,75 @@ server <- function(input, output, session) {
         )
       )
       
+    } else if (input$introTab == "DotPlot_infor") {
+      
+      tagList(
+        tags$main(
+          tags$h3("Dot plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=126HZDZ1pwZ4R6qwgPaOWJxpvEwJ0_JXp", height = "300px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          downloadLink("download_DotPlot_Tutorial_pdf", "Link to download (Not available, Update later)"),
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("The input data are e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst"),
+          tags$h6("Note: Column order need to be identical with example data (if the information is unavailable, leave it empty). Column names can be different"),
+          tags$p("\n"),
+          downloadLink("download_DotPlot_ExampleGSEA_1", "Link to download example GSEA-derived pathway data: Example 1,"),  # Link to the example data
+          downloadLink("download_DotPlot_ExampleGSEA_2", "Example 2"),
+          tags$p("\n"),
+          downloadLink("download_DotPlot_ExampleORA_1", "Link to download example ORA-derived pathway data: Example 1,"),
+          downloadLink("download_DotPlot_ExampleORA_2", "Example 2"),
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_DotPlot_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your amazing plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_DotPlot_module', Math.random())"
+          )
+        )
+      )
+      
+    } else if (input$introTab == "BubblePlot_infor") {
+      
+      tagList(
+        tags$main(
+          tags$h3("Bubble plot"),
+          
+          img(src = "https://drive.google.com/thumbnail?id=1292cIWMe3LIjavag3V1aBLw75g7bnFSv", height = "300px"),
+          
+          tags$h4("First, download a step-by-step guide"),
+          downloadLink("download_BubblePlot_Tutorial_pdf", "Link to download (Not available, Update later)"),
+          
+          tags$h4("Next, prepare the input data"),
+          
+          tags$p("The input data are e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst"),
+          tags$h6("Note: Column order need to be identical with example data (if the information is unavailable, leave it empty). Column names can be different"),
+          tags$p("\n"),
+          
+          downloadLink("download_BubblePlot_ExampleORA_1", "Link to download example Metabolomics-derived pathway data"),  # Link to the example data
+          tags$p("\n"),
+          downloadLink("download_BubblePlot_ExampleORA_2", "Link to download example Transcriptomics-derived pathway data"),
+          
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_BubblePlot_module",
+            class = "action-button shiny-bound-input",
+            "Click here to make your amazing plot",
+            style = "font-size: 20px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_BubblePlot_module', Math.random())"
+          )
+        )
+      )
+      
     }
+    
   })
   
   
@@ -1214,6 +1302,131 @@ server <- function(input, output, session) {
       )
     }
   )
+  
+  # Dot Plot
+  ## Example 1 data - GSEA - clusterProfiler
+  output$download_DotPlot_ExampleGSEA_1 <- downloadHandler(
+    filename = function() {
+      "DotPlot_ExampleGSEA_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12HKJacKLBwhXmQs184MCidczKgg4N6Om", 
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Example 2 data - GSEA - ExpressAnalyst
+  output$download_DotPlot_ExampleGSEA_2 <- downloadHandler(
+    filename = function() {
+      "DotPlot_ExampleGSEA_2.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12NVDJM-0G23ekUXvJcJUDwutCDgfpPhk",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Example 1 data - ORA - ExpressAnalyst
+  output$download_DotPlot_ExampleORA_1 <- downloadHandler(
+    filename = function() {
+      "DotPlot_BubblePlot_ExampleORA_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12GJzca4ETuyC308eLyc3K-4q0pt7yCUJ",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Example 2 data - ORA - MetaboAnalyst
+  output$download_DotPlot_ExampleORA_2 <- downloadHandler(
+    filename = function() {
+      "DotPlot_BubblePlot_ExampleORA_2.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12LoaTHegT-LSxcIrV1ZVA6DAB2MDAuL8",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # ## Tutorial
+  # output$download_DotPlot_Tutorial_pdf <- downloadHandler(
+  #   filename = function() {
+  #     "EasyPubPlot_Tutorials_DotPlot.pdf"  # Name of the file to be downloaded
+  #   },
+  #   content = function(file) {
+  #     # Download the file from Google Drive and save it to 'file'
+  #     download.file(
+  #       url = "https://drive.google.com/uc?export=download&id=",
+  #       destfile = file,
+  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
+  #     )
+  #   }
+  # 
+  # )
+  
+  # Bubble Plot
+  ## Example 1 data - ORA - ExpressAnalyst
+  output$download_BubblePlot_ExampleORA_1 <- downloadHandler(
+    filename = function() {
+      "BubblePlot_BubblePlot_ExampleORA_1.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12GJzca4ETuyC308eLyc3K-4q0pt7yCUJ",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  ## Example 2 data - ORA - MetaboAnalyst
+  output$download_BubblePlot_ExampleORA_2 <- downloadHandler(
+    filename = function() {
+      "BubblePlot_BubblePlot_ExampleORA_2.csv"  # Name of the file to be downloaded
+    },
+    content = function(file) {
+      # Download the file from Google Drive and save it to 'file'
+      download.file(
+        url = "https://drive.google.com/uc?export=download&id=12LoaTHegT-LSxcIrV1ZVA6DAB2MDAuL8",
+        destfile = file,
+        mode = "wb"  # 'wb' mode to handle binary files like PDFs
+      )
+    }
+  )
+  
+  # ## Tutorial
+  # output$download_BubblePlot_Tutorial_pdf <- downloadHandler(
+  #   filename = function() {
+  #     "EasyPubPlot_Tutorials_BubblePlot.pdf"  # Name of the file to be downloaded
+  #   },
+  #   content = function(file) {
+  #     # Download the file from Google Drive and save it to 'file'
+  #     download.file(
+  #       url = "https://drive.google.com/uc?export=download&id=",
+  #       destfile = file,
+  #       mode = "wb"  # 'wb' mode to handle binary files like PDFs
+  #     )
+  #   }
+  #   
+  # )
+  
   
   #<-- Define some background function -->
   ## theme_Publication - copy from the source code
@@ -1505,7 +1718,7 @@ server <- function(input, output, session) {
     # Define the theme dynamically
     plot_theme <- switch(
       input$plotTheme_Volcano,
-      "theme_Publication" = theme_Publication(), 
+      "theme_Publication" = theme_Publication_modifed_DotPlot(), 
       "theme_bw" = theme_bw(), 
       "theme_minimal" = theme_minimal(),
       "theme_linedraw" = theme_linedraw(), 
@@ -1560,7 +1773,7 @@ server <- function(input, output, session) {
           boxedLabels = FALSE,
           colAlpha = 0.48,
           colCustom = keyvals2,
-          legendLabSize = input$legendLabSize_Volcano,
+          # legendLabSize = input$legendTextSize_Volcano,
           legendIconSize = input$legendIconSize_Volcano,
           drawConnectors = FALSE,
           subtitle = "",
@@ -1593,7 +1806,7 @@ server <- function(input, output, session) {
           boxedLabels = FALSE,
           colAlpha = 0.48,
           colCustom = keyvals2,
-          legendLabSize = input$legendLabSize_Volcano,
+          # legendLabSize = input$legendTextSize_Volcano,
           legendIconSize = input$legendIconSize_Volcano,
           drawConnectors = FALSE,
           subtitle = "",
@@ -1614,34 +1827,35 @@ server <- function(input, output, session) {
     
     # Call the volcano plot function
     draw_volcano(values$volcanoData, FC_cut_of = input$FC_cut_off_Volcano, FDR_cut_of = input$FDR_cut_off_Volcano) + 
-      ggplot2::theme(legend.position = "none") +
+      plot_theme +
       ggplot2::theme(
         axis.title.x = element_text(size = input$labelSize_Volcano),
         axis.title.y = element_text(size = input$labelSize_Volcano),
         axis.text.x = element_text(size = input$tickLabelSize_Volcano),
-        axis.text.y = element_text(size = input$tickLabelSize_Volcano)
+        axis.text.y = element_text(size = input$tickLabelSize_Volcano),
+        legend.title = element_blank(),
+        legend.text = element_text(size = input$legendTextSize_Volcano)
       ) +
       ggplot2::scale_x_continuous(limits = x_limits, breaks = x_breaks) +
       ggplot2::scale_y_continuous(limits = y_limits, breaks = y_breaks) -> p_volcano
     
     # Show legend or nor
-    if (input$Show_legend_Volcano) {
-      p_volcano + ggplot2::theme(legend.position = "top",
-                                 legend.title = element_blank()) -> p_volcano
+    if (!(input$Show_legend_Volcano)) {
+      p_volcano + ggplot2::theme(legend.position = "none") -> p_volcano
     }
     
-    ## If select other themes
-    if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano) {
-      p_volcano + 
-        plot_theme + 
-        ggplot2::theme(legend.position = "top", legend.title = element_blank()) -> p_volcano
-    } 
-    
-    if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano == FALSE){
-      p_volcano + 
-        plot_theme + 
-        ggplot2::theme(legend.position = "none") -> p_volcano
-    }
+    # ## If select other themes
+    # if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano) {
+    #   p_volcano + 
+    #     plot_theme + 
+    #     ggplot2::theme(legend.position = "top", legend.title = element_blank()) -> p_volcano
+    # } 
+    # 
+    # if (input$plotTheme_Volcano != "none" & input$Show_legend_Volcano == FALSE){
+    #   p_volcano + 
+    #     plot_theme + 
+    #     ggplot2::theme(legend.position = "none") -> p_volcano
+    # }
     
     # Conditionally add the bold for axis and tick
     if (input$checkbox_Axis_bold_Volcano) {
