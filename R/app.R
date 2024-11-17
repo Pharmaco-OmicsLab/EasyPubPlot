@@ -5,848 +5,886 @@ library(tidyverse)
 library(bslib)
 
 # Define UI
-ui <- navbarPage(
-  title = "EasyPubPlot",
-  id = "navbar",  # Set an ID here for reference
-  theme = bs_theme(
-    version = 4,
-    bootswatch = "lux",
-    primary = "#47B0C3",
-    base_font = font_google("Roboto")
-  ),
-  
-  # Introduction Tab
-  tabPanel(
-    title = "Introduction",
-    tagList(
-      # Use with action link below to customize its UI
-      #   tags$head(
-      #     tags$style(HTML("
-      #   .clickable-link {
-      #     color: blue;
-      #     text-decoration: underline;
-      #     cursor: pointer;
-      #   }
-      #   .clickable-link:hover {
-      #     color: darkblue;
-      #   }
-      # "))
-      #   ),
-      
-      tags$main(
-        tags$h2("EasyPubPlot - Easy and Publishable Plotting"),
-        tags$p(
-          "EasyPubPlot provides an interactive and customizable tools to easily",
-          "create publishable plots for scientific papers"
-        ),
-        # actionLink("go_to_tutorials",
-        #            tags$h4("Click here to start", class = "clickable-link")),  # Clickable text
-        
-        tags$p("\n"),
-        
-        tags$button(
-          id = "go_to_tutorials",
-          class = "action-button shiny-bound-input",
-          "Click here to start",
-          style = "font-size: 20px; font-weight: bold; padding: 10px 20px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-          onclick = "Shiny.setInputValue('go_to_tutorials', Math.random())"
-        ),
-        
-        tags$p("\n"),
-        img(src = "https://drive.google.com/thumbnail?id=12PUIle3BBlG8mCLfBd2uLNqXze_Nszyu", height = "500px")
-        
-      )
-    )
-  ),
-  
-  # Volcano Plot Tab
-  tabPanel(
-    title = "Volcano Plot",
+ui <- fluidPage(
+  # Custom CSS
+  tags$style(HTML("
     
-    tags$button(
-      id = "go_to_tutorials_VolcanoPlot",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_VolcanoPlot', Math.random())"
+    /* Customzie sidebarLayout */
+    .well {
+      border-radius: 15px; /* Rounded corners for sidebar panel */
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for sidebar panel */
+      background-color: #f8f9fa; /* Optional: Lighten the background */
+      padding: 15px;
+    }
+    
+    /* Prevent tab titles from being upper case */
+    .navbar-nav .nav-link {
+        text-transform: none; /* Ensure text is displayed in original case */
+        font-size: 18px; /* Change to increase font size */
+    }
+    
+    /* Customzie hearder font of tabPanel */
+    .navbar-brand {
+      text-transform: none !important; /* Prevent uppercase for the title */
+      font-size: 30px; /* Change to increase font size */
+    }
+    h2, h3, h4, h5, h6 {
+      text-transform: none !important; /* Prevent uppercase for headers */
+    }
+    
+    h6 {
+      font-size: 15px; /* Change to increase font size */
+    }
+
+  ")),
+  
+  
+  navbarPage(
+    title = "EasyPubPlot",
+    id = "navbar",  # Set an ID here for reference
+    theme = bs_theme(
+      version = 4,
+      bootswatch = "lux",
+      primary = "#47B0C3",
+      base_font = font_google("Roboto")
     ),
     
-    # This work but not beautiful
-    # actionButton("reload_app_button", "Reset App",
-    #              style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
+    # Introduction Tab
+    tabPanel(
+      title = "Introduction",
+      tagList(
+        # Use with action link below to customize its UI
+        #   tags$head(
+        #     tags$style(HTML("
+        #   .clickable-link {
+        #     color: blue;
+        #     text-decoration: underline;
+        #     cursor: pointer;
+        #   }
+        #   .clickable-link:hover {
+        #     color: darkblue;
+        #   }
+        # "))
+        #   ),
         
-        # Controls for the Volcano Plot
-        tabsetPanel(
-          id = "volcanoTabs",
-          type = "pills",
+        tags$main(
+          tags$h2("EasyPubPlot - Easy and Publishable Plotting"),
+          tags$p(
+            "EasyPubPlot provides an interactive and customizable tools to easily",
+            "create publishable plots for scientific papers"
+          ),
+          # actionLink("go_to_tutorials",
+          #            tags$h4("Click here to start", class = "clickable-link")),  # Clickable text
           
-          # File upload inputs for Volcano Plot
-          tabPanel(
-            "Data Upload",
-            fileInput("volcanoFile", "Upload STAT Results File:", accept = c(".csv"))
+          tags$p("\n"),
+          
+          tags$button(
+            id = "go_to_tutorials",
+            class = "action-button shiny-bound-input",
+            "Click here to start",
+            style = "font-size: 20px; font-weight: bold; padding: 10px 20px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+            onclick = "Shiny.setInputValue('go_to_tutorials', Math.random())"
           ),
           
-          # Plot Dimension Tab
-          tabPanel(
-            "Plot Dimension",
-            
-            numericInput("plotWidth_Volcano", "Width (in pixels):", value = 800, step = 5),
-            numericInput("plotHeight_Volcano", "Height (in pixels):", value = 600, step = 5)
-          ),
-          
-          # Cut-offs Tab
-          tabPanel(
-            "Cut-offs",
-            
-            numericInput("FDR_cut_off_Volcano", "(adj) P-value Cut-off:", min = 0, max = 10, value = 0.05, step = 0.01),
-            numericInput("FC_cut_off_Volcano", "Fold Change Cut-off:", min = 0, max = 500, value = 1.5, step = 0.5),
-            
-            # caption
-            # checkboxInput("Show_caption_Volcano", "Show caption", value = TRUE),
-            textInput("caption_Volcano", "Caption:", value = "FC cut-off, 1.5; FDR cut-off, 0.05"),
-            numericInput("captionLabSize_Volcano", "Caption Size:", value = 20)
-            
-          ),
-          
-          tabPanel(
-            "Themes & Colors",
-            
-            selectInput(
-              "plotTheme_Volcano", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "none"
-            ),
-            
-            colourInput("color_NotSig_Volcano", "Not Significant Color:", value = "#848484"),
-            colourInput("color_DownFDR_Volcano", "(adj) P-value, Down-regulation Color:", value = "#BCF1B9"),
-            colourInput("color_UpFDR_Volcano", "(adj) P-value, Up-regulation:", value = "#FEB0B0"),
-            colourInput("color_DownFDR_FC_Volcano", "(adj) P-value & FC, Down-regulation):", value = "#5FDD59"),
-            colourInput("color_UpFDR_FC_Volcano", "(adj) P-value & FC, Up-regulation):", value = "#FE5E5E")
-            
-          ),
-          
-          # Plot Appearance
-          tabPanel(
-            "Points & Legends",
-            numericInput("pointSize_Volcano", "Point Size:", value = 1.6, step = 0.5),
-            
-            # legend
-            checkboxInput("Show_legend_Volcano", "Show legend", value = TRUE),
-            numericInput("legendTextSize_Volcano", "Legend Text Size:", value = 12),
-            numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6)
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("xLabel_Volcano", "X-axis Label:", value = "log2(FC)"),
-            textInput("yLabel_Volcano", "Y-axis Label:", value = "-log10(FDR)"),
-            numericInput("labelSize_Volcano", "Axis Label Size:", value = 24),
-            checkboxInput("checkbox_Axis_bold_Volcano", "Axis bold", value = TRUE),
-            
-            numericInput("tickLabelSize_Volcano", "Tick Label Size:", value = 20),
-            checkboxInput("checkbox_Tick_bold_Volcano", "Tick bold", value = FALSE)
-          ),
-          
-          # Axis Limits & Breaks Tab
-          tabPanel(
-            "Axis Limits",
-            numericInput("xMin_Volcano", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("xMax_Volcano", "X-axis Maximum:", value = NA, step = 0.1),
-            numericInput("yMin_Volcano", "Y-axis Minimum:", value = NA, step = 0.1),
-            numericInput("yMax_Volcano", "Y-axis Maximum:", value = NA, step = 0.1)
-          ),
-          
-          tabPanel(
-            "Axis Breaks",
-            numericInput("xBreaks_Volcano", "X-axis Breaks:", value = NA, step = 0.1),
-            numericInput("yBreaks_Volcano", "Y-axis Breaks:", value = NA, step = 0.1)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            # Ensure the consistency with variables name in the server
-            numericInput("volcanoDPI", "Resolution (DPI):", value = 300, step = 300),
-            selectInput(
-              "formatdownloadVolcano", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf"),
-              selected = ".png"
-            ),
-            downloadButton("download_VolcanoPlot", "Download Plot")
+          tags$p("\n"),
+          div(
+            img(src = "https://drive.google.com/thumbnail?id=12PUIle3BBlG8mCLfBd2uLNqXze_Nszyu", height = "500px"),
+            style = "text-align: center;"
           )
         )
+      )
+    ),
+    
+    # Volcano Plot Tab
+    tabPanel(
+      title = "Volcano Plot",
+      
+      tags$button(
+        id = "go_to_tutorials_VolcanoPlot",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_VolcanoPlot', Math.random())"
       ),
       
-      mainPanel(
-        plotOutput("Render_volcanoPlot", width = "100%", height = "600px")
-      )
-    )
-  ),
-  
-  # Heatmap tap
-  tabPanel(
-    title = "Heatmap",
-    
-    tags$button(
-      id = "go_to_tutorials_HeatmapSimple",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_HeatmapSimple', Math.random())"
-    ),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
+      # This work but not beautiful
+      # actionButton("reload_app_button", "Reset App",
+      #              style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
+          
+          # Controls for the Volcano Plot
+          tabsetPanel(
+            id = "volcanoTabs",
+            type = "pills",
+            
+            # File upload inputs for Volcano Plot
+            tabPanel(
+              "Data Upload",
+              fileInput("volcanoFile", "Upload STAT Results File:", accept = c(".csv"))
+            ),
+            
+            # Plot Dimension Tab
+            tabPanel(
+              "Plot Dimension",
+              
+              numericInput("plotWidth_Volcano", "Width (in pixels):", value = 800, step = 5),
+              numericInput("plotHeight_Volcano", "Height (in pixels):", value = 600, step = 5)
+            ),
+            
+            # Cut-offs Tab
+            tabPanel(
+              "Cut-offs",
+              
+              numericInput("FDR_cut_off_Volcano", "(adj) P-value Cut-off:", min = 0, max = 10, value = 0.05, step = 0.01),
+              numericInput("FC_cut_off_Volcano", "Fold Change Cut-off:", min = 0, max = 500, value = 1.5, step = 0.5),
+              
+              # caption
+              # checkboxInput("Show_caption_Volcano", "Show caption", value = TRUE),
+              textInput("caption_Volcano", "Caption:", value = "FC cut-off, 1.5; FDR cut-off, 0.05"),
+              numericInput("captionLabSize_Volcano", "Caption Size:", value = 20)
+              
+            ),
+            
+            tabPanel(
+              "Themes & Colors",
+              
+              selectInput(
+                "plotTheme_Volcano", "Plot Theme:",
+                choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+                selected = "none"
+              ),
+              
+              colourInput("color_NotSig_Volcano", "Not Significant Color:", value = "#848484"),
+              colourInput("color_DownFDR_Volcano", "(adj) P-value, Down-regulation Color:", value = "#BCF1B9"),
+              colourInput("color_UpFDR_Volcano", "(adj) P-value, Up-regulation:", value = "#FEB0B0"),
+              colourInput("color_DownFDR_FC_Volcano", "(adj) P-value & FC, Down-regulation):", value = "#5FDD59"),
+              colourInput("color_UpFDR_FC_Volcano", "(adj) P-value & FC, Up-regulation):", value = "#FE5E5E")
+              
+            ),
+            
+            # Plot Appearance
+            tabPanel(
+              "Points & Legends",
+              numericInput("pointSize_Volcano", "Point Size:", value = 1.6, step = 0.5),
+              
+              # legend
+              checkboxInput("Show_legend_Volcano", "Show legend", value = TRUE),
+              numericInput("legendTextSize_Volcano", "Legend Text Size:", value = 12),
+              numericInput("legendIconSize_Volcano", "Legend Icon Size:", value = 6)
+            ),
+            
+            # Axis Labels Tab
+            tabPanel(
+              "Axis Labels",
+              textInput("xLabel_Volcano", "X-axis Label:", value = "log2(FC)"),
+              textInput("yLabel_Volcano", "Y-axis Label:", value = "-log10(FDR)"),
+              numericInput("labelSize_Volcano", "Axis Label Size:", value = 24),
+              checkboxInput("checkbox_Axis_bold_Volcano", "Axis bold", value = TRUE),
+              
+              numericInput("tickLabelSize_Volcano", "Tick Label Size:", value = 20),
+              checkboxInput("checkbox_Tick_bold_Volcano", "Tick bold", value = FALSE)
+            ),
+            
+            # Axis Limits & Breaks Tab
+            tabPanel(
+              "Axis Limits",
+              numericInput("xMin_Volcano", "X-axis Minimum:", value = NA, step = 0.1),
+              numericInput("xMax_Volcano", "X-axis Maximum:", value = NA, step = 0.1),
+              numericInput("yMin_Volcano", "Y-axis Minimum:", value = NA, step = 0.1),
+              numericInput("yMax_Volcano", "Y-axis Maximum:", value = NA, step = 0.1)
+            ),
+            
+            tabPanel(
+              "Axis Breaks",
+              numericInput("xBreaks_Volcano", "X-axis Breaks:", value = NA, step = 0.1),
+              numericInput("yBreaks_Volcano", "Y-axis Breaks:", value = NA, step = 0.1)
+            ),
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              # Ensure the consistency with variables name in the server
+              numericInput("volcanoDPI", "Resolution (DPI):", value = 300, step = 300),
+              selectInput(
+                "formatdownloadVolcano", "Format:",
+                choices = c(".png", ".svg", ".tiff", ".pdf"),
+                selected = ".png"
+              ),
+              downloadButton("download_VolcanoPlot", "Download Plot")
+            )
+          )
+        ),
         
-        # Tabs for different settings
-        tabsetPanel(
-          id = "HeatmapSimpletabs",
-          type = "pills",
+        mainPanel(
+          plotOutput("Render_volcanoPlot", width = "100%", height = "600px")
+        )
+      )
+    ),
+    
+    # Heatmap tap
+    tabPanel(
+      title = "Heatmap",
+      
+      tags$button(
+        id = "go_to_tutorials_HeatmapSimple",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_HeatmapSimple', Math.random())"
+      ),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
           
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            # File upload inputs
-            fileInput("metadataFile_HeatmapSimple", "Upload Metadata File:", accept = c(".csv")),
-            fileInput("NormDataFile_HeatmapSimple", "Upload Normalized Data File:", accept = c(".csv"))
-          ),
-          
-          # Group Tab
-          tabPanel(
-            "Plot Appearance",
-            # Group Color => Use dynamical
-            uiOutput("groupLevelSelector_HeatmapSimple"),  # Cannot change group order in the ComplexHeatmap
-            uiOutput("dynamicColorInputs_HeatmapSimple"),
-            uiOutput("dynamicLegendInputs_HeatmapSimple")
-          ),
-          
-          # Plot Dimension Tab
-          tabPanel(
-            "Plot Dimension",
+          # Tabs for different settings
+          tabsetPanel(
+            id = "HeatmapSimpletabs",
+            type = "pills",
             
-            numericInput("plotWidth_HeatmapSimple", "Width (in pixels):", value = 300, step = 5),
-            numericInput("plotHeight_HeatmapSimple", "Height (in pixels):", value = 600, step = 5),
-          ),
-          
-          # Colors Tab
-          tabPanel(
-            "Heatmap Colors",
-            # Heatmap Color and Scale
-            colourInput("color_DownHeatmap_HeatmapSimple", "Down-regulation Color:", value = "#23446f"),
-            colourInput("color_UnchangedHeatmap_HeatmapSimple", "Unchange Color:", value = "white"),
-            colourInput("color_UpHeatmap_HeatmapSimple", "Up-regulation Color:", value = "#ad190d"),
-            numericInput("color_scaleHeatmap_HeatmapSimple", "Color Scale:", value = 2, step = 0.5)
-          ),
-          
-          # Text Size Tab
-          tabPanel(
-            "Text & Size",
-            # Feature Text Size
-            numericInput("size_Features_HeatmapSimple", "Features Size:", value = 12),
-            checkboxInput("checkbox_italicFeatures_HeatmapSimple", "Italic Text", value = FALSE),
+            # Data upload
+            tabPanel(
+              "Data Upload",
+              # File upload inputs
+              fileInput("metadataFile_HeatmapSimple", "Upload Metadata File:", accept = c(".csv")),
+              fileInput("NormDataFile_HeatmapSimple", "Upload Normalized Data File:", accept = c(".csv"))
+            ),
             
-            # Top level
-            # numericInput("size_TopAnnotation_HeatmapSimple", "Top Annotation Size, top:", value = 16),
+            # Group Tab
+            tabPanel(
+              "Plot Appearance",
+              # Group Color => Use dynamical
+              uiOutput("groupLevelSelector_HeatmapSimple"),  # Cannot change group order in the ComplexHeatmap
+              uiOutput("dynamicColorInputs_HeatmapSimple"),
+              uiOutput("dynamicLegendInputs_HeatmapSimple")
+            ),
+            
+            # Plot Dimension Tab
+            tabPanel(
+              "Plot Dimension",
+              
+              numericInput("plotWidth_HeatmapSimple", "Width (in pixels):", value = 300, step = 5),
+              numericInput("plotHeight_HeatmapSimple", "Height (in pixels):", value = 600, step = 5),
+            ),
+            
+            # Colors Tab
+            tabPanel(
+              "Heatmap Colors",
+              # Heatmap Color and Scale
+              colourInput("color_DownHeatmap_HeatmapSimple", "Down-regulation Color:", value = "#23446f"),
+              colourInput("color_UnchangedHeatmap_HeatmapSimple", "Unchange Color:", value = "white"),
+              colourInput("color_UpHeatmap_HeatmapSimple", "Up-regulation Color:", value = "#ad190d"),
+              numericInput("color_scaleHeatmap_HeatmapSimple", "Color Scale:", value = 2, step = 0.5)
+            ),
+            
+            # Text Size Tab
+            tabPanel(
+              "Text & Size",
+              # Feature Text Size
+              numericInput("size_Features_HeatmapSimple", "Features Size:", value = 12),
+              checkboxInput("checkbox_italicFeatures_HeatmapSimple", "Italic Text", value = FALSE),
+              
+              # Top level
+              # numericInput("size_TopAnnotation_HeatmapSimple", "Top Annotation Size, top:", value = 16),
+              
+              # Legend
+              textInput("TopAnnotation_legend_HeatmapSimple", "Level-1 Annotation:", value = "Group"),
+              textInput("HeatmapAnnotation_legend_HeatmapSimple", "Heatmap Annotation:", value = "Expression (scaled)")
+            ),
+            
+            # Clustering Tab
+            tabPanel(
+              "Clustering",
+              # Row clustering
+              checkboxInput("checkbox_Row_clustering_HeatmapSimple", "Cluster Row", value = TRUE),
+              # Col clustering
+              checkboxInput("checkbox_Col_clustering_HeatmapSimple", "Cluster Column", value = FALSE),
+              # Show col name
+              checkboxInput("checkbox_showColname_HeatmapSimple", "Show Column Name", value = FALSE)
+            ),
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              
+              numericInput("dpi_HeatmapSimple", "Resolution (DPI):", value = 300, step = 300),
+              # selectInput(
+              #   "formatdownload_HeatmapSimple", "Format:",
+              #   choices = c(".png", ".svg", ".tiff", ".pdf"),
+              #   selected = ".png"
+              # ),
+              downloadButton("download_HeatmapSimple", "Download Plot as .png")
+            ),
+          )
+        ),
+        
+        mainPanel(
+          plotOutput("Render_HeatmapSimple", width = "100%", height = "600px")
+        )
+      )
+    ),
+    
+    # Scores Plot Tab
+    tabPanel(
+      title = "Scores Plot",
+      
+      tags$button(
+        id = "go_to_tutorials_ScoresPlot",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_ScoresPlot', Math.random())"
+      ),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
+          
+          # Tabs for different settings
+          tabsetPanel(
+            id = "ScorePlottabs",
+            type = "pills",
+            
+            # Data upload
+            tabPanel(
+              "Data Upload",
+              # File upload inputs
+              fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
+              fileInput("scoreFile_ScorePlot", "Upload Scores File:", accept = c(".csv"))
+            ),
+            
+            # Plot Appearance Tab
+            tabPanel(
+              "Plot Appearance",
+              uiOutput("groupLevelSelector_ScorePlot"),  # This will be dynamically generated based on the uploaded data
+              uiOutput("dynamicColorInputs_ScorePlot"),
+              
+              uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
+              
+              checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE)
+              
+            ),
+            
+            # Plot Dimension Tab
+            tabPanel(
+              "Plot Dimension",
+              
+              numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
+              numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5)
+            ),
+            
+            # Points and Themes
+            tabPanel(
+              "Points & Themes",
+              
+              numericInput("pointSize_ScorePlot", "Point Size:", value = 4),
+              
+              selectInput(
+                "plotTheme_ScorePlot", "Plot Theme:",
+                choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+                selected = "theme_Publication"
+              )
+            ),
+            
+            # Axis Labels Tab
+            tabPanel(
+              "Axis Labels",
+              textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
+              textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
+              numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15),
+              checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
+              
+              numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15),
+              checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
+            ),
+            
+            # Axis Limits & Breaks Tab
+            tabPanel(
+              "Axis Limits",
+              numericInput("xMin_ScorePlot", "X-axis Minimum:", value = NA, step = 0.1),
+              numericInput("xMax_ScorePlot", "X-axis Maximum:", value = NA, step = 0.1),
+              numericInput("yMin_ScorePlot", "Y-axis Minimum:", value = NA, step = 0.1),
+              numericInput("yMax_ScorePlot", "Y-axis Maximum:", value = NA, step = 0.1)
+            ),
+            
+            tabPanel(
+              "Axis Breaks",
+              numericInput("xBreaks_ScorePlot", "X-axis Breaks:", value = NA, step = 0.1),
+              numericInput("yBreaks_ScorePlot", "Y-axis Breaks:", value = NA, step = 0.1)
+            ),
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              
+              # numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
+              # numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5),
+              numericInput("dpi_ScorePlot", "Resolution (DPI):", value = 300, step = 300),
+              selectInput(
+                "formatdownloadScorePlot", "Format:",
+                choices = c(".png", ".svg", ".tiff", ".pdf"),
+                selected = ".png"
+              ),
+              downloadButton("downloadScorePlot", "Download Plot")
+            ),
+          )
+        ),
+        
+        mainPanel(
+          plotOutput("Render_ScorePlot", width = "100%", height = "600px")
+        )
+      )
+    ),
+    
+    # Box Plot Tab
+    tabPanel(
+      title = "Box Plot",
+      
+      tags$button(
+        id = "go_to_tutorials_BoxPlot",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_BoxPlot', Math.random())"
+      ),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
+          
+          # Tabs for different settings
+          tabsetPanel(
+            id = "BoxPlottabs",
+            type = "pills",
+            
+            # Data upload
+            tabPanel(
+              "Data Upload",
+              # File upload inputs
+              fileInput("metadataFile_BoxPlot", "Upload Metadata File:", accept = c(".csv")),
+              fileInput("expressionFile_BoxPlot", "Upload Normalized Data File:", accept = c(".csv"))
+            ),
+            
+            # Plot Appearance Tab
+            tabPanel(
+              "Plot Appearance",
+              uiOutput("groupLevelSelector_BoxPlot"),  # This will be dynamically generated based on the uploaded data
+              uiOutput("dynamicColorInputs_BoxPlot"),
+              
+              uiOutput("dynamicLegendInputs_BoxPlot"), # For dynamic legend labels
+              
+              selectInput(
+                "plotTheme_BoxPlot", "Plot Theme:",
+                choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+                selected = "theme_Publication"
+              )
+            ),
+            
+            # Plot Dimension Tab
+            tabPanel(
+              "Plot Dimension",
+              
+              numericInput("plotWidth_BoxPlot", "Width (in pixels):", value = 800, step = 5),
+              numericInput("plotHeight_BoxPlot", "Height (in pixels):", value = 400, step = 5)
+            ),
+            
+            # point, jitter, width
+            tabPanel(
+              "Sizes",
+              numericInput("pointSize_BoxPlot", "Point Size:", value = 3),
+              numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, step = 0.1),
+              numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, step = 0.02)
+            ),
+            
+            # Axis Labels Tab
+            tabPanel(
+              "Axis Labels",
+              textInput("yLabel_BoxPlot", "Y-axis Label:", value = "Normalized Abundance"),
+              numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20),
+              checkboxInput("checkbox_Axis_bold_BoxPlot", "Axis bold", value = TRUE),
+              
+              numericInput("tickLabelSize_BoxPlot", "Tick Label Size:", value = 15),
+              checkboxInput("checkbox_Tick_bold_BoxPlot", "Tick bold", value = FALSE),
+              
+              numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, step = 1),
+            ),
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              
+              numericInput("dpi_BoxPlot", "Resolution (DPI):", value = 300, step = 300),
+              selectInput(
+                "formatdownload_BoxPlot", "Format:",
+                choices = c(".png", ".svg", ".tiff", ".pdf"),
+                selected = ".png"
+              ),
+              downloadButton("download_BoxPlot", "Download Plot")
+            ),
+          )
+        ),
+        
+        mainPanel(
+          plotOutput("Render_BoxPlot", width = "100%", height = "600px")
+        )
+      )
+    ),
+    
+    # Dot Plot tab
+    tabPanel(
+      title = "Dot Plot",
+      
+      tags$button(
+        id = "go_to_tutorials_DotPlot",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_DotPlot', Math.random())"
+      ),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
+          
+          # Tabs for different settings
+          tabsetPanel(
+            id = "DotPlottabs",
+            type = "pills",
+            
+            # Data upload
+            tabPanel(
+              "Data Upload",
+              
+              # GSEA or ORA
+              selectInput(
+                "PathwayAnalysisMode_DotPlot", "Pathway Analysis Mode:",
+                choices = c("ORA", "GSEA"),
+                selected = "ORA"
+              ),
+              
+              # Metabolomics or Transcriptomics
+              selectInput(
+                "PathwayFromOmics_DotPlot", "Using:",
+                choices = c("Metabolomics", "Transcriptomics"),
+                selected = "Transcriptomics"
+              ),
+              
+              # Use Pvalue or adjPvalue 
+              checkboxInput("checkbox_adjPvalue_DotPlot", "Adjusted P-value"),  # Get automatically from the server
+              
+              # File upload inputs
+              fileInput("PathwayDataFile_DotPlot", "Upload Pathway Results File:", accept = c(".csv"))
+            ),
+            
+            # Plot Size and Theme Tab
+            tabPanel(
+              "Plot Dimension & Themes",
+              
+              # Plot Size
+              numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
+              numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
+              
+              # Plot Theme
+              selectInput(
+                "plotTheme_DotPlot", "Plot Theme:",
+                choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+                selected = "theme_Publication"
+              )
+            ),
+            
+            # Customized Points Tab
+            tabPanel(
+              "Points",
+              
+              numericInput("small_size_scale_DotPlot", "Point Size Scale, Small:", value = 2, step = 1),
+              numericInput("big_size_scale_DotPlot", "Point Size Scale, Big:", value = 7, step = 1),
+              
+              colourInput("color_lowPvalue_DotPlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
+              colourInput("color_interPvalue_DotPlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
+              colourInput("color_highPvalue_DotPlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
+            ),
+            
+            # Legend Tab
+            tabPanel(
+              "Legend",
+              
+              numericInput("legendTitleSize_DotPlot", "Legend Title Size:", value = 15, step = 1),
+              numericInput("legendTextSize_DotPlot", "Legend Text Size:", value = 14, step = 1),
+              numericInput("legendkeySize_DotPlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+              
+              textInput("ColorTitle_DotPlot", "Color Title:"), # value will be returned from the server
+              
+              textInput("PointSizeTitle_DotPlot", "Point Size Title:", value = "Hits Count"),
+            ),
+            
+            # Axis Labels Tab
+            tabPanel(
+              "Axis Labels",
+              textInput("xLabel_DotPlot", "X-axis Label:"), # value will be returned from the server
+              numericInput("labelSize_DotPlot", "Axis Label Size:", value = 18),
+              checkboxInput("checkbox_Axis_bold_DotPlot", "Axis Bold", value = TRUE),
+              
+              numericInput("tickLabelSize_xAxis_DotPlot", "Tick Label Size, x-Axis:", value = 13),
+              numericInput("tickLabelSize_yAxis_DotPlot", "Tick Label Size, y-Axis:", value = 15),
+              checkboxInput("checkbox_Tick_bold_DotPlot", "Tick Bold", value = FALSE),
+            ),
+            
+            # Axis Limits & Breaks Tab
+            tabPanel(
+              "Limits & Breaks",
+              numericInput("xMin_DotPlot", "X-axis Minimum:", value = NA, step = 0.1),
+              numericInput("xMax_DotPlot", "X-axis Maximum:", value = NA, step = 0.1),
+              
+              numericInput("xBreaks_DotPlot", "X-axis Breaks:", value = NA, step = 0.1)
+            ),
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              
+              # numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
+              # numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
+              numericInput("dpi_DotPlot", "Resolution (DPI):", value = 300, step = 300),
+              selectInput(
+                "formatdownload_DotPlot", "Format:",
+                choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+                selected = ".png"
+              ),
+              downloadButton("download_DotPlot", "Download Plot")
+            ),
+          )
+        ),
+        
+        mainPanel(
+          plotOutput("Render_DotPlot", width = "auto", height = "auto")
+        )
+      )
+    ),
+    
+    # BubblePlot Tab
+    tabPanel(
+      title = "Bubble Plot",
+      
+      tags$button(
+        id = "go_to_tutorials_BubblePlot",
+        class = "action-button shiny-bound-input",
+        "Back to Tutorials",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('go_to_tutorials_BubblePlot', Math.random())"
+      ),
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      sidebarLayout(
+        sidebarPanel(
+          width = 4,
+          
+          # Tabs for different settings
+          tabsetPanel(
+            id = "BubblePlottabs",
+            type = "pills",
+            
+            # Data upload
+            tabPanel(
+              "Data Upload",
+              
+              # Metabolomics or Transcriptomics
+              selectInput(
+                "PathwayFromOmics_BubblePlot", "Omics Data:",
+                choices = c("Metabolomics", "Transcriptomics"),
+                selected = "Metabolomics"
+              ),
+              
+              # Use Pvalue or adjPvalue 
+              checkboxInput("checkbox_adjPvalue_BubblePlot", "Adjusted P-value"), # value will be returned from the server
+              
+              # File upload inputs
+              fileInput("PathwayDataFile_BubblePlot", "Upload Pathway Results File:", accept = c(".csv"))
+            ),
+            
+            # Plot Size and Theme Tab
+            tabPanel(
+              "Plot Dimension & Themes",
+              
+              # Plot Size
+              numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
+              numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
+              
+              # Plot Theme
+              selectInput(
+                "plotTheme_BubblePlot", "Plot Theme:",
+                choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
+                selected = "theme_Publication"
+              )
+            ),
+            
+            # Points
+            tabPanel(
+              "Points",
+              
+              numericInput("small_size_scale_BubblePlot", "Point Size Scale, Small:", value = 4, step = 1),
+              numericInput("big_size_scale_BubblePlot", "Point Size Scale, Big:", value = 12, step = 1),
+              
+              colourInput("color_lowPvalue_BubblePlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
+              colourInput("color_interPvalue_BubblePlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
+              colourInput("color_highPvalue_BubblePlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
+            ),
             
             # Legend
-            textInput("TopAnnotation_legend_HeatmapSimple", "Level-1 Annotation:", value = "Group"),
-            textInput("HeatmapAnnotation_legend_HeatmapSimple", "Heatmap Annotation:", value = "Expression (scaled)")
-          ),
-          
-          # Clustering Tab
-          tabPanel(
-            "Clustering",
-            # Row clustering
-            checkboxInput("checkbox_Row_clustering_HeatmapSimple", "Cluster Row", value = TRUE),
-            # Col clustering
-            checkboxInput("checkbox_Col_clustering_HeatmapSimple", "Cluster Column", value = FALSE),
-            # Show col name
-            checkboxInput("checkbox_showColname_HeatmapSimple", "Show Column Name", value = FALSE)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            
-            numericInput("dpi_HeatmapSimple", "Resolution (DPI):", value = 300, step = 300),
-            # selectInput(
-            #   "formatdownload_HeatmapSimple", "Format:",
-            #   choices = c(".png", ".svg", ".tiff", ".pdf"),
-            #   selected = ".png"
-            # ),
-            downloadButton("download_HeatmapSimple", "Download Plot as .png")
-          ),
-        )
-      ),
-      
-      mainPanel(
-        plotOutput("Render_HeatmapSimple", width = "100%", height = "600px")
-      )
-    )
-  ),
-  
-  # Scores Plot Tab
-  tabPanel(
-    title = "Scores Plot",
-    
-    tags$button(
-      id = "go_to_tutorials_ScoresPlot",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_ScoresPlot', Math.random())"
-    ),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
-        
-        # Tabs for different settings
-        tabsetPanel(
-          id = "ScorePlottabs",
-          type = "pills",
-          
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            # File upload inputs
-            fileInput("metadataFile_ScorePlot", "Upload Metadata File:", accept = c(".csv")),
-            fileInput("scoreFile_ScorePlot", "Upload Scores File:", accept = c(".csv"))
-          ),
-          
-          # Plot Appearance Tab
-          tabPanel(
-            "Plot Appearance",
-            uiOutput("groupLevelSelector_ScorePlot"),  # This will be dynamically generated based on the uploaded data
-            uiOutput("dynamicColorInputs_ScorePlot"),
-            
-            uiOutput("dynamicLegendInputs_ScorePlot"),  # For dynamic legend labels
-            
-            checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE)
-            
-          ),
-          
-          # Plot Dimension Tab
-          tabPanel(
-            "Plot Dimension",
-            
-            numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
-            numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5)
-          ),
-          
-          # Points and Themes
-          tabPanel(
-            "Points & Themes",
-            
-            numericInput("pointSize_ScorePlot", "Point Size:", value = 4),
-            
-            selectInput(
-              "plotTheme_ScorePlot", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "theme_Publication"
-            )
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("xLabel_ScorePlot", "X-axis Label:", value = "The first component (A %)"),
-            textInput("yLabel_ScorePlot", "Y-axis Label:", value = "The second component (B %)"),
-            numericInput("labelSize_ScorePlot", "Axis Label Size:", value = 15),
-            checkboxInput("checkbox_Axis_bold_ScorePlot", "Axis bold", value = TRUE),
-            
-            numericInput("tickLabelSize_ScorePlot", "Tick Label Size:", value = 15),
-            checkboxInput("checkbox_Tick_bold_ScorePlot", "Tick bold", value = FALSE),
-          ),
-          
-          # Axis Limits & Breaks Tab
-          tabPanel(
-            "Axis Limits",
-            numericInput("xMin_ScorePlot", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("xMax_ScorePlot", "X-axis Maximum:", value = NA, step = 0.1),
-            numericInput("yMin_ScorePlot", "Y-axis Minimum:", value = NA, step = 0.1),
-            numericInput("yMax_ScorePlot", "Y-axis Maximum:", value = NA, step = 0.1)
-          ),
-          
-          tabPanel(
-            "Axis Breaks",
-            numericInput("xBreaks_ScorePlot", "X-axis Breaks:", value = NA, step = 0.1),
-            numericInput("yBreaks_ScorePlot", "Y-axis Breaks:", value = NA, step = 0.1)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            
-            # numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
-            # numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5),
-            numericInput("dpi_ScorePlot", "Resolution (DPI):", value = 300, step = 300),
-            selectInput(
-              "formatdownloadScorePlot", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf"),
-              selected = ".png"
-            ),
-            downloadButton("downloadScorePlot", "Download Plot")
-          ),
-        )
-      ),
-      
-      mainPanel(
-        plotOutput("Render_ScorePlot", width = "100%", height = "600px")
-      )
-    )
-  ),
-  
-  # Box Plot Tab
-  tabPanel(
-    title = "Box Plot",
-    
-    tags$button(
-      id = "go_to_tutorials_BoxPlot",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_BoxPlot', Math.random())"
-    ),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
-        
-        # Tabs for different settings
-        tabsetPanel(
-          id = "BoxPlottabs",
-          type = "pills",
-          
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            # File upload inputs
-            fileInput("metadataFile_BoxPlot", "Upload Metadata File:", accept = c(".csv")),
-            fileInput("expressionFile_BoxPlot", "Upload Normalized Data File:", accept = c(".csv"))
-          ),
-          
-          # Plot Appearance Tab
-          tabPanel(
-            "Plot Appearance",
-            uiOutput("groupLevelSelector_BoxPlot"),  # This will be dynamically generated based on the uploaded data
-            uiOutput("dynamicColorInputs_BoxPlot"),
-            
-            uiOutput("dynamicLegendInputs_BoxPlot"), # For dynamic legend labels
-            
-            selectInput(
-              "plotTheme_BoxPlot", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "theme_Publication"
-            )
-          ),
-          
-          # Plot Dimension Tab
-          tabPanel(
-            "Plot Dimension",
-            
-            numericInput("plotWidth_BoxPlot", "Width (in pixels):", value = 800, step = 5),
-            numericInput("plotHeight_BoxPlot", "Height (in pixels):", value = 400, step = 5)
-          ),
-          
-          # point, jitter, width
-          tabPanel(
-            "Sizes",
-            numericInput("pointSize_BoxPlot", "Point Size:", value = 3),
-            numericInput("BoxWidth_BoxPlot", "Box Width:", value = 0.5, step = 0.1),
-            numericInput("JitterWidth_BoxPlot", "Jitter Width:", value = 0.18, step = 0.02)
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("yLabel_BoxPlot", "Y-axis Label:", value = "Normalized Abundance"),
-            numericInput("labelSize_BoxPlot", "Axis Label Size:", value = 20),
-            checkboxInput("checkbox_Axis_bold_BoxPlot", "Axis bold", value = TRUE),
-            
-            numericInput("tickLabelSize_BoxPlot", "Tick Label Size:", value = 15),
-            checkboxInput("checkbox_Tick_bold_BoxPlot", "Tick bold", value = FALSE),
-            
-            numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, step = 1),
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            
-            numericInput("dpi_BoxPlot", "Resolution (DPI):", value = 300, step = 300),
-            selectInput(
-              "formatdownload_BoxPlot", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf"),
-              selected = ".png"
-            ),
-            downloadButton("download_BoxPlot", "Download Plot")
-          ),
-        )
-      ),
-      
-      mainPanel(
-        plotOutput("Render_BoxPlot", width = "100%", height = "600px")
-      )
-    )
-  ),
-  
-  # Dot Plot tab
-  tabPanel(
-    title = "Dot Plot",
-    
-    tags$button(
-      id = "go_to_tutorials_DotPlot",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_DotPlot', Math.random())"
-    ),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
-        
-        # Tabs for different settings
-        tabsetPanel(
-          id = "DotPlottabs",
-          type = "pills",
-          
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            
-            # GSEA or ORA
-            selectInput(
-              "PathwayAnalysisMode_DotPlot", "Pathway Analysis Mode:",
-              choices = c("ORA", "GSEA"),
-              selected = "ORA"
+            tabPanel(
+              "Legend",
+              
+              checkboxInput("showLegend_BubblePlot", "Show Legend", value = TRUE),
+              
+              numericInput("legendTitleSize_BubblePlot", "Legend Title Size:", value = 18, step = 1),
+              numericInput("legendTextSize_BubblePlot", "Legend Text Size:", value = 15, step = 1),
+              numericInput("legendkeySize_BubblePlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
+              
+              textInput("ColorTitle_BubblePlot", "Color Title:"), # value will be returned from the server
+              
+              textInput("PointSizeTitleBubblePlot", "Point Size Title:") # value will be returned from the server
             ),
             
-            # Metabolomics or Transcriptomics
-            selectInput(
-              "PathwayFromOmics_DotPlot", "Using:",
-              choices = c("Metabolomics", "Transcriptomics"),
-              selected = "Transcriptomics"
+            # Axis Labels Tab
+            tabPanel(
+              "Axis Labels",
+              textInput("xLabel_BubblePlot", "X-axis Label:"), # value will be returned from the server
+              
+              textInput("yLabel_BubblePlot", "Y-axis Label:"), # value will be returned from the server
+              
+              numericInput("labelSize_BubblePlot", "Axis Label Size:", value = 22),
+              checkboxInput("checkbox_Axis_bold_BubblePlot", "Axis Bold", value = TRUE),
+              
+              numericInput("tickLabelSize_BubblePlot", "Tick Label Size:", value = 18),
+              checkboxInput("checkbox_Tick_bold_BubblePlot", "Tick Bold", value = FALSE),
             ),
             
-            # Use Pvalue or adjPvalue 
-            checkboxInput("checkbox_adjPvalue_DotPlot", "Adjusted P-value"),  # Get automatically from the server
-            
-            # File upload inputs
-            fileInput("PathwayDataFile_DotPlot", "Upload Pathway Results File:", accept = c(".csv"))
-          ),
-          
-          # Plot Size and Theme Tab
-          tabPanel(
-            "Plot Dimension & Themes",
-            
-            # Plot Size
-            numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
-            numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
-            
-            # Plot Theme
-            selectInput(
-              "plotTheme_DotPlot", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "theme_Publication"
-            )
-          ),
-          
-          # Customized Points Tab
-          tabPanel(
-            "Points",
-            
-            numericInput("small_size_scale_DotPlot", "Point Size Scale, Small:", value = 2, step = 1),
-            numericInput("big_size_scale_DotPlot", "Point Size Scale, Big:", value = 7, step = 1),
-            
-            colourInput("color_lowPvalue_DotPlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
-            colourInput("color_interPvalue_DotPlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
-            colourInput("color_highPvalue_DotPlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
-          ),
-          
-          # Legend Tab
-          tabPanel(
-            "Legend",
-            
-            numericInput("legendTitleSize_DotPlot", "Legend Title Size:", value = 15, step = 1),
-            numericInput("legendTextSize_DotPlot", "Legend Text Size:", value = 14, step = 1),
-            numericInput("legendkeySize_DotPlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
-            
-            textInput("ColorTitle_DotPlot", "Color Title:"), # value will be returned from the server
-            
-            textInput("PointSizeTitle_DotPlot", "Point Size Title:", value = "Hits Count"),
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("xLabel_DotPlot", "X-axis Label:"), # value will be returned from the server
-            numericInput("labelSize_DotPlot", "Axis Label Size:", value = 18),
-            checkboxInput("checkbox_Axis_bold_DotPlot", "Axis Bold", value = TRUE),
-            
-            numericInput("tickLabelSize_xAxis_DotPlot", "Tick Label Size, x-Axis:", value = 13),
-            numericInput("tickLabelSize_yAxis_DotPlot", "Tick Label Size, y-Axis:", value = 15),
-            checkboxInput("checkbox_Tick_bold_DotPlot", "Tick Bold", value = FALSE),
-          ),
-          
-          # Axis Limits & Breaks Tab
-          tabPanel(
-            "Limits & Breaks",
-            numericInput("xMin_DotPlot", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("xMax_DotPlot", "X-axis Maximum:", value = NA, step = 0.1),
-            
-            numericInput("xBreaks_DotPlot", "X-axis Breaks:", value = NA, step = 0.1)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            
-            # numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
-            # numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
-            numericInput("dpi_DotPlot", "Resolution (DPI):", value = 300, step = 300),
-            selectInput(
-              "formatdownload_DotPlot", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
-              selected = ".png"
-            ),
-            downloadButton("download_DotPlot", "Download Plot")
-          ),
-        )
-      ),
-      
-      mainPanel(
-        plotOutput("Render_DotPlot", width = "auto", height = "auto")
-      )
-    )
-  ),
-  
-  # BubblePlot Tab
-  tabPanel(
-    title = "Bubble Plot",
-    
-    tags$button(
-      id = "go_to_tutorials_BubblePlot",
-      class = "action-button shiny-bound-input",
-      "Back to Tutorials",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('go_to_tutorials_BubblePlot', Math.random())"
-    ),
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    sidebarLayout(
-      sidebarPanel(
-        width = 4,
-        
-        # Tabs for different settings
-        tabsetPanel(
-          id = "BubblePlottabs",
-          type = "pills",
-          
-          # Data upload
-          tabPanel(
-            "Data Upload",
-            
-            # Metabolomics or Transcriptomics
-            selectInput(
-              "PathwayFromOmics_BubblePlot", "Omics Data:",
-              choices = c("Metabolomics", "Transcriptomics"),
-              selected = "Metabolomics"
+            # Axis Limits & Breaks Tab
+            tabPanel(
+              "Axis Limits",
+              numericInput("xMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
+              numericInput("xMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1),
+              
+              numericInput("yMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
+              numericInput("yMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1)
             ),
             
-            # Use Pvalue or adjPvalue 
-            checkboxInput("checkbox_adjPvalue_BubblePlot", "Adjusted P-value"), # value will be returned from the server
-            
-            # File upload inputs
-            fileInput("PathwayDataFile_BubblePlot", "Upload Pathway Results File:", accept = c(".csv"))
-          ),
-          
-          # Plot Size and Theme Tab
-          tabPanel(
-            "Plot Dimension & Themes",
-            
-            # Plot Size
-            numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
-            numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
-            
-            # Plot Theme
-            selectInput(
-              "plotTheme_BubblePlot", "Plot Theme:",
-              choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-              selected = "theme_Publication"
-            )
-          ),
-          
-          # Points
-          tabPanel(
-            "Points",
-            
-            numericInput("small_size_scale_BubblePlot", "Point Size Scale, Small:", value = 4, step = 1),
-            numericInput("big_size_scale_BubblePlot", "Point Size Scale, Big:", value = 12, step = 1),
-            
-            colourInput("color_lowPvalue_BubblePlot", "(Adj) P-value Color, Low:", value = "#7fc97f"),
-            colourInput("color_interPvalue_BubblePlot", "(Adj) P-value Color, Intermediate:", value = "#fdb462"),
-            colourInput("color_highPvalue_BubblePlot", "(Adj) P-value Color, High:", value = "#ef3b2c")
-          ),
-          
-          # Legend
-          tabPanel(
-            "Legend",
-            
-            checkboxInput("showLegend_BubblePlot", "Show Legend", value = TRUE),
-            
-            numericInput("legendTitleSize_BubblePlot", "Legend Title Size:", value = 18, step = 1),
-            numericInput("legendTextSize_BubblePlot", "Legend Text Size:", value = 15, step = 1),
-            numericInput("legendkeySize_BubblePlot", "Legend Icon Size:", value = 0.7, step = 0.1, min = 0.1, max = 4),
-            
-            textInput("ColorTitle_BubblePlot", "Color Title:"), # value will be returned from the server
-            
-            textInput("PointSizeTitleBubblePlot", "Point Size Title:") # value will be returned from the server
-          ),
-          
-          # Axis Labels Tab
-          tabPanel(
-            "Axis Labels",
-            textInput("xLabel_BubblePlot", "X-axis Label:"), # value will be returned from the server
-            
-            textInput("yLabel_BubblePlot", "Y-axis Label:"), # value will be returned from the server
-            
-            numericInput("labelSize_BubblePlot", "Axis Label Size:", value = 22),
-            checkboxInput("checkbox_Axis_bold_BubblePlot", "Axis Bold", value = TRUE),
-            
-            numericInput("tickLabelSize_BubblePlot", "Tick Label Size:", value = 18),
-            checkboxInput("checkbox_Tick_bold_BubblePlot", "Tick Bold", value = FALSE),
-          ),
-          
-          # Axis Limits & Breaks Tab
-          tabPanel(
-            "Axis Limits",
-            numericInput("xMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("xMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1),
-            
-            numericInput("yMin_BubblePlot", "X-axis Minimum:", value = NA, step = 0.1),
-            numericInput("yMax_BubblePlot", "X-axis Maximum:", value = NA, step = 0.1)
-          ),
-          
-          tabPanel(
-            "Axis Breaks",
-            numericInput("xBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1),
-            numericInput("yBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1)
-          ),
-          
-          # Save Plot Tab
-          tabPanel(
-            "Save Plot",
-            # numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
-            # numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
-            numericInput("dpi_BubblePlot", "Resolution (DPI):", value = 300, step = 300),
-            selectInput(
-              "formatdownload_BubblePlot", "Format:",
-              choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
-              selected = ".png"
+            tabPanel(
+              "Axis Breaks",
+              numericInput("xBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1),
+              numericInput("yBreaks_BubblePlot", "X-axis Breaks:", value = NA, step = 0.1)
             ),
-            downloadButton("download_BubblePlot", "Download Plot")
-          ),
-        )
-      ),
-      
-      mainPanel(
-        plotOutput("Render_BubblePlot", width = "100%", height = "600px")
-      )
-    )
-  ),
-  
-  # Tutorial Tab
-  tabPanel(
-    title = "Tutorials",
-    
-    tags$button(
-      id = "reload_app_button",
-      class = "action-button shiny-bound-input",
-      "Reset App",
-      style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-      onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
-    ),
-    
-    fluidPage(
-      fluidRow(
-        column(
-          width = 3,
-          #wellPanel(
-          navlistPanel(
-            id = "introTab",
-            # tabPanel("Welcome", value = "welcome"),
-            tabPanel("Volcano Plot", value = "VolcanoPlot_infor"),
-            tabPanel("Heatmap", value = "HeatmapSimple_infor"),
-            tabPanel("Scores PLot", value = "ScoresPlot_infor"),
-            tabPanel("Box PLot", value = "BoxPlot_infor"),
-            tabPanel("Dot Plot", value = "DotPlot_infor"),
-            tabPanel("Bubble Plot", value = "BubblePlot_infor")
+            
+            # Save Plot Tab
+            tabPanel(
+              "Save Plot",
+              # numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
+              # numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
+              numericInput("dpi_BubblePlot", "Resolution (DPI):", value = 300, step = 300),
+              selectInput(
+                "formatdownload_BubblePlot", "Format:",
+                choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+                selected = ".png"
+              ),
+              downloadButton("download_BubblePlot", "Download Plot")
+            ),
           )
-          #)
         ),
-        column(
-          width = 8,
-          uiOutput("TutorialsContent")
+        
+        mainPanel(
+          plotOutput("Render_BubblePlot", width = "100%", height = "600px")
+        )
+      )
+    ),
+    
+    # Tutorial Tab
+    tabPanel(
+      title = "Tutorials",
+      
+      tags$button(
+        id = "reload_app_button",
+        class = "action-button shiny-bound-input",
+        "Reset App",
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
+        onclick = "Shiny.setInputValue('reload_app_button', Math.random())"
+      ),
+      
+      fluidPage(
+        fluidRow(
+          column(
+            width = 3,
+            #wellPanel(
+            navlistPanel(
+              id = "introTab",
+              # tabPanel("Welcome", value = "welcome"),
+              tabPanel("Volcano Plot", value = "VolcanoPlot_infor"),
+              tabPanel("Heatmap", value = "HeatmapSimple_infor"),
+              tabPanel("Scores PLot", value = "ScoresPlot_infor"),
+              tabPanel("Box PLot", value = "BoxPlot_infor"),
+              tabPanel("Dot Plot", value = "DotPlot_infor"),
+              tabPanel("Bubble Plot", value = "BubblePlot_infor")
+            )
+            #)
+          ),
+          column(
+            width = 8,
+            uiOutput("TutorialsContent")
+          )
         )
       )
     )
   )
 )
+
 
 # Define Server
 server <- function(input, output, session) {
@@ -947,7 +985,7 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=1uacjgrXmt0b97V7UdmCf_uUloAYgFDkk", height = "300px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_ScoresPlot_Tutorial_pdf", "Link to download", class = "clickable-link"),
           
           tags$h4("Next, prepare the input data"),
@@ -981,13 +1019,14 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=1ubOEI67ERmQzcJ4tMcArX8-MoUou4-ei&usp", height = "200px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_VolcanoPlot_Tutorial_pdf", "Link to download"), 
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("Three columns are required: Features, log2FoldChange, adj.P.Val."),
           tags$p("The input data were statistical output from e.g., MetaboAnalyst, ExpressAnalyst, and DESeq2."),
+          tags$p("Five columns are required: Features, FoldChange, log2FoldChange, P-value, adj.P.Val."),
+          tags$h6("Note: Column order need to be identical with example data (if the information is unavailable, leave it empty, e.g., column P-value with all empty values). Column names can be different"),
           downloadLink("download_VolcanoPlot_ExampleData", "Link to download example input data"),  # Link to the example data
           
           tags$p("\n"),
@@ -1011,7 +1050,7 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=1Rx7G21L0abazFohXaFhJtgRwMKmwtbpU", height = "300px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
           
           tags$h4("Next, prepare the input data"),
@@ -1041,7 +1080,7 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=1S-N9OWh4rhA3JWtBWcF75ullRgfMj-T9", height = "200px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
@@ -1071,7 +1110,7 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=126HZDZ1pwZ4R6qwgPaOWJxpvEwJ0_JXp", height = "300px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_DotPlot_Tutorial_pdf", "Link to download (Not available, Update later)"),
           
           tags$h4("Next, prepare the input data"),
@@ -1105,7 +1144,7 @@ server <- function(input, output, session) {
           
           img(src = "https://drive.google.com/thumbnail?id=1292cIWMe3LIjavag3V1aBLw75g7bnFSv", height = "300px"),
           
-          tags$h4("First, download a step-by-step guide"),
+          tags$h4("First, download a step-by-step tutorial"),
           downloadLink("download_BubblePlot_Tutorial_pdf", "Link to download (Not available, Update later)"),
           
           tags$h4("Next, prepare the input data"),
@@ -1476,7 +1515,7 @@ server <- function(input, output, session) {
               plot.background = element_rect(colour = NA),
               panel.border = element_rect(colour = NA),
               axis.title = element_text(#face = "bold",
-                                        size = rel(1)),
+                size = rel(1)),
               axis.title.y = element_text(angle = 90,vjust = 2),
               axis.title.x = element_text(vjust = -0.2),
               axis.text = element_text(), 
