@@ -51,7 +51,7 @@ ui <- fluidPage(
     
     # Introduction Tab
     tabPanel(
-      title = "Introduction",
+      title = "Welcome",
       tagList(
         # Use with action link below to customize its UI
         #   tags$head(
@@ -2997,7 +2997,3 @@ server <- function(input, output, session) {
 
 # Run the Application
 shinyApp(ui = ui, server = server)
-
-
-
-
