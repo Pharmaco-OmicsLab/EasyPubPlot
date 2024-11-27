@@ -120,7 +120,7 @@ runEasyPubPlot = function() {
 
             tags$p("\n"),
             div(
-              img(src = "https://drive.google.com/thumbnail?id=12PUIle3BBlG8mCLfBd2uLNqXze_Nszyu", height = "500px"),
+              img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/Embed_Graphical_Abstract.png?raw=true", height = "700px"),
               style = "text-align: center;"
             )
           )
@@ -1287,7 +1287,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("2D scores plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=1uacjgrXmt0b97V7UdmCf_uUloAYgFDkk", height = "300px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/ScoresPlot_Example_1.png?raw=true", height = "300px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_ScoresPlot_Tutorial_pdf", "Link to download", class = "clickable-link"),
@@ -1321,7 +1321,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("Volcano plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=1ubOEI67ERmQzcJ4tMcArX8-MoUou4-ei&usp", height = "200px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/VolcanoPlot_Example_1.png?raw=true", height = "200px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_VolcanoPlot_Tutorial_pdf", "Link to download"),
@@ -1358,7 +1358,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("Heatmap plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=1Rx7G21L0abazFohXaFhJtgRwMKmwtbpU", height = "300px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/HeatmapSimple_Example_1.png?raw=true", height = "300px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
@@ -1388,7 +1388,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("Box plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=1S-N9OWh4rhA3JWtBWcF75ullRgfMj-T9", height = "200px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/BoxPlot_Example_1.png?raw=true", height = "200px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"),
@@ -1418,7 +1418,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("Dot plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=126HZDZ1pwZ4R6qwgPaOWJxpvEwJ0_JXp", height = "300px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/DotPlot_GSEA_Example_1.png?raw=true", height = "300px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_DotPlot_Tutorial_pdf", "Link to download"),
@@ -1455,7 +1455,7 @@ runEasyPubPlot = function() {
           tags$main(
             tags$h3("Bubble plot"),
 
-            img(src = "https://drive.google.com/thumbnail?id=1292cIWMe3LIjavag3V1aBLw75g7bnFSv", height = "300px"),
+            img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/BubblePlot_Metabolomics_Example_1.png?raw=true", height = "300px"),
 
             tags$h4("First, download a step-by-step tutorial"),
             downloadLink("download_BubblePlot_Tutorial_pdf", "Link to download"),
