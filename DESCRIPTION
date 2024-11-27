@@ -2,7 +2,7 @@ Package: EasyPubPlot
 Title: Easy and Publishable Ploting
 Version: 0.0.1
 Authors@R: 
-    person("Nguyen Tran Nam", "Tien", "namtien.hup@gmail.com", role = c("aut", "cre"))
+    person(given = "Nguyen Tran Nam", family = "Tien", email = "namtien.hup@gmail.com", role = c("aut", "cre"))
 Description: Interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
 License: MIT + file LICENSE
 Encoding: UTF-8
