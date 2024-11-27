@@ -8,9 +8,11 @@ EasyPubPlot is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPu
 
 EasyPubPlot provides an interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
 
-![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/64102d9e2654b3756f70942fbafbbd401bca491d/docs/Example_plots/Embed_Graphical_Abstract.png?raw=true)
+![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/344cd5cb996330f4139ff6c2c8221bed3da7d433/docs/README_Figures/main_UI.png?raw=true)
 
-![One screenshot demonstrating customization](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/64102d9e2654b3756f70942fbafbbd401bca491d/docs/Example_plots/Embed_Graphical_Abstract.png?raw=true)
+## Examples
+
+![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/b0c65ee487d7fb007aa77c8a0746ca841506658f/docs/README_Figures/BoxPlot_screenshot.png?raw=true)
 
 ## Install and run locally
 
