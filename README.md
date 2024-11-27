@@ -2,7 +2,7 @@
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://mit-license.org/)
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-DOI.svg)](https://biorxiv.org/content/DOI)
+[![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
 
 EasyPubPlot is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
 
@@ -16,7 +16,7 @@ EasyPubPlot provides an interactive, customizable, and coding-free Shiny App to 
 
 ## Install and run locally
 
-EasyPubPlot requires [![min R](https://img.shields.io/badge/R%3E%3D-4.0.0-386cb0.svg)](https://cran.r-project.org/)
+`EasyPubPlot` requires [![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
 
 Step 1: Check and install the necessary packages from `CRAN` to run `EasyPubPlot`.
 
@@ -53,7 +53,7 @@ runEasyPubPlot()
 
 ## Citation
 
-Nguyen Tran Nam Tien, Nguyen Quang Thu, Dong Hyun Kim, Seongoh Park#, Nguyen Phuoc Long#. "**EasyPubPlot: a shiny web application for rapid omics data exploration and visualization.**" [https://DOI](https://github.com/Pharmaco-OmicsLab/LipMetAnnotCompare).
+Nguyen Tran Nam Tien, Nguyen Quang Thu, Dong Hyun Kim, Seongoh Park#, Nguyen Phuoc Long#. "**EasyPubPlot: a shiny web application for rapid omics data exploration and visualization.**" [https://github.com/Pharmaco-OmicsLab/EasyPubPlot](https://github.com/Pharmaco-OmicsLab/EasyPubPlot).
 
 ## Contributors
 
