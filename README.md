@@ -16,14 +16,35 @@ EasyPubPlot provides an interactive, customizable, and coding-free Shiny App to 
 
 ## Install and run locally
 
-First, install via
+EasyPubPlot requires [![min R](https://img.shields.io/badge/R%3E%3D-4.0.0-386cb0.svg)](https://cran.r-project.org/)
+
+Step 1: Check and install the necessary packages from `CRAN` to run `EasyPubPlot`.
 
 ```r
-library(devtools)
-install_github("Pharmaco-OmicsLab/EasyPubPlot")
+for (pkg in c("remotes", "shiny", "shinyjs", "shinyWidgets", "colourpicker", "bslib", "shinytoastr", "dplyr", "magrittr", "ggplot2", "tibble", "tidyr", "ggthemes", "BiocManager", "circlize")) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
 ```
 
-then run `EasyPubPlot` in your computer.
+Step 2: Check and install the necessary packages from `BiocManager` to run `EasyPubPlot`.
+
+```r
+for (pkg in c("EnhancedVolcano", "ComplexHeatmap")) {
+  if (!require(pkg, character.only = TRUE)) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}    
+```
+
+Step 3: Install `EasyPubPlot`.
+
+```r
+remotes::install_github("Pharmaco-OmicsLab/EasyPubPlot")
+```
+
+Step 3: Run `EasyPubPlot` in your computer.
 
 ```r
 library(EasyPubPlot)  
