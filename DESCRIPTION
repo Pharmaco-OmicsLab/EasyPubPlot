@@ -1,0 +1,24 @@
+Package: EasyPubPlot
+Title: Easy and Publishable Ploting
+Version: 0.0.1
+Authors@R: 
+    person("Nguyen Tran Nam", "Tien", , "namtien.hup@gmail.com", role = c("aut", "cre"))
+Description: Interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: R (>= 4.0.0), methods, grid, graphics, stats, grDevices
+Imports: 
+    bslib,
+    colourpicker,
+    dplyr,
+    ggplot2,
+    ggthemes,
+    magrittr,
+    shiny,
+    shinyjs,
+    shinytoastr,
+    shinyWidgets,
+    tibble,
+    tidyr
