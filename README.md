@@ -1,12 +1,11 @@
-# `EasyPubPlot` - Easy and Publishable Ploting
-
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://mit-license.org/)
 [![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
 
-EasyPubPlot is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
+# `EasyPubPlot` - Easy and Publishable Ploting
+An interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
 
-EasyPubPlot provides an interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
+EasyPubPlot is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
 
 ![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/344cd5cb996330f4139ff6c2c8221bed3da7d433/docs/README_Figures/main_UI.png?raw=true)
 
