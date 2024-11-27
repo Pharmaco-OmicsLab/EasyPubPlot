@@ -3,13 +3,17 @@
 [![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
 
 # `EasyPubPlot` - Easy and Publishable Ploting
-An interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
+An interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers. `EasyPubPlot` is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
 
-EasyPubPlot is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
+<p align="center">
+  <img src="https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/a0e562c811f639e9d732cab4096ae601818c327b/docs/Example_plots/Embed_Graphical_Abstract.png?raw=true" width="760"/>
+</p>
+
+## App Interface
 
 ![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/344cd5cb996330f4139ff6c2c8221bed3da7d433/docs/README_Figures/main_UI.png?raw=true)
 
-## Examples
+## Example
 
 ![Graphical abstract Figure](https://github.com/Pharmaco-OmicsLab/EasyPubPlotdev/blob/b0c65ee487d7fb007aa77c8a0746ca841506658f/docs/README_Figures/BoxPlot_screenshot.png?raw=true)
 
