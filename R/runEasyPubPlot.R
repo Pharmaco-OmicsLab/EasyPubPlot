@@ -8,28 +8,6 @@
 
 runEasyPubPlot = function() {
 
-  # library(shiny)
-  # library(shinyjs)
-  # library(shinyWidgets)
-  # library(colourpicker)
-  # library(bslib)
-  # library(shinytoastr)  # for pop-up messeges
-  # 
-  # library(dplyr)
-  # library(magrittr)
-  # library(ggplot2)
-  # library(tibble)
-  # library(tidyr)
-  # library(ggthemes)
-  # library(EnhancedVolcano)
-  # library(ComplexHeatmap)
-
-  # Source UI
-  source("R/ui.R")
-
-  # Source Server
-  source("R/server.R")
-
   # Run the Application
   shinyApp(ui = ui, server = server)
 
