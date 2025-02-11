@@ -4,13 +4,15 @@ library(ggplot2)
 library(tibble)
 library(tidyr)
 library(ggthemes)
+library(rstatix) # add statistics to box plot
+library(ggpubr) # add statistics to box plot
 library(EnhancedVolcano)
 library(ComplexHeatmap)
 
 # Define Server
 server <- function(input, output, session) {
   
-  #<-- Reset -->
+  # Reset ----
   # Observe the reset button and reload the app when clicked
   observeEvent(input$reload_app_button, {
     session$reload()
@@ -101,7 +103,7 @@ server <- function(input, output, session) {
   }, ignoreInit = TRUE)  # Avoid duplicate triggers
   
   
-  #<-- Navigate when click -->
+  # Navigate when click ----
   ## Go to tutorial
   observeEvent(input$go_to_tutorials, {
     updateTabsetPanel(session, inputId = "navbar", selected = "Tutorials")
@@ -168,42 +170,27 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, inputId = "navbar", selected = "Bubble Plot")
   })
   
-  #<-- Dynamic content for Introduction tab Handling -->
+  # Dynamic content for Introduction tab Handling ----
   output$TutorialsContent <- renderUI({
     if (input$introTab == "ScoresPlot_infor") {
       
       tagList(
-        # Use with action link below
-        #     tags$head(
-        #       tags$style(HTML("
-        #   .clickable-link {
-        #     color: blue;
-        #     text-decoration: underline;
-        #     cursor: pointer;
-        #   }
-        #   .clickable-link:hover {
-        #     color: darkblue;
-        #   }
-        # "))
-        #     ),
         
         tags$main(
-          tags$h3("2D scores plot"),
+          tags$h3("2D Scores Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/ScoresPlot_Example_1.png?raw=true", height = "300px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_ScoresPlot_Tutorial_pdf", "Link to download", class = "clickable-link"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data are principal component scores obtained in the PCA/PLS-DA analysis"),
-          tags$p("This module also requires metadata"),
-          downloadLink("download_ScoresPlot_ExampleScoresData", "Link to download example scores data,", class = "clickable-link"),  # Link to the example data
-          downloadLink("download_ScoresPlot_ExampleMetaData", "Link to download example metadata data", class = "clickable-link"),
-          
-          # actionLink("go_to_ScoresPlot_module",
-          #            tags$h4("Click here to make your first plot", class = "clickable-link")),  # Clickable text
+          tags$p("The input data could be principal component scores obtained in the PCA/PLS-DA analysis."),
+          tags$p("This module also requires metadata."),
+          downloadLink("download_ScoresPlot_ExampleScoresData", "Link to download example scores data", class = "clickable-link"),  # Link to the example data
+          tags$p("\n"),
+          downloadLink("download_ScoresPlot_ExampleMetaData", "Link to download example metadata", class = "clickable-link"),
           
           tags$p("\n"),
           
@@ -222,16 +209,16 @@ server <- function(input, output, session) {
       
       tagList(
         tags$main(
-          tags$h3("Volcano plot"),
+          tags$h3("Volcano Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/VolcanoPlot_Example_1.png?raw=true", height = "200px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_VolcanoPlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data were statistical output from e.g., MetaboAnalyst, ExpressAnalyst, and DESeq2."),
+          tags$p("The input data could be statistical output from, e.g., MetaboAnalyst, ExpressAnalyst, and DESeq2."),
           tags$p("Five columns are required: Features, FoldChange, log2FoldChange, P-value, adj.P.Val."),
           tags$p(
             "Note: Please ensure the columns are in the same order as in the example data. If a column’s information isn’t available, just leave it empty (e.g., FOLDCHANGE and P_VALUE). Column names can be different.",
@@ -259,19 +246,20 @@ server <- function(input, output, session) {
       
       tagList(
         tags$main(
-          tags$h3("Heatmap plot"),
+          tags$h3("Heatmap Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/HeatmapSimple_Example_1.png?raw=true", height = "300px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_HeatmapSimple_Tutorial_pdf", "Link to download", class = "clickable-link"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data are e.g., normalized gene expression or metabolites abundance data"),
-          tags$p("This module also requires metadata"),
-          downloadLink("download_HeatmapSimple_ExampleNormData", "Link to download example normalized data,"),  # Link to the example data
-          downloadLink("download_HeatmapSimple_ExampleMetaData", "Link to download example metadata data"),
+          tags$p("The input data could be, e.g., normalized gene expression or metabolites abundance data."),
+          tags$p("This module also requires metadata."),
+          downloadLink("download_HeatmapSimple_ExampleNormData", "Link to download example normalized data"),  # Link to the example data
+          tags$p("\n"),
+          downloadLink("download_HeatmapSimple_ExampleMetaData", "Link to download example metadata"),
           
           tags$p("\n"),
           
@@ -289,19 +277,20 @@ server <- function(input, output, session) {
       
       tagList(
         tags$main(
-          tags$h3("Box plot"),
+          tags$h3("Box Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/BoxPlot_Example_1.png?raw=true", height = "200px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_BoxPlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data are e.g., normalized gene expression or metabolites abundance data"),
-          tags$p("This module also requires metadata"),
-          downloadLink("download_BoxPlot_ExampleNormData", "Link to download example normalized data,"),  # Link to the example data
-          downloadLink("download_BoxPlot_ExampleMetaData", "Link to download example metadata data"),
+          tags$p("The input data could be, e.g., normalized gene expression or metabolites abundance data."),
+          tags$p("This module also requires metadata."),
+          downloadLink("download_BoxPlot_ExampleNormData", "Link to download example normalized data"),  # Link to the example data
+          tags$p("\n"),
+          downloadLink("download_BoxPlot_ExampleMetaData", "Link to download example metadata"),
           
           tags$p("\n"),
           
@@ -319,18 +308,18 @@ server <- function(input, output, session) {
       
       tagList(
         tags$main(
-          tags$h3("Dot plot"),
+          tags$h3("Dot Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/DotPlot_GSEA_Example_1.png?raw=true", height = "300px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_DotPlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data are e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst"),
+          tags$p("The input data could be, e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst."),
           tags$p(
-            "Note: Please ensure the columns are in the same order as in the example data. If a column’s information isn’t available, just leave it empty. Column names can be different.",
+            "Note: Please ensure the columns are in the same order as in the example data. If a column’s information is not available, leave it empty. Column names can be different.",
             style = "font-weight: bold;"
           ),
           tags$p("\n"),
@@ -356,18 +345,18 @@ server <- function(input, output, session) {
       
       tagList(
         tags$main(
-          tags$h3("Bubble plot"),
+          tags$h3("Bubble Plot"),
           
           img(src = "https://github.com/Pharmaco-OmicsLab/EasyPubPlot/blob/0c198fa1beb3e7fc5a10173e20cf636ab1ea2337/docs/Example_plots/BubblePlot_Metabolomics_Example_1.png?raw=true", height = "300px"),
           
-          tags$h4("First, download a step-by-step tutorial"),
+          tags$h4("First, download the step-by-step tutorial"),
           downloadLink("download_BubblePlot_Tutorial_pdf", "Link to download"),
           
           tags$h4("Next, prepare the input data"),
           
-          tags$p("The input data are e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst"),
+          tags$p("The input data could be, e.g., results obtained via Pathway Analysis in clusterProfiler, ExpressAnalyst, and MetaboAnalyst."),
           tags$p(
-            "Note: Please ensure the columns are in the same order as in the example data. If a column’s information isn’t available, just leave it empty. Column names can be different.",
+            "Note: Please ensure the columns are in the same order as in the example data. If a column’s information is not available, leave it empty. Column names can be different.",
             style = "font-weight: bold;"
           ),
           tags$p("\n"),
@@ -392,9 +381,8 @@ server <- function(input, output, session) {
     
   })
   
-  
-  #<-- Download example data and tutorials Handling -->
-  # Scores Plot
+  # Download example data and tutorials Handling ----
+  ## Scores Plot ----
   ## Scores data
   output$download_ScoresPlot_ExampleScoresData <- downloadHandler(
     filename = function() {
@@ -440,7 +428,7 @@ server <- function(input, output, session) {
     }
   )
   
-  # Volcano Plot
+  ## Volcano Plot ----
   ## STAT data
   output$download_VolcanoPlot_ExampleData <- downloadHandler(
     filename = function() {
@@ -482,7 +470,7 @@ server <- function(input, output, session) {
     )
   }, rownames = FALSE, colnames = TRUE)
   
-  # Heatmap Plot
+  ## Heatmap Plot ----
   ## Heatmap data
   output$download_HeatmapSimple_ExampleNormData <- downloadHandler(
     filename = function() {
@@ -528,7 +516,7 @@ server <- function(input, output, session) {
     }
   )
   
-  # Box Plot
+  ## Box Plot ----
   ## Box Norm data
   output$download_BoxPlot_ExampleNormData <- downloadHandler(
     filename = function() {
@@ -574,7 +562,7 @@ server <- function(input, output, session) {
     }
   )
   
-  # Dot Plot
+  ## Dot Plot ----
   ## Example 1 data - GSEA - clusterProfiler
   output$download_DotPlot_ExampleGSEA_1 <- downloadHandler(
     filename = function() {
@@ -651,7 +639,7 @@ server <- function(input, output, session) {
     
   )
   
-  # Bubble Plot
+  ## Bubble Plot ----
   ## Example 1 data - ORA - ExpressAnalyst
   output$download_BubblePlot_ExampleORA_1 <- downloadHandler(
     filename = function() {
@@ -699,7 +687,7 @@ server <- function(input, output, session) {
   )
   
   
-  #<-- Define some background function -->
+  # Define some background function ----
   ## theme_Publication - copy from the source code
   theme_Publication <- function(base_size=14, base_family="helvetica") {
     library(grid)
@@ -779,14 +767,14 @@ server <- function(input, output, session) {
   }
   
   
-  #<--Reactive values to store uploaded data for all modules -->
+  # Reactive values to store uploaded data for all modules ----
   values <- reactiveValues(
     # PCA/PLS-DA score_ScorePlot plot
     metadata_ScorePlot = NULL, score_ScorePlot = NULL,
     # Volcano plots
     volcanoData = NULL,
     # Box Plots
-    expression_BoxPlot = NULL, metadata_BoxPlot= NULL,
+    expression_BoxPlot = NULL, metadata_BoxPlot= NULL, StatTestResult_BoxPlot = NULL, data_gathered_BoxPlot = NULL,
     # Heatmap simple
     metadata_HeatmapSimple = NULL, NormData_HeatmapSimple = NULL,
     # Dot Plot
@@ -795,7 +783,8 @@ server <- function(input, output, session) {
     PathwayData_BubblePlot = NULL
   )
   
-  #<-- PCA/PLS-DA score_ScorePlot plot Handling -->
+  # PCA/PLS-DA score_ScorePlot plot Handling ----
+  
   # Observe metadata_ScorePlot file upload
   observeEvent(input$metadataFile_ScorePlot, {
     req(input$metadataFile_ScorePlot)
@@ -832,9 +821,6 @@ server <- function(input, output, session) {
     }
     
     # # SHow pop-up messages
-    # Sys.sleep(3)
-    # toastr_info(message = "Ensure: (1) 2 columns in metadata; and (2) identical sample names between files.", timeOut = 12000,
-    #             position = "top-right", closeButton = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 12000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
     
@@ -844,13 +830,6 @@ server <- function(input, output, session) {
     }
     
   })
-  
-  # # Check matched sample names or not
-  # observeEvent(input$scoreFile_ScorePlot, {
-  #
-  #
-  #
-  # })
   
   # UI for dynamic color inputs based on group levels
   output$dynamicColorInputs_ScorePlot <- renderUI({
@@ -922,7 +901,7 @@ server <- function(input, output, session) {
     labels_ScorePlot
   })
   
-  # Render the plot
+  ## Render the plot ----
   output$Render_ScorePlot <- renderPlot({
     req(values$metadata_ScorePlot, values$score_ScorePlot, input$groupLevels_selected_ScorePlot) # Ensure data and group level input are available
     
@@ -1034,31 +1013,66 @@ server <- function(input, output, session) {
     # Render the plot
     p_ScorePlot
     
-    
-    
   }, width = reactive({ input$plotWidth_ScorePlot }), height = reactive({ input$plotHeight_ScorePlot }), res  = 72)
   
   
-  # <-- Download handlers -->
-  ## Score plot
-  output$downloadScorePlot <- downloadHandler(
+  ## Download handlers ----
+  output$download_ScorePlot <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_2DScores_Plot", input$formatdownloadScorePlot, sep = "")
+      # Set the filename dynamically
+      if (input$formatdownload_ScorePlot == ".png") {
+        paste(gsub("-", "_", Sys.Date()), "_ScorePlot", ".png", sep = "")
+      } else if (input$formatdownload_ScorePlot == ".tiff") {
+        paste(gsub("-", "_", Sys.Date()), "_ScorePlot", ".tiff", sep = "")
+      } else if (input$formatdownload_ScorePlot == ".pdf") {
+        paste(gsub("-", "_", Sys.Date()), "_ScorePlot", ".pdf", sep = "")
+      } else if (input$formatdownload_ScorePlot == ".svg") {
+        paste(gsub("-", "_", Sys.Date()), "_ScorePlot", ".svg", sep = "")
+      }
     },
     content = function(file) {
-      ggsave(
-        file, plot = p_ScorePlot,
-        # Adjust height and width accordingly
-        width = input$plotWidth_ScorePlot * input$dpi_ScorePlot / 72,
-        height = input$plotHeight_ScorePlot * input$dpi_ScorePlot / 72,
-        dpi = input$dpi_ScorePlot,
-        units = "px"
-      )
+      # Open the appropriate graphics device based on the file format
+      if (input$formatdownload_ScorePlot == ".png") {
+        png(
+          file,
+          width = input$plotWidth_ScorePlot * input$dpi_ScorePlot / 72,
+          height = input$plotHeight_ScorePlot * input$dpi_ScorePlot / 72,
+          res = input$dpi_ScorePlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_ScorePlot == ".tiff") {
+        tiff(
+          file,
+          width = input$plotWidth_ScorePlot * input$dpi_ScorePlot / 72,
+          height = input$plotHeight_ScorePlot * input$dpi_ScorePlot / 72,
+          res = input$dpi_ScorePlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_ScorePlot == ".pdf") {
+        # For PDF, specify width and height in inches (not pixels), and do not use dpi
+        pdf(
+          file,
+          width = input$plotWidth_ScorePlot / 72,  # Convert to inches
+          height = input$plotHeight_ScorePlot / 72  # Convert to inches
+        )
+      } else if (input$formatdownload_ScorePlot == ".svg") {
+        # For SVG, specify width and height in inches (not pixels), and do not use dpi
+        svg(
+          file,
+          width = input$plotWidth_ScorePlot / 72,  # Convert to inches
+          height = input$plotHeight_ScorePlot / 72  # Convert to inches
+        )
+      }
+      
+      # Explicitly print the ggplot object to the file
+      print(p_ScorePlot)
+      
+      # Close the device after plotting
+      dev.off()
     }
   )
   
-  
-  # <-- Volcano Plot Handling -->
+  # Volcano Plot Handling ----
   observeEvent(input$volcanoFile, {
     req(input$volcanoFile)
     values$volcanoData <- read.csv(input$volcanoFile$datapath)
@@ -1078,8 +1092,6 @@ server <- function(input, output, session) {
     }
     
     # SHow pop-up messages
-    # toastr_info(message = "Ensure: (1) 5 columns in files.", timeOut = 12000,
-    #             position = "top-right", closeButton = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 12000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
   })
@@ -1295,27 +1307,65 @@ server <- function(input, output, session) {
     # For render
     p_volcano
     
-  }, width = reactive({ input$plotWidth_Volcano }), height = reactive({ input$plotHeight_Volcano }), res  = 72)
+  }, width = reactive({ input$plotWidth_VolcanoPlot }), height = reactive({ input$plotHeight_VolcanoPlot }), res  = 72)
   
-  # <-- Download handlers -->
-  ## Volcano plot
+  ## Download handlers ----
   output$download_VolcanoPlot <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_Volcano_Plot", input$formatdownloadVolcano, sep = "")
+      # Set the filename dynamically
+      if (input$formatdownload_VolcanoPlot == ".png") {
+        paste(gsub("-", "_", Sys.Date()), "_VolcanoPlot", ".png", sep = "")
+      } else if (input$formatdownload_VolcanoPlot == ".tiff") {
+        paste(gsub("-", "_", Sys.Date()), "_VolcanoPlot", ".tiff", sep = "")
+      } else if (input$formatdownload_VolcanoPlot == ".pdf") {
+        paste(gsub("-", "_", Sys.Date()), "_VolcanoPlot", ".pdf", sep = "")
+      } else if (input$formatdownload_VolcanoPlot == ".svg") {
+        paste(gsub("-", "_", Sys.Date()), "_VolcanoPlot", ".svg", sep = "")
+      }
     },
     content = function(file) {
-      ggsave(
-        file, plot = p_volcano,
-        # Adjust height and width accordingly
-        width = input$plotWidth_Volcano * input$volcanoDPI / 72,
-        height = input$plotHeight_Volcano * input$volcanoDPI / 72,
-        dpi = input$volcanoDPI,
-        units = "px"
-      )
+      # Open the appropriate graphics device based on the file format
+      if (input$formatdownload_VolcanoPlot == ".png") {
+        png(
+          file,
+          width = input$plotWidth_VolcanoPlot * input$dpi_VolcanoPlot / 72,
+          height = input$plotHeight_VolcanoPlot * input$dpi_VolcanoPlot / 72,
+          res = input$dpi_VolcanoPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_VolcanoPlot == ".tiff") {
+        tiff(
+          file,
+          width = input$plotWidth_VolcanoPlot * input$dpi_VolcanoPlot / 72,
+          height = input$plotHeight_VolcanoPlot * input$dpi_VolcanoPlot / 72,
+          res = input$dpi_VolcanoPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_VolcanoPlot == ".pdf") {
+        # For PDF, specify width and height in inches (not pixels), and do not use dpi
+        pdf(
+          file,
+          width = input$plotWidth_VolcanoPlot / 72,  # Convert to inches
+          height = input$plotHeight_VolcanoPlot / 72  # Convert to inches
+        )
+      } else if (input$formatdownload_VolcanoPlot == ".svg") {
+        # For SVG, specify width and height in inches (not pixels), and do not use dpi
+        svg(
+          file,
+          width = input$plotWidth_VolcanoPlot / 72,  # Convert to inches
+          height = input$plotHeight_VolcanoPlot / 72  # Convert to inches
+        )
+      }
+      
+      # Explicitly print the ggplot object to the file
+      print(p_volcano)
+      
+      # Close the device after plotting
+      dev.off()
     }
   )
   
-  #<-- Boxplot Handling -->
+  # Boxplot Handling ----
   # Observe metadata_BoxPlot file upload
   observeEvent(input$metadataFile_BoxPlot, {
     req(input$metadataFile_BoxPlot)
@@ -1336,8 +1386,6 @@ server <- function(input, output, session) {
   observeEvent(input$expressionFile_BoxPlot, {
     
     # SHow pop-up messages
-    # toastr_info(message = "Ensure: (1) 2 columns in metadata; (2) identical sample names between files; and (3) not duplicated features.", timeOut = 15000,
-    #             position = "top-right", closeButton = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 15000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
     
@@ -1449,8 +1497,9 @@ server <- function(input, output, session) {
     labels_BoxPlot
   })
   
-  # Render the plot
-  output$Render_BoxPlot <- renderPlot({
+  # Re-format data and Calculate (adj) P-value [2 groups scenario]
+  observe({
+    
     req(values$metadata_BoxPlot, values$expression_BoxPlot, input$groupLevels_selected_BoxPlot) # Ensure data and group level input are available
     
     # Get pre-defined level of features first
@@ -1463,14 +1512,87 @@ server <- function(input, output, session) {
     
     data_normalized_STAT_DEMs = values$metadata_BoxPlot %>%
       inner_join(Exp_df_BoxPlot, by = "Sample") %>%
-      mutate(Group = factor(Group, levels = input$groupLevels_selected_BoxPlot))  # Use selected group levels
+      mutate(Group = factor(Group, levels = input$groupLevels_selected_BoxPlot))  # Use selected group levels, also applied for statistics
     
     # Transform data
-    data_gathered <- gather(data_normalized_STAT_DEMs, key = "Features", value = "Intensity", -Sample, -Group) %>%
+    data_gathered_BoxPlot <- gather(data_normalized_STAT_DEMs, key = "Features", value = "Intensity", -Sample, -Group) %>%
       mutate(
         Intensity = as.numeric(Intensity),
         Features = factor(Features, levels = Features_level_BoxPlot)
       )
+    
+    # Calculate (adj) P-value [2 groups scenario]
+    if (length(unique(data_gathered_BoxPlot$Group)) == 2){
+      
+      UseFDRBOxPlot = input$checkbox_FDR_BoxPlot  # UseFDRBOxPlot = TRUE
+      
+      # P-value correction methods
+      PValCorrectionMethod <- switch(
+        input$PValCorrectionMethod_BoxPlot,
+        "Holm" = "holm",
+        "Hochberg" = "hochberg",
+        "Hommel" = "hommel",
+        "Bonferroni" = "bonferroni",
+        "Benjamini-Hochberg (BH)" = "BH"
+      )
+      
+      if (UseFDRBOxPlot) {
+        
+        StatTestResult_BoxPlot <- data_gathered_BoxPlot %>% 
+          group_by(Features) %>%
+          t_test(Intensity ~ Group, paired = FALSE, alternative = "two.sided", var.equal = TRUE) %>%
+          adjust_pvalue(method = PValCorrectionMethod) %>%
+          add_significance() %>% 
+          add_xy_position(x = "Group") %>% 
+          dplyr::rename(Label = p.adj.signif) %>% 
+          mutate(
+            Label_Pval = base::paste(Label, ", ", "Adj. P-value: ", sprintf("%.2f", p.adj), sep = "")
+          )
+        
+      } else {
+        
+        StatTestResult_BoxPlot <- data_gathered_BoxPlot %>% 
+          group_by(Features) %>%
+          t_test(Intensity ~ Group, paired = FALSE, alternative = "two.sided", var.equal = TRUE) %>%
+          add_significance() %>% 
+          add_xy_position(x = "Group") %>% 
+          dplyr::rename(Label = p.signif) %>% 
+          mutate(
+            Label_Pval = base::paste(Label, ", ", "P-value: ", sprintf("%.2f", p), sep = "")
+          )
+        
+      }
+      
+      ## Change name to show in the plot
+      LabelPvalBoxplot = FALSE#input$checkbox_showPvalue_BoxPlot  #
+      
+      if (LabelPvalBoxplot) {
+        
+        StatTestResult_BoxPlot = StatTestResult_BoxPlot %>% 
+          rename(Label_ggplot2 = Label_Pval)
+        
+      } else {
+        
+        StatTestResult_BoxPlot = StatTestResult_BoxPlot %>% 
+          rename(Label_ggplot2 = Label)
+        
+      }
+      
+    }
+    
+    ## Return data_gathered_BoxPlot and `StatTestResult_BoxPlot` to values
+    values$StatTestResult_BoxPlot = StatTestResult_BoxPlot
+    values$data_gathered_BoxPlot = data_gathered_BoxPlot
+    
+  })
+  
+  ## Render the plot ----
+  output$Render_BoxPlot <- renderPlot({
+    req(values$metadata_BoxPlot, values$expression_BoxPlot, values$StatTestResult_BoxPlot, values$data_gathered_BoxPlot, input$groupLevels_selected_BoxPlot) # Ensure data and group level input are available
+    
+    # Assign data.frame
+    StatTestResult_BoxPlot <- values$StatTestResult_BoxPlot
+    data_gathered = values$data_gathered_BoxPlot
     
     # Generate dynamic color palette based on the number of groups
     color_code_BoxPlot <- color_palette_BoxPlot()  # Get dynamic color palette
@@ -1521,6 +1643,15 @@ server <- function(input, output, session) {
       scale_x_discrete(labels = legend_labels_vector_BoxPlot)
     # scale_y_continuous(limits = y_limits, breaks = y_breaks)
     
+    # Conditionally add the statistics (2 group scenarios)
+    if (input$checkbox_PvalCalculation_BoxPlot == TRUE & length(unique(data_gathered$Group)) == 2){
+      p_BoxPlot + 
+        stat_pvalue_manual(
+          StatTestResult_BoxPlot, label = "Label_ggplot2",
+          tip.length = 0.01, step.increase = 0.05, label.size = input$labelSizeStatistic_BoxPlot
+        ) -> p_BoxPlot
+    }
+    
     # Conditionally add the bold for axis and tick
     if (input$checkbox_Axis_bold_BoxPlot) {
       p_BoxPlot <- p_BoxPlot + theme(axis.title = element_text(face = "bold"))
@@ -1538,26 +1669,94 @@ server <- function(input, output, session) {
     
   }, width = reactive({ input$plotWidth_BoxPlot }), height = reactive({ input$plotHeight_BoxPlot }), res  = 72)
   
-  # <-- Download handlers -->
-  ## Box plot
+  ## Download handlers ----
+  ### Box Plot
   output$download_BoxPlot <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_Box_Plots", input$formatdownload_BoxPlot, sep = "")
+      # Set the filename dynamically
+      if (input$formatdownload_BoxPlot == ".png") {
+        paste(gsub("-", "_", Sys.Date()), "_BoxPlot", ".png", sep = "")
+      } else if (input$formatdownload_BoxPlot == ".tiff") {
+        paste(gsub("-", "_", Sys.Date()), "_BoxPlot", ".tiff", sep = "")
+      } else if (input$formatdownload_BoxPlot == ".pdf") {
+        paste(gsub("-", "_", Sys.Date()), "_BoxPlot", ".pdf", sep = "")
+      } else if (input$formatdownload_BoxPlot == ".svg") {
+        paste(gsub("-", "_", Sys.Date()), "_BoxPlot", ".svg", sep = "")
+      }
     },
     content = function(file) {
-      ggsave(
-        file, plot = p_BoxPlot,
-        # Adjust height and width accordingly
-        width = input$plotWidth_BoxPlot * input$dpi_BoxPlot / 72,
-        height = input$plotHeight_BoxPlot * input$dpi_BoxPlot / 72,
-        dpi = input$dpi_BoxPlot,
-        units = "px"
-      )
+      # Open the appropriate graphics device based on the file format
+      if (input$formatdownload_BoxPlot == ".png") {
+        png(
+          file,
+          width = input$plotWidth_BoxPlot * input$dpi_BoxPlot / 72,
+          height = input$plotHeight_BoxPlot * input$dpi_BoxPlot / 72,
+          res = input$dpi_BoxPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_BoxPlot == ".tiff") {
+        tiff(
+          file,
+          width = input$plotWidth_BoxPlot * input$dpi_BoxPlot / 72,
+          height = input$plotHeight_BoxPlot * input$dpi_BoxPlot / 72,
+          res = input$dpi_BoxPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_BoxPlot == ".pdf") {
+        # For PDF, specify width and height in inches (not pixels), and do not use dpi
+        pdf(
+          file,
+          width = input$plotWidth_BoxPlot / 72,  # Convert to inches
+          height = input$plotHeight_BoxPlot / 72  # Convert to inches
+        )
+      } else if (input$formatdownload_BoxPlot == ".svg") {
+        # For SVG, specify width and height in inches (not pixels), and do not use dpi
+        svg(
+          file,
+          width = input$plotWidth_BoxPlot / 72,  # Convert to inches
+          height = input$plotHeight_BoxPlot / 72  # Convert to inches
+        )
+      }
+      
+      # Explicitly print the ggplot object to the file
+      print(p_BoxPlot)
+      
+      # Close the device after plotting
+      dev.off()
+    }
+  )
+  
+  ### Statistics results
+  output$download_PvalueBoxPlot <- downloadHandler(
+    filename = function() {
+      # Ensure the filename has a .csv extension
+      paste(gsub("-", "_", Sys.Date()), "_StatTestResult.csv", sep = "")
+    },
+    content = function(file) {
+      # Access the data stored in values$StatTestResult_BoxPlot
+      data_to_download <- values$StatTestResult_BoxPlot
+      
+      # Check if data is not NULL
+      if (!is.null(data_to_download)) {
+        
+        # Extract the necessary columns from the rstatix object (assuming it has a t-test result)
+        # Convert to a data frame
+        data_as_df <- as.data.frame(data_to_download)
+        
+        # If necessary, extract specific columns from the rstatix result
+        result_df <- data_as_df[, c("Features", "statistic", "df", "p", "p.adj", "Label_ggplot2")]
+        
+        # Write the data frame to a CSV file
+        write.csv(result_df, file, row.names = FALSE)
+      } else {
+        # If data is NULL, show a notification
+        showNotification("Error: StatTestResult_BoxPlot data is not available", type = "error")
+      }
     }
   )
   
   
-  #<-- HeatmapSimple plot Handling -->
+  # HeatmapSimple plot Handling ----
   library(ComplexHeatmap)
   
   # Observe metadata_HeatmapSimple file upload
@@ -1579,8 +1778,6 @@ server <- function(input, output, session) {
   observeEvent(input$NormDataFile_HeatmapSimple, {
     
     # SHow pop-up messages
-    # toastr_info(message = "Ensure: (1) 2 columns in metadata; (2) identical sample names between files; and (3) not duplicated features.", timeOut = 15000,
-    #             position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 15000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
     
@@ -1809,20 +2006,72 @@ server <- function(input, output, session) {
     
   }, width = reactive({ input$plotWidth_HeatmapSimple }), height = reactive({ input$plotHeight_HeatmapSimple }), res  = 72)
   
-  # <-- Download handlers -->
+  ##  Download handlers ----
   ## Heatmap simple
   output$download_HeatmapSimple <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".png", sep = "")
+      
+      if (input$formatdownload_HeatmapSimple == ".png") {
+        
+        paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".png", sep = "")
+        
+      } else if (input$formatdownload_HeatmapSimple == ".tiff") {
+        
+        paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".tiff", sep = "")
+        
+      } else if (input$formatdownload_HeatmapSimple == ".pdf") {
+        
+        paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".pdf", sep = "")
+        
+      } else if (input$formatdownload_HeatmapSimple == ".svg") {
+        
+        paste(gsub("-", "_", Sys.Date()), "_Heatmap", ".svg", sep = "")
+        
+      }
+      
     },
     content = function(file) {
-      png(
-        file,
-        # Adjust height and width accordingly
-        width = input$plotWidth_HeatmapSimple * input$dpi_HeatmapSimple / 72,
-        height = input$plotHeight_HeatmapSimple * input$dpi_HeatmapSimple / 72,
-        res = input$dpi_HeatmapSimple, units = "px"
-      )
+      if (input$formatdownload_HeatmapSimple == ".png") {
+        
+        png(
+          file,
+          # Adjust height and width accordingly
+          width = input$plotWidth_HeatmapSimple * input$dpi_HeatmapSimple / 72,
+          height = input$plotHeight_HeatmapSimple * input$dpi_HeatmapSimple / 72,
+          res = input$dpi_HeatmapSimple, units = "px"
+        )
+        
+      } else if (input$formatdownload_HeatmapSimple == ".tiff") {
+        
+        tiff(
+          file,
+          # Adjust height and width accordingly
+          width = input$plotWidth_HeatmapSimple * input$dpi_HeatmapSimple / 72,
+          height = input$plotHeight_HeatmapSimple * input$dpi_HeatmapSimple / 72,
+          res = input$dpi_HeatmapSimple, units = "px"
+        )
+        
+      } else if (input$formatdownload_HeatmapSimple == ".pdf") {
+        
+        pdf(
+          file,
+          # Adjust height and width accordingly
+          width = input$plotWidth_HeatmapSimple / 72,
+          height = input$plotHeight_HeatmapSimple / 72
+          # res = input$dpi_HeatmapSimple, units = "px"
+        )
+        
+      } else if (input$formatdownload_HeatmapSimple == ".svg") {
+        
+        svg(
+          file,
+          # Adjust height and width accordingly
+          width = input$plotWidth_HeatmapSimple / 72,
+          height = input$plotHeight_HeatmapSimple / 72
+          # res = input$dpi_HeatmapSimple, units = "px"
+        )
+        
+      }
       
       ######### IMPORTANT: Copy all to here => Remember when modify in the render -> Copy here #########
       req(
@@ -1940,15 +2189,13 @@ server <- function(input, output, session) {
     }
   )
   
-  #<-- DotPlot plot Handling -->
+  # DotPlot plot Handling ----
   # Observe PathwayData_DotPlot file upload
   observeEvent(input$PathwayDataFile_DotPlot, {
     req(input$PathwayDataFile_DotPlot)
     values$PathwayData_DotPlot <- read.csv(input$PathwayDataFile_DotPlot$datapath, check.names = FALSE)
     
     # SHow pop-up messages
-    # toastr_info(message = "Ensure: (1) accurate number of columns.", timeOut = 12000,
-    #             position = "top-right", closeButton = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 12000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
   })
@@ -1957,7 +2204,7 @@ server <- function(input, output, session) {
   observeEvent(input$PathwayFromOmics_DotPlot, {
     Input_data_DotPlot <- switch(
       input$PathwayFromOmics_DotPlot,
-      "Transcriptomics" = "Transcriptomics",
+      "Transcriptomics/Proteomics" = "Transcriptomics/Proteomics",
       "Metabolomics" = "Metabolomics"
     )
     
@@ -1965,21 +2212,21 @@ server <- function(input, output, session) {
     updateTextInput(
       session,
       "xLabel_DotPlot",
-      value = if (Input_data_DotPlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+      value = if (Input_data_DotPlot == "Transcriptomics/Proteomics") "Gene Ratio" else "Pathway Impact"
     )
     
     # Update color label based on Input_data_DotPlot
     updateTextInput(
       session,
       "ColorTitle_DotPlot",
-      value = if (Input_data_DotPlot == "Transcriptomics") "Adjusted P-value" else "P-value"
+      value = if (Input_data_DotPlot == "Transcriptomics/Proteomics") "Adjusted P-value" else "P-value"
     )
     
-    # Choose AdjPvalue by default if select Transcriptomics
+    # Choose AdjPvalue by default if select Transcriptomics/Proteomics
     updateTextInput(
       session,
       "checkbox_adjPvalue_DotPlot",
-      value = if (Input_data_DotPlot == "Transcriptomics") TRUE else FALSE
+      value = if (Input_data_DotPlot == "Transcriptomics/Proteomics") TRUE else FALSE
     )
     
   })
@@ -1996,7 +2243,7 @@ server <- function(input, output, session) {
     
   })
   
-  # Render the plot
+  # Render the plot ----
   output$Render_DotPlot <- renderPlot({
     req(values$PathwayData_DotPlot) # Ensure data and group level input are available
     
@@ -2029,7 +2276,7 @@ server <- function(input, output, session) {
     # Define the Omics data => NOTE: also define outside (above) to update the x-axis label autonmatically
     Input_data_DotPlot <- switch(
       input$PathwayFromOmics_DotPlot,
-      "Transcriptomics" = "Transcriptomics",
+      "Transcriptomics/Proteomics" = "Transcriptomics/Proteomics",
       "Metabolomics" = "Metabolomics"
     )
     
@@ -2037,9 +2284,9 @@ server <- function(input, output, session) {
     if (Pathway_analysis_mode == "ORA") {
       
       ######### For ORA #########
-      if (Input_data_DotPlot == "Transcriptomics") {
+      if (Input_data_DotPlot == "Transcriptomics/Proteomics") {
         
-        # <-- Transcriptomics -->
+        # <-- Transcriptomics/Proteomics -->
         
         # Standardize variables name
         names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "GeneRatio", "Pvalue", "P.adjust", "FeaturesID")
@@ -2066,6 +2313,7 @@ server <- function(input, output, session) {
           p_DotPlot = pathway_input_data %>%
             dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
             mutate(Description = factor(Description, level = Description_level)) %>%
+            dplyr::filter(P.adjust < input$STATcutoff_DotPlot) %>% # Add filtering step
             ggplot(aes(x = `GeneRatio`, y = Description)) +
             geom_point(aes(size = Hits_count, color = P.adjust)) +
             geom_segment(aes(xend = 0, yend = Description))
@@ -2074,6 +2322,7 @@ server <- function(input, output, session) {
           p_DotPlot = pathway_input_data %>%
             dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
             mutate(Description = factor(Description, level = Description_level)) %>%
+            dplyr::filter(Pvalue < input$STATcutoff_DotPlot) %>% # Add filtering step
             ggplot(aes(x = `GeneRatio`, y = Description)) +
             geom_point(aes(size = Hits_count, color = Pvalue)) +
             geom_segment(aes(xend = 0, yend = Description))
@@ -2101,6 +2350,7 @@ server <- function(input, output, session) {
           p_DotPlot = pathway_input_data %>%
             dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
             mutate(Description = factor(Description, level = Description_level)) %>%
+            dplyr::filter(P.adjust < input$STATcutoff_DotPlot) %>% # Add filtering step
             ggplot(aes(x = `Pathway_impact`, y = Description)) +
             geom_point(aes(size = Hits_count, color = P.adjust)) +
             geom_segment(aes(xend = 0, yend = Description))
@@ -2109,6 +2359,7 @@ server <- function(input, output, session) {
           p_DotPlot = pathway_input_data %>%
             dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
             mutate(Description = factor(Description, level = Description_level)) %>%
+            dplyr::filter(Pvalue < input$STATcutoff_DotPlot) %>% # Add filtering step
             ggplot(aes(x = `Pathway_impact`, y = Description)) +
             geom_point(aes(size = Hits_count, color = Pvalue)) +
             geom_segment(aes(xend = 0, yend = Description))
@@ -2117,7 +2368,7 @@ server <- function(input, output, session) {
       }
       
     } else if (
-      (Pathway_analysis_mode == "GSEA") & (Input_data_DotPlot == "Transcriptomics")
+      (Pathway_analysis_mode == "GSEA") & (Input_data_DotPlot == "Transcriptomics/Proteomics")
     ) {
       
       ######### For GSEA #########
@@ -2162,6 +2413,7 @@ server <- function(input, output, session) {
         p_DotPlot = pathway_input_data %>%
           dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
           mutate(Description = factor(Description, level = Description_level)) %>%
+          dplyr::filter(P.adjust < input$STATcutoff_DotPlot) %>% # Add filtering step
           ggplot(aes(x = `GeneRatio`, y = Description)) +
           geom_point(aes(size = Hits_count, color = P.adjust)) +
           geom_segment(aes(xend = 0, yend = Description)) +
@@ -2171,6 +2423,7 @@ server <- function(input, output, session) {
         p_DotPlot = pathway_input_data %>%
           dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
           mutate(Description = factor(Description, level = Description_level)) %>%
+          dplyr::filter(Pvalue < input$STATcutoff_DotPlot) %>% # Add filtering step
           ggplot(aes(x = `GeneRatio`, y = Description)) +
           geom_point(aes(size = Hits_count, color = Pvalue)) +
           geom_segment(aes(xend = 0, yend = Description)) +
@@ -2215,33 +2468,69 @@ server <- function(input, output, session) {
     
   }, width = reactive({ input$plotWidth_DotPlot }), height = reactive({ input$plotHeight_DotPlot }), res = 72)
   
-  # <-- Download handlers -->
-  ## Dot plot
+  # Download handlers ----
   output$download_DotPlot <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_DotPlot", input$formatdownload_DotPlot, sep = "")
+      # Set the filename dynamically
+      if (input$formatdownload_DotPlot == ".png") {
+        paste(gsub("-", "_", Sys.Date()), "_DotPlot", ".png", sep = "")
+      } else if (input$formatdownload_DotPlot == ".tiff") {
+        paste(gsub("-", "_", Sys.Date()), "_DotPlot", ".tiff", sep = "")
+      } else if (input$formatdownload_DotPlot == ".pdf") {
+        paste(gsub("-", "_", Sys.Date()), "_DotPlot", ".pdf", sep = "")
+      } else if (input$formatdownload_DotPlot == ".svg") {
+        paste(gsub("-", "_", Sys.Date()), "_DotPlot", ".svg", sep = "")
+      }
     },
     content = function(file) {
-      ggsave(
-        file, plot = p_DotPlot,
-        # Adjust height and width accordingly
-        width = input$plotWidth_DotPlot * input$dpi_DotPlot / 72,
-        height = input$plotHeight_DotPlot * input$dpi_DotPlot / 72,
-        dpi = input$dpi_DotPlot,
-        units = "px"
-      )
+      # Open the appropriate graphics device based on the file format
+      if (input$formatdownload_DotPlot == ".png") {
+        png(
+          file,
+          width = input$plotWidth_DotPlot * input$dpi_DotPlot / 72,
+          height = input$plotHeight_DotPlot * input$dpi_DotPlot / 72,
+          res = input$dpi_DotPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_DotPlot == ".tiff") {
+        tiff(
+          file,
+          width = input$plotWidth_DotPlot * input$dpi_DotPlot / 72,
+          height = input$plotHeight_DotPlot * input$dpi_DotPlot / 72,
+          res = input$dpi_DotPlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_DotPlot == ".pdf") {
+        # For PDF, specify width and height in inches (not pixels), and do not use dpi
+        pdf(
+          file,
+          width = input$plotWidth_DotPlot / 72,  # Convert to inches
+          height = input$plotHeight_DotPlot / 72  # Convert to inches
+        )
+      } else if (input$formatdownload_DotPlot == ".svg") {
+        # For SVG, specify width and height in inches (not pixels), and do not use dpi
+        svg(
+          file,
+          width = input$plotWidth_DotPlot / 72,  # Convert to inches
+          height = input$plotHeight_DotPlot / 72  # Convert to inches
+        )
+      }
+      
+      # Explicitly print the ggplot object to the file
+      print(p_DotPlot)
+      
+      # Close the device after plotting
+      dev.off()
     }
   )
   
-  #<-- BubblePlot plot Handling -->
+  # BubblePlot plot Handling ----
   # Observe PathwayData_BubblePlot file upload
   observeEvent(input$PathwayDataFile_BubblePlot, {
     req(input$PathwayDataFile_BubblePlot)
     values$PathwayData_BubblePlot <- read.csv(input$PathwayDataFile_BubblePlot$datapath, check.names = FALSE)
     
     # SHow pop-up messages
-    # toastr_info(message = "Ensure: (1) accurate number of columns.", timeOut = 12000,
-    #             position = "top-right", closeButton = TRUE)
     toastr_info(title = "NOTE", message = "If the plot doesn’t appear or you see an error message, please double-check your input data and try again. If the issue persists, don't hesitate to contact us—we're here to help!", timeOut = 12000,
                 position = "top-right", closeButton = TRUE)#, progressBar = TRUE)
   })
@@ -2250,7 +2539,7 @@ server <- function(input, output, session) {
   observeEvent(input$PathwayFromOmics_BubblePlot, {
     Input_data_BubblePlot <- switch(
       input$PathwayFromOmics_BubblePlot,
-      "Transcriptomics" = "Transcriptomics",
+      "Transcriptomics/Proteomics" = "Transcriptomics/Proteomics",
       "Metabolomics" = "Metabolomics"
     )
     
@@ -2258,35 +2547,35 @@ server <- function(input, output, session) {
     updateTextInput(
       session,
       "xLabel_BubblePlot",
-      value = if (Input_data_BubblePlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+      value = if (Input_data_BubblePlot == "Transcriptomics/Proteomics") "Gene Ratio" else "Pathway Impact"
     )
     
     # Update PointSize label based on Input_data_BubblePlot
     updateTextInput(
       session,
       "PointSizeTitleBubblePlot",
-      value = if (Input_data_BubblePlot == "Transcriptomics") "Gene Ratio" else "Pathway Impact"
+      value = if (Input_data_BubblePlot == "Transcriptomics/Proteomics") "Gene Ratio" else "Pathway Impact"
     )
     
     # Update Y-axis label based on Input_data_BubblePlot
     updateTextInput(
       session,
       "yLabel_BubblePlot",
-      value = if (Input_data_BubblePlot == "Transcriptomics") "-log10(Adjusted P-value)" else "-log10(P-value)"
+      value = if (Input_data_BubblePlot == "Transcriptomics/Proteomics") "-log10(Adjusted P-value)" else "-log10(P-value)"
     )
     
     # Update color label based on Input_data_BubblePlot
     updateTextInput(
       session,
       "ColorTitle_BubblePlot",
-      value = if (Input_data_BubblePlot == "Transcriptomics") "Adjusted P-value" else "P-value"
+      value = if (Input_data_BubblePlot == "Transcriptomics/Proteomics") "Adjusted P-value" else "P-value"
     )
     
-    # Choose AdjPvalue by default if select Transcriptomics
+    # Choose AdjPvalue by default if select Transcriptomics/Proteomics
     updateTextInput(
       session,
       "checkbox_adjPvalue_BubblePlot",
-      value = if (Input_data_BubblePlot == "Transcriptomics") TRUE else FALSE
+      value = if (Input_data_BubblePlot == "Transcriptomics/Proteomics") TRUE else FALSE
     )
     
   })
@@ -2310,7 +2599,7 @@ server <- function(input, output, session) {
     
   })
   
-  # Render the plot
+  ## Render the plot ----
   output$Render_BubblePlot <- renderPlot({
     req(values$PathwayData_BubblePlot) # Ensure data and group level input are available
     
@@ -2339,15 +2628,15 @@ server <- function(input, output, session) {
     # Define the Omics data => NOTE: also define outside (above) to update the x-axis label autonmatically
     Input_data_BubblePlot <- switch(
       input$PathwayFromOmics_BubblePlot,
-      "Transcriptomics" = "Transcriptomics",
+      "Transcriptomics/Proteomics" = "Transcriptomics/Proteomics",
       "Metabolomics" = "Metabolomics"
     )
     
     # Ploting
     ######### Bubble only For ORA #########
-    if (Input_data_BubblePlot == "Transcriptomics") {
+    if (Input_data_BubblePlot == "Transcriptomics/Proteomics") {
       
-      # <-- Transcriptomics -->
+      # <-- Transcriptomics/Proteomics -->
       
       # Standardize variables name
       names(pathway_input_data) = c("Description", "Hits_count", "Total_input_gene", "GeneRatio", "Pvalue", "P.adjust", "FeaturesID")
@@ -2373,6 +2662,7 @@ server <- function(input, output, session) {
         # Use adjPvalue for visualization
         p_BubblePlot = pathway_input_data %>%
           dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+          dplyr::filter(P.adjust < input$STATcutoff_BubblePlot) %>% # Add filtering step
           ggplot(aes(x = `GeneRatio`, y = -log10(P.adjust))) +
           geom_point(aes(size = GeneRatio, color = P.adjust))
         
@@ -2380,6 +2670,7 @@ server <- function(input, output, session) {
         # Use Pvalue for visualization
         p_BubblePlot = pathway_input_data %>%
           dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+          dplyr::filter(Pvalue < input$STATcutoff_BubblePlot) %>% # Add filtering step
           ggplot(aes(x = `GeneRatio`, y = -log10(Pvalue))) +
           geom_point(aes(size = GeneRatio, color = Pvalue))
       }
@@ -2406,6 +2697,7 @@ server <- function(input, output, session) {
         # Use adjPvalue for visualization
         p_BubblePlot = pathway_input_data %>%
           dplyr::select(-Pvalue) %>%  # QC to ensure that did not select P-value in the analysis
+          dplyr::filter(P.adjust < input$STATcutoff_BubblePlot) %>% # Add filtering step
           ggplot(aes(x = `Pathway_impact`, y = -log10(P.adjust))) +
           geom_point(aes(size = Pathway_impact, color = P.adjust))
         
@@ -2413,6 +2705,7 @@ server <- function(input, output, session) {
         # Use Pvalue for visualization
         p_BubblePlot = pathway_input_data %>%
           dplyr::select(-P.adjust) %>%  # QC to ensure that did not select P.adjust in the analysis
+          dplyr::filter(Pvalue < input$STATcutoff_BubblePlot) %>% # Add filtering step
           ggplot(aes(x = `Pathway_impact`, y = -log10(Pvalue))) +
           geom_point(aes(size = Pathway_impact, color = Pvalue))
       }
@@ -2460,21 +2753,59 @@ server <- function(input, output, session) {
     
   }, width = reactive({ input$plotWidth_BubblePlot }), height = reactive({ input$plotHeight_BubblePlot }), res = 72)
   
-  # <-- Download handlers -->
-  ## Bubble plot
+  ## Download handlers ----
   output$download_BubblePlot <- downloadHandler(
     filename = function() {
-      paste(gsub("-", "_", Sys.Date()), "_BubblePlot", input$formatdownload_BubblePlot, sep = "")
+      # Set the filename dynamically
+      if (input$formatdownload_BubblePlot == ".png") {
+        paste(gsub("-", "_", Sys.Date()), "_BubblePlot", ".png", sep = "")
+      } else if (input$formatdownload_BubblePlot == ".tiff") {
+        paste(gsub("-", "_", Sys.Date()), "_BubblePlot", ".tiff", sep = "")
+      } else if (input$formatdownload_BubblePlot == ".pdf") {
+        paste(gsub("-", "_", Sys.Date()), "_BubblePlot", ".pdf", sep = "")
+      } else if (input$formatdownload_BubblePlot == ".svg") {
+        paste(gsub("-", "_", Sys.Date()), "_BubblePlot", ".svg", sep = "")
+      }
     },
     content = function(file) {
-      ggsave(
-        file, plot = p_BubblePlot,
-        # Adjust height and width accordingly
-        width = input$plotWidth_BubblePlot * input$dpi_BubblePlot / 72,
-        height = input$plotHeight_BubblePlot * input$dpi_BubblePlot / 72,
-        dpi = input$dpi_BubblePlot,
-        units = "px"
-      )
+      # Open the appropriate graphics device based on the file format
+      if (input$formatdownload_BubblePlot == ".png") {
+        png(
+          file,
+          width = input$plotWidth_BubblePlot * input$dpi_BubblePlot / 72,
+          height = input$plotHeight_BubblePlot * input$dpi_BubblePlot / 72,
+          res = input$dpi_BubblePlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_BubblePlot == ".tiff") {
+        tiff(
+          file,
+          width = input$plotWidth_BubblePlot * input$dpi_BubblePlot / 72,
+          height = input$plotHeight_BubblePlot * input$dpi_BubblePlot / 72,
+          res = input$dpi_BubblePlot, 
+          units = "px"
+        )
+      } else if (input$formatdownload_BubblePlot == ".pdf") {
+        # For PDF, specify width and height in inches (not pixels), and do not use dpi
+        pdf(
+          file,
+          width = input$plotWidth_BubblePlot / 72,  # Convert to inches
+          height = input$plotHeight_BubblePlot / 72  # Convert to inches
+        )
+      } else if (input$formatdownload_BubblePlot == ".svg") {
+        # For SVG, specify width and height in inches (not pixels), and do not use dpi
+        svg(
+          file,
+          width = input$plotWidth_BubblePlot / 72,  # Convert to inches
+          height = input$plotHeight_BubblePlot / 72  # Convert to inches
+        )
+      }
+      
+      # Explicitly print the ggplot object to the file
+      print(p_BubblePlot)
+      
+      # Close the device after plotting
+      dev.off()
     }
   )
 }

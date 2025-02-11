@@ -7,7 +7,7 @@ library(shinytoastr)
 
 # Define UI
 ui <- fluidPage(
-  # Custom CSS
+  # Custom CSS ----
   tags$style(HTML("
 
     /* Customzie sidebarLayout */
@@ -47,7 +47,7 @@ ui <- fluidPage(
 
   ")),
   
-  
+  # navbarPage ----
   navbarPage(
     title = "EasyPubPlot",
     id = "navbar",  # Set an ID here for reference
@@ -61,23 +61,10 @@ ui <- fluidPage(
     useToastr(),  # Initialize shinytoastr
     shinyjs::useShinyjs(),  # Allow to use shinyjs
     
-    # Introduction Tab
+    ## Introduction Tab ----
     tabPanel(
       title = "Welcome",
       tagList(
-        # Use with action link below to customize its UI
-        #   tags$head(
-        #     tags$style(HTML("
-        #   .clickable-link {
-        #     color: blue;
-        #     text-decoration: underline;
-        #     cursor: pointer;
-        #   }
-        #   .clickable-link:hover {
-        #     color: darkblue;
-        #   }
-        # "))
-        #   ),
         
         tags$main(
           tags$h2("EasyPubPlot - Easy and Publishable Plotting"),
@@ -85,8 +72,6 @@ ui <- fluidPage(
             "EasyPubPlot provides an interactive and customizable tools to easily",
             "create publishable plots for scientific papers"
           ),
-          # actionLink("go_to_tutorials",
-          #            tags$h4("Click here to start", class = "clickable-link")),  # Clickable text
           
           tags$p("\n"),
           
@@ -107,7 +92,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Volcano Plot Tab
+    ## Volcano Plot Tab ----
     tabPanel(
       title = "Volcano Plot",
       
@@ -119,16 +104,11 @@ ui <- fluidPage(
         onclick = "Shiny.setInputValue('go_to_tutorials_VolcanoPlot', Math.random())"
       ),
       
-      # This work but not beautiful
-      # actionButton("reload_app_button", "Reset App",
-      #              style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"),
-      
       tags$button(
         id = "reload_tab_button_Volcano",
         class = "action-button shiny-bound-input",
         "Reset This Tab",
-        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-        # onclick = "Shiny.setInputValue('reload_tab_button_BoxPlot', Math.random())"
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"  # Custom styles
       ),
       
       tags$button(
@@ -174,8 +154,8 @@ ui <- fluidPage(
               tabPanel(
                 "Figure Sizes & Themes",
                 
-                numericInput("plotWidth_Volcano", "Width (in pixels):", value = 800, step = 5),
-                numericInput("plotHeight_Volcano", "Height (in pixels):", value = 600, step = 5),
+                numericInput("plotWidth_VolcanoPlot", "Width (in pixels):", value = 800, step = 5),
+                numericInput("plotHeight_VolcanoPlot", "Height (in pixels):", value = 600, step = 5),
                 
                 selectInput(
                   "plotTheme_Volcano", "Plot Theme:",
@@ -270,9 +250,9 @@ ui <- fluidPage(
               tabPanel(
                 "Save Figure",
                 # Ensure the consistency with variables name in the server
-                numericInput("volcanoDPI", "Resolution (DPI):", value = 300, step = 300),
+                numericInput("dpi_VolcanoPlot", "Resolution (DPI):", value = 300, step = 300),
                 selectInput(
-                  "formatdownloadVolcano", "Format:",
+                  "formatdownload_VolcanoPlot", "Format:",
                   choices = c(".png", ".svg", ".tiff", ".pdf"),
                   selected = ".png"
                 ),
@@ -289,7 +269,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Heatmap tap
+    ## Heatmap tap ----
     tabPanel(
       title = "Heatmap",
       
@@ -348,11 +328,6 @@ ui <- fluidPage(
                 checkboxInput("checkbox_showColname_HeatmapSimple", "Show Column Name", value = FALSE)
               ),
               
-              # # Group Tab
-              # tabPanel(
-              #   "Plot Appearance"
-              # ),
-              
               # Figure Sizes Tab
               tabPanel(
                 "Figure Sizes",
@@ -370,16 +345,6 @@ ui <- fluidPage(
               tabPanel(
                 "Heatmap Colors",
                 
-                # selectInput(
-                #   "Color_Palette_HeatmapSimple", "Select Color Palette:",
-                #   choices = c("theme_Publication", "theme_classic", "theme_bw", "theme_minimal", "theme_linedraw", "theme_gray"),
-                #   selected = "none"
-                # ),
-                #
-                # tags$p(
-                #   "Or Select Manually:",
-                # ),
-                
                 # Heatmap Color and Scale
                 colourpicker::colourInput("color_DownHeatmap_HeatmapSimple", "Down-regulation Color:", value = "#23446f"),
                 colourpicker::colourInput("color_UnchangedHeatmap_HeatmapSimple", "Unchange Color:", value = "white"),
@@ -393,9 +358,6 @@ ui <- fluidPage(
                 # Feature Text Size
                 numericInput("size_Features_HeatmapSimple", "Features Size:", value = 12),
                 checkboxInput("checkbox_italicFeatures_HeatmapSimple", "Italic Text", value = FALSE),
-                
-                # Top level
-                # numericInput("size_TopAnnotation_HeatmapSimple", "Top Annotation Size, top:", value = 16),
                 
                 # Legend
                 textInput("TopAnnotation_legend_HeatmapSimple", "Level-1 Annotation:", value = "Group"),
@@ -416,12 +378,12 @@ ui <- fluidPage(
                 "Save Figure",
                 
                 numericInput("dpi_HeatmapSimple", "Resolution (DPI):", value = 300, step = 300),
-                # selectInput(
-                #   "formatdownload_HeatmapSimple", "Format:",
-                #   choices = c(".png", ".svg", ".tiff", ".pdf"),
-                #   selected = ".png"
-                # ),
-                downloadButton("download_HeatmapSimple", "Download Plot as .png")
+                selectInput(
+                  "formatdownload_HeatmapSimple", "Format:",
+                  choices = c(".png", ".svg", ".tiff", ".pdf"),
+                  selected = ".png"
+                ),
+                downloadButton("download_HeatmapSimple", "Download Plot")
               ),
             )
           )
@@ -434,7 +396,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Scores Plot Tab
+    ## Scores Plot Tab ----
     tabPanel(
       title = "Scores Plot",
       
@@ -498,12 +460,6 @@ ui <- fluidPage(
                 checkboxInput("checkbox_95CI_ScorePlot", "Display 95% confidence ellipse", value = TRUE)
                 
               ),
-              
-              # # Plot Appearance Tab
-              # tabPanel(
-              #   "Plot Appearance",
-              #
-              # ),
               
               # Figure Sizes Tab
               tabPanel(
@@ -574,15 +530,13 @@ ui <- fluidPage(
               tabPanel(
                 "Save Figure",
                 
-                # numericInput("plotWidth_ScorePlot", "Width (in pixels):", value = 600, step = 5),
-                # numericInput("plotHeight_ScorePlot", "Height (in pixels):", value = 600, step = 5),
                 numericInput("dpi_ScorePlot", "Resolution (DPI):", value = 300, step = 300),
                 selectInput(
-                  "formatdownloadScorePlot", "Format:",
+                  "formatdownload_ScorePlot", "Format:",
                   choices = c(".png", ".svg", ".tiff", ".pdf"),
                   selected = ".png"
                 ),
-                downloadButton("downloadScorePlot", "Download Plot")
+                downloadButton("download_ScorePlot", "Download Plot")
               ),
             )
           )
@@ -594,7 +548,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Box Plot Tab
+    ## Box Plot Tab ----
     tabPanel(
       title = "Box Plot",
       
@@ -610,8 +564,7 @@ ui <- fluidPage(
         id = "reload_tab_button_BoxPlot",
         class = "action-button shiny-bound-input",
         "Reset This Tab",
-        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;",  # Custom styles
-        # onclick = "Shiny.setInputValue('reload_tab_button_BoxPlot', Math.random())"
+        style = "font-size: 15px; font-weight: bold; padding: 5px 15px; background-color: #47B0C3; color: white; border: none; border-radius: 5px; cursor: pointer;"  # Custom styles
       ),
       
       tags$button(
@@ -644,19 +597,14 @@ ui <- fluidPage(
                 fileInput("metadataFile_BoxPlot", "Upload Metadata File:", accept = c(".csv")),
                 fileInput("expressionFile_BoxPlot", "Upload Normalized Data File:", accept = c(".csv")),
                 
+                checkboxInput("checkbox_PvalCalculation_BoxPlot", "Calculate (Adjusted) P-value (Only support 2-group comparison)", value = FALSE),
+                
                 
                 uiOutput("groupLevelSelector_BoxPlot"),  # This will be dynamically generated based on the uploaded data
                 uiOutput("dynamicColorInputs_BoxPlot"),
                 
                 uiOutput("dynamicLegendInputs_BoxPlot"), # For dynamic legend labels
               ),
-              
-              # # Plot Appearance Tab
-              # tabPanel(
-              #   "Plot Appearance",
-              #
-              #
-              # ),
               
               # Figure Sizes Tab
               tabPanel(
@@ -700,6 +648,33 @@ ui <- fluidPage(
                 numericInput("stripLabelSize_BoxPlot", "Features Label Size:", value = 15, step = 1),
               ),
               
+              # Statistics Tab
+              tabPanel(
+                "Statistics",
+                
+                tags$p(
+                  "NOTE: The current version only supports unpaired two-sided t-test with equal variance.",
+                  style = "font-size: 16px; font-weight: bold;"
+                ),
+                checkboxInput("checkbox_FDR_BoxPlot", "Adjust P-value", value = TRUE),
+                selectInput(
+                  "PValCorrectionMethod_BoxPlot", "P-value Correction Methods:",
+                  # choices = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"),
+                  choices = c("Holm", "Hochberg", "Hommel", "Bonferroni", "Benjamini-Hochberg (BH)"),
+                  selected = "Benjamini-Hochberg (BH)"
+                ),
+                # checkboxInput("checkbox_showPvalue_BoxPlot", "Show (Adjusted) P-value", value = FALSE),
+                # Download Pvalue
+                downloadButton("download_PvalueBoxPlot", "Download (Adjusted) P-value Results"),
+                
+                tags$p(
+                  "",
+                  style = "font-size: 16px; font-weight: bold;"
+                ),
+                numericInput("labelSizeStatistic_BoxPlot", "Label Size:", value = 4)
+              ),
+              
+              
               # Save Figure Tab
               tabPanel(
                 "Save Figure",
@@ -722,7 +697,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Dot Plot tab
+    ## Dot Plot tab ----
     tabPanel(
       title = "Dot Plot",
       
@@ -776,15 +751,17 @@ ui <- fluidPage(
                   selected = "ORA"
                 ),
                 
-                # Metabolomics or Transcriptomics
+                # Metabolomics or Transcriptomics/Proteomics
                 selectInput(
                   "PathwayFromOmics_DotPlot", "Using:",
-                  choices = c("Metabolomics", "Transcriptomics"),
-                  selected = "Transcriptomics"
+                  choices = c("Metabolomics", "Transcriptomics/Proteomics"),
+                  selected = "Transcriptomics/Proteomics"
                 ),
                 
                 # Use Pvalue or adjPvalue
                 checkboxInput("checkbox_adjPvalue_DotPlot", "Adjusted P-value"),  # Get automatically from the server
+                
+                numericInput("STATcutoff_DotPlot", "(Adjusted) P-value Cut-off:", value = 0.05, step = 0.01),
                 
                 # File upload inputs
                 fileInput("PathwayDataFile_DotPlot", "Upload Pathway Results File:", accept = c(".csv"))
@@ -861,12 +838,10 @@ ui <- fluidPage(
               tabPanel(
                 "Save Figure",
                 
-                # numericInput("plotWidth_DotPlot", "Width (in pixels):", value = 800, step = 50),
-                # numericInput("plotHeight_DotPlot", "Height (in pixels):", value = 600, step = 50),
                 numericInput("dpi_DotPlot", "Resolution (DPI):", value = 300, step = 300),
                 selectInput(
                   "formatdownload_DotPlot", "Format:",
-                  choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+                  choices = c(".png", ".svg", ".tiff", ".pdf"),
                   selected = ".png"
                 ),
                 downloadButton("download_DotPlot", "Download Plot")
@@ -876,12 +851,12 @@ ui <- fluidPage(
         ),
         
         mainPanel(
-          plotOutput("Render_DotPlot", width = "auto", height = "auto")
+          plotOutput("Render_DotPlot", width = "100%", height = "600px")
         )
       )
     ),
     
-    # BubblePlot Tab
+    ## Bubble Plot Tab ----
     tabPanel(
       title = "Bubble Plot",
       
@@ -928,15 +903,17 @@ ui <- fluidPage(
               tabPanel(
                 "Data Upload",
                 
-                # Metabolomics or Transcriptomics
+                # Metabolomics or Transcriptomics/Proteomics
                 selectInput(
                   "PathwayFromOmics_BubblePlot", "Omics Data:",
-                  choices = c("Metabolomics", "Transcriptomics"),
+                  choices = c("Metabolomics", "Transcriptomics/Proteomics"),
                   selected = "Metabolomics"
                 ),
                 
                 # Use Pvalue or adjPvalue
                 checkboxInput("checkbox_adjPvalue_BubblePlot", "Adjusted P-value"), # value will be returned from the server
+                
+                numericInput("STATcutoff_BubblePlot", "(Adjusted) P-value Cut-off:", value = 1, step = 0.01),
                 
                 # File upload inputs
                 fileInput("PathwayDataFile_BubblePlot", "Upload Pathway Results File:", accept = c(".csv"))
@@ -1024,12 +1001,11 @@ ui <- fluidPage(
               # Save Figure Tab
               tabPanel(
                 "Save Figure",
-                # numericInput("plotWidth_BubblePlot", "Width (in pixels):", value = 800, step = 50),
-                # numericInput("plotHeight_BubblePlot", "Height (in pixels):", value = 600, step = 50),
+                
                 numericInput("dpi_BubblePlot", "Resolution (DPI):", value = 300, step = 300),
                 selectInput(
                   "formatdownload_BubblePlot", "Format:",
-                  choices = c(".png", ".svg", ".tiff", ".pdf", ".pptx"),
+                  choices = c(".png", ".svg", ".tiff", ".pdf"),
                   selected = ".png"
                 ),
                 downloadButton("download_BubblePlot", "Download Plot")
@@ -1044,7 +1020,7 @@ ui <- fluidPage(
       )
     ),
     
-    # Tutorial Tab
+    ## Tutorial Tab ----
     tabPanel(
       title = "Tutorials",
       
@@ -1063,7 +1039,7 @@ ui <- fluidPage(
             #wellPanel(
             navlistPanel(
               id = "introTab",
-              # tabPanel("Welcome", value = "welcome"),
+              
               tabPanel("Volcano Plot", value = "VolcanoPlot_infor"),
               tabPanel("Heatmap", value = "HeatmapSimple_infor"),
               tabPanel("Scores Plot", value = "ScoresPlot_infor"),
