@@ -9,6 +9,7 @@
 runEasyPubPlot = function() {
 
   # Run the Application
-  shiny::shinyApp(ui = ui, server = server)
+  library(shiny)
+  shinyApp(ui = ui, server = server)
 
 }
