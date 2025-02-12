@@ -1,9 +1,7 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![MIT license](https://img.shields.io/badge/License-MIT-984ea3.svg)](https://mit-license.org/)
 [![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
-[![Preprint-bioRxiv](https://img.shields.io/badge/bioRxiv-10.1101/2024.11.26.625339-ef3b2c.svg)](https://doi.org/10.1101/2024.11.26.625339
-        
-        ) 
+[![Preprint-bioRxiv](https://img.shields.io/badge/bioRxiv-10.1101/2024.11.26.625339-ef3b2c.svg)](https://doi.org/10.1101/2024.11.26.625339) 
 
 # `EasyPubPlot` - Easy and Publishable Ploting
 An interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers. `EasyPubPlot` is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
@@ -66,11 +64,7 @@ runInteractiveEasyPubPlot()
 
 ## Citation
 
-Nguyen Tran Nam Tien, Nguyen Quang Thu, Dong Hyun Kim, Seongoh Park#, Nguyen Phuoc Long#. "**EasyPubPlot: a shiny web application for rapid omics data exploration and visualization**". *bioRxiv*. 2024. DOI: [10.1101/2024.11.26.625339
-        
-        ](https://doi.org/10.1101/2024.11.26.625339
-        
-        ).
+Nguyen Tran Nam Tien, Nguyen Quang Thu, Dong Hyun Kim, Seongoh Park#, Nguyen Phuoc Long#. "**EasyPubPlot: a shiny web application for rapid omics data exploration and visualization**". *bioRxiv*. 2024. DOI: [10.1101/2024.11.26.625339](https://doi.org/10.1101/2024.11.26.625339).
 
 ## Contributors
 
