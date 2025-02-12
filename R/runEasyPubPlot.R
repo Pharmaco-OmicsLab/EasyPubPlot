@@ -13,3 +13,12 @@ runEasyPubPlot = function() {
   shinyApp(ui = ui, server = server)
 
 }
+
+# Interactive (current version supports volcano plot and bubble plot)
+runInteractiveEasyPubPlot = function() {
+  
+  # Run the Application
+  library(shiny)
+  shinyApp(ui = ui_Interactive, server = server_Interactive)
+  
+}

@@ -1,6 +1,6 @@
 Package: EasyPubPlot
 Title: Easy and Publishable Ploting
-Version: 0.0.1
+Version: 0.1.1
 Authors@R: 
     person(given = "Nguyen Tran Nam", family = "Tien", email = "namtien.hup@gmail.com", role = c("aut", "cre"))
 Description: Interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers.
@@ -16,9 +16,11 @@ Imports:
     ggplot2,
     ggthemes,
     magrittr,
+    ggiraph,
     shiny,
     shinyjs,
     shinytoastr,
     shinyWidgets,
     tibble,
-    tidyr
+    tidyr,
+    cluster
