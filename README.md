@@ -3,7 +3,7 @@
 [![min R](https://img.shields.io/badge/R%3E%3D-4.2.0-386cb0.svg)](https://cran.r-project.org/)
 [![Journal of Proteome Research](https://img.shields.io/badge/Journal_of_Proteome_Research-10.1101/2024.11.26.625339-ef3b2c.svg)](https://pubs.acs.org/doi/10.1021/acs.jproteome.4c01068)
 
-# `EasyPubPlot` - Easy and Publishable Ploting
+# `EasyPubPlot` - Easy and Publishable Plotting
 An interactive, customizable, and coding-free Shiny App to easily create publishable plots for scientific papers. `EasyPubPlot` is freely available at https://pharmaco-omicslab.shinyapps.io/EasyPubPlot.
 
 <p align="center">
